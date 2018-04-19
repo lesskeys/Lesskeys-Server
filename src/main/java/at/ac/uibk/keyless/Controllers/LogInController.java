@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,11 +21,14 @@ public class LogInController {
   private UserRepository userRepository;
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public String logInUser(@RequestBody Map<String, String> data) {
+  public Map<String, String> logInUser(@RequestBody Map<String, String> data) {
+    Map<String, String> response = new HashMap<>();
     if (userRepository.findByFirstName(data.get("username")).size() > 0) {
-      return "Success";
+      response.put("answer", "Success");
+      return response;
     }
-    return "Failure";
+    response.put("answer", "Failure");
+    return response;
   }
 
 }
