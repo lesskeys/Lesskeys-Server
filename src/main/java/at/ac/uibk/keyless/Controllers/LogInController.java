@@ -79,7 +79,7 @@ public class LogInController {
     }
     if (entry.getDateAsString().equals(data.get("date"))
       && entry.getToken().equals(data.get("token"))) {
-      String newToken = generateToken("deviceId");
+      String newToken = generateToken(data.get("deviceId"));
       Date newDate = new Date();
       entry.setToken(newToken);
       entry.setDate(newDate);
