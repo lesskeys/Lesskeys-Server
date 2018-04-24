@@ -3,6 +3,7 @@ package at.ac.uibk.keyless.Models;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -29,6 +30,10 @@ public class LogInEntry {
   @Column(nullable = false)
   private Date date;
 
+
+  public String getDateAsString() {
+    return new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(date);
+  }
 
   public long getLoginId() {
     return loginId;
