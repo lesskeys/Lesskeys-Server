@@ -1,5 +1,7 @@
 package at.ac.uibk.keyless.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -20,6 +22,10 @@ public class User {
   @Column(nullable = false, unique = true)
   private String email;
 
+  @Column(nullable = false)
+  @JsonIgnore
+  private String password;
+
   @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
   @Column(nullable = false, updatable = false)
@@ -31,6 +37,14 @@ public class User {
   @Column(nullable = false)
   private String firstName;
 
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
   public long getUserId() {
     return userId;

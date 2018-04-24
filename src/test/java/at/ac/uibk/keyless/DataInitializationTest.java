@@ -26,6 +26,6 @@ public class DataInitializationTest {
   @Test
   public void testDataInitialization() {
     assertThat(userRepository.findAll().size(), is(greaterThan(0)));
-    assertThat(userRepository.findByFirstName("admin").size(), is(greaterThan(0)));
+    assertThat(userRepository.findFirstByEmail("admin@keyless.com"), is(notNullValue()));
   }
 }
