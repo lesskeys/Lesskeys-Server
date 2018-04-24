@@ -38,6 +38,14 @@ public class User {
   private String firstName;
 
 
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
   public long getUserId() {
     return userId;
   }

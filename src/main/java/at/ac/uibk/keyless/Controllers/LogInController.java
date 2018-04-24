@@ -55,12 +55,15 @@ public class LogInController {
     Map<String, String> response = new HashMap<>();
     User loggedIn = userRepository.findFirstByEmail(data.get("username"));
     if (!(loggedIn == null)) {
-      LogInEntry entry = saveNewLogInEntry(data.get("deviceId"), loggedIn.getUserId(),
-        generateToken(data.get("deviceId")));
-      response.put("answer", "Success");
-      response.put("token", entry.getToken());
-      response.put("date", entry.getDateAsString());
-      return response;
+      if (data.get("username").equals(loggedIn.getEmail()) &&
+        data.get("password").equals(loggedIn.getPassword())) {
+        LogInEntry entry = saveNewLogInEntry(data.get("deviceId"), loggedIn.getUserId(),
+          generateToken(data.get("deviceId")));
+        response.put("answer", "Success");
+        response.put("token", entry.getToken());
+        response.put("date", entry.getDateAsString());
+        return response;
+      }
     }
     response.put("answer", "Failure");
     return response;
