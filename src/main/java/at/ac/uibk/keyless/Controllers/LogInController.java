@@ -70,6 +70,10 @@ public class LogInController {
   public Map<String, String> autoLogInUser(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
     LogInEntry entry = loginRepository.findByDeviceId(data.get("deviceId"));
+    if (entry == null) {
+      response.put("answer", "Failure");
+      return response;
+    }
     if (entry.getDateAsString().equals(data.get("date"))
       && entry.getToken().equals(data.get("token"))) {
       String newToken = generateToken("deviceId");
