@@ -17,7 +17,7 @@ public class LogInEntry {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long loginId;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String deviceId;
 
   @Column(nullable = false, unique = true)

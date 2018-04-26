@@ -4,6 +4,7 @@ import at.ac.uibk.keyless.Models.LogInEntry;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.LogInEntryRepository;
 import at.ac.uibk.keyless.Repositories.UserRepository;
+import at.ac.uibk.keyless.Services.LogInService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,9 @@ public class LogInController {
   @Autowired
   private LogInEntryRepository loginRepository;
 
+  @Autowired
+  private LogInService logInService;
+
   private static String generateToken(String deviceId) {
     String alphabet = deviceId;
     return ThreadLocalRandom.current()
@@ -39,17 +43,6 @@ public class LogInController {
       .collect(Collectors.joining());
   }
 
-  private LogInEntry saveNewLogInEntry(String deviceId, long userId, String token) {
-    LogInEntry toSave = new LogInEntry();
-    toSave.setUserId(userId);
-    toSave.setDeviceId(deviceId);
-    toSave.setToken(token);
-    toSave.setDate(new Date());
-    loginRepository.save(toSave);
-    return toSave;
-  }
-
-
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public Map<String, String> logInUser(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
@@ -57,7 +50,7 @@ public class LogInController {
     if (!(loggedIn == null)) {
       if (data.get("username").equals(loggedIn.getEmail()) &&
         data.get("password").equals(loggedIn.getPassword())) {
-        LogInEntry entry = saveNewLogInEntry(data.get("deviceId"), loggedIn.getUserId(),
+        LogInEntry entry = logInService.updateLogInEntry(data.get("deviceId"), loggedIn.getUserId(),
           generateToken(data.get("deviceId")));
         response.put("answer", "Success");
         response.put("token", entry.getToken());
@@ -72,7 +65,7 @@ public class LogInController {
   @RequestMapping(value = "/autologin", method = RequestMethod.POST)
   public Map<String, String> autoLogInUser(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
-    LogInEntry entry = loginRepository.findByDeviceId(data.get("deviceId"));
+    LogInEntry entry = loginRepository.findByDeviceId(data.get("deviceId")).get(0);
     if (entry == null) {
       response.put("answer", "Failure");
       return response;
