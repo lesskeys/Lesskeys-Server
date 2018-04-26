@@ -30,4 +30,12 @@ public class LogInService {
     return toSave;
   }
 
+  public LogInEntry getFirstLogInEntry(String deviceId) {
+    if (loginRepository.findByDeviceId(deviceId).size() > 0) {
+      return loginRepository.findByDeviceId(deviceId).get(0);
+    } else {
+      return null;
+    }
+  }
+
 }

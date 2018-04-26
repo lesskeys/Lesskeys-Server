@@ -65,7 +65,7 @@ public class LogInController {
   @RequestMapping(value = "/autologin", method = RequestMethod.POST)
   public Map<String, String> autoLogInUser(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
-    LogInEntry entry = loginRepository.findByDeviceId(data.get("deviceId")).get(0);
+    LogInEntry entry = logInService.getFirstLogInEntry(data.get("deviceId"));
     if (entry == null) {
       response.put("answer", "Failure");
       return response;
