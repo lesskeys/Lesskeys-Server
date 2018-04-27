@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class SystemLogEntry {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long systemLogId;
 
   private String event;
