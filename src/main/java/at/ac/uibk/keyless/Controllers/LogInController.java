@@ -5,6 +5,7 @@ import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.LogInEntryRepository;
 import at.ac.uibk.keyless.Repositories.UserRepository;
 import at.ac.uibk.keyless.Services.LogInService;
+import at.ac.uibk.keyless.Services.SystemLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,9 @@ public class LogInController {
   @Autowired
   private LogInService logInService;
 
+  @Autowired
+  private SystemLogService systemLogService;
+
   private static String generateToken(String deviceId) {
     String alphabet = deviceId;
     return ThreadLocalRandom.current()
@@ -55,6 +59,7 @@ public class LogInController {
         response.put("answer", "Success");
         response.put("token", entry.getToken());
         response.put("date", entry.getDateAsString());
+        systemLogService.logEvent("user"+loggedIn.getUserId()+" logged in manually");
         return response;
       }
     }
