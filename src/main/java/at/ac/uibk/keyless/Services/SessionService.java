@@ -3,9 +3,12 @@ package at.ac.uibk.keyless.Services;
 import at.ac.uibk.keyless.Models.Session;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.SessionRepository;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -30,6 +33,10 @@ public class SessionService {
       .collect(Collectors.joining());
   }
 
+  /**
+   * @param user
+   * @return initializes a new session for a user and returns the session-token
+   */
   public String initSession(User user) {
     Session s = sessionRepository.findByUserId(user.getUserId());
     if (s == null) {
@@ -40,5 +47,15 @@ public class SessionService {
     s.setLastAction(new Date());
     sessionRepository.save(s);
     return s.getSessionToken();
+  }
+
+  /**
+   * @param token
+   * @return checks if a token is valid and not older than 30 minutes
+   */
+  public boolean isValidSession(String token) {
+    return sessionRepository.findAll().stream()
+      .anyMatch(s -> s.getSessionToken().equals(token) &&
+        !Minutes.minutesBetween(new DateTime(s.getLastAction()), new DateTime()).isGreaterThan(Minutes.minutes(30)));
   }
 }

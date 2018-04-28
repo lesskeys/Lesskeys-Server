@@ -1,6 +1,7 @@
 package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.SystemLogEntry;
+import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.SystemLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +21,15 @@ public class SystemLogController {
   @Autowired
   private SystemLogService systemLogService;
 
+  @Autowired
+  private SessionService sessionService;
+
+
   @RequestMapping(value = "/full-log", method = RequestMethod.POST)
   public List<SystemLogEntry> getFullLog(@RequestBody Map<String, String> data) {
-    // TODO: Check session token
-    return systemLogService.getAll();
+    if (sessionService.isValidSession(data.get("session"))) {
+      return systemLogService.getAll();
+    }
+    return null;
   }
 }
