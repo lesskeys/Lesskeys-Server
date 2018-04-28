@@ -29,9 +29,6 @@ public class LogInController {
   private UserRepository userRepository;
 
   @Autowired
-  private LogInEntryRepository loginRepository;
-
-  @Autowired
   private LogInService logInService;
 
   @Autowired
@@ -70,22 +67,19 @@ public class LogInController {
   @RequestMapping(value = "/autologin", method = RequestMethod.POST)
   public Map<String, String> autoLogInUser(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
-    LogInEntry entry = logInService.getFirstLogInEntry(data.get("deviceId"));
-    if (entry == null) {
-      response.put("answer", "Failure");
-      return response;
-    }
-    if (entry.getDateAsString().equals(data.get("date"))
-      && entry.getToken().equals(data.get("token"))) {
-      String newToken = generateToken(data.get("deviceId"));
-      Date newDate = new Date();
-      entry.setToken(newToken);
-      entry.setDate(newDate);
-      loginRepository.save(entry);
-      response.put("answer", "Success");
-      response.put("token", newToken);
-      response.put("date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(newDate));
-      return response;
+    LogInEntry entry = logInService.getNewestEntryForDevice(data.get("deviceId"));
+    if (!(entry == null)) {
+      if (entry.getDateAsString().equals(data.get("date")) && entry.getToken().equals(data.get("token"))) {
+        String newToken = generateToken(data.get("deviceId"));
+        Date newDate = new Date();
+        entry.setToken(newToken);
+        entry.setDate(newDate);
+        logInService.saveEntry(entry);
+        response.put("answer", "Success");
+        response.put("token", newToken);
+        response.put("date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(newDate));
+        return response;
+      }
     }
     response.put("answer", "Failure");
     return response;
