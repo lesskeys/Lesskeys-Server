@@ -5,6 +5,7 @@ import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.LogInEntryRepository;
 import at.ac.uibk.keyless.Repositories.UserRepository;
 import at.ac.uibk.keyless.Services.LogInService;
+import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.SystemLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,13 +30,14 @@ public class LogInController {
   private UserRepository userRepository;
 
   @Autowired
-  private LogInEntryRepository loginRepository;
-
-  @Autowired
   private LogInService logInService;
 
   @Autowired
   private SystemLogService systemLogService;
+
+  @Autowired
+  private SessionService sessionService;
+
 
   private static String generateToken(String deviceId) {
     String alphabet = deviceId;
@@ -59,6 +61,7 @@ public class LogInController {
         response.put("answer", "Success");
         response.put("token", entry.getToken());
         response.put("date", entry.getDateAsString());
+        response.put("session", sessionService.initSession(loggedIn));
         systemLogService.logEvent("user"+loggedIn.getUserId()+" logged in manually");
         return response;
       }
@@ -70,22 +73,20 @@ public class LogInController {
   @RequestMapping(value = "/autologin", method = RequestMethod.POST)
   public Map<String, String> autoLogInUser(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
-    LogInEntry entry = logInService.getFirstLogInEntry(data.get("deviceId"));
-    if (entry == null) {
-      response.put("answer", "Failure");
-      return response;
-    }
-    if (entry.getDateAsString().equals(data.get("date"))
-      && entry.getToken().equals(data.get("token"))) {
-      String newToken = generateToken(data.get("deviceId"));
-      Date newDate = new Date();
-      entry.setToken(newToken);
-      entry.setDate(newDate);
-      loginRepository.save(entry);
-      response.put("answer", "Success");
-      response.put("token", newToken);
-      response.put("date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(newDate));
-      return response;
+    LogInEntry entry = logInService.getNewestEntryForDevice(data.get("deviceId"));
+    if (!(entry == null)) {
+      if (entry.getDateAsString().equals(data.get("date")) && entry.getToken().equals(data.get("token"))) {
+        String newToken = generateToken(data.get("deviceId"));
+        Date newDate = new Date();
+        entry.setToken(newToken);
+        entry.setDate(newDate);
+        logInService.saveEntry(entry);
+        response.put("answer", "Success");
+        response.put("token", newToken);
+        response.put("date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(newDate));
+        response.put("session", sessionService.initSession(userRepository.findByUserId(entry.getUserId())));
+        return response;
+      }
     }
     response.put("answer", "Failure");
     return response;
