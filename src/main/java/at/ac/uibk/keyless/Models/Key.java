@@ -15,7 +15,8 @@ public class Key {
 
   private Byte[] content;
 
-  private int
+  @Column(nullable = false)
+  private int aid;
 
   @ManyToOne
   private User owner;
@@ -39,5 +40,13 @@ public class Key {
 
   public void setContent(Byte[] content) {
     this.content = content;
+  }
+
+  public int getAid() {
+    return aid;
+  }
+
+  public void setAid(int aid) {
+    this.aid = aid;
   }
 }
