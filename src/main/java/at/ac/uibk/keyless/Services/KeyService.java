@@ -20,7 +20,7 @@ public class KeyService {
   UserRepository userRepository;
 
 
-  public void saveKey(byte[] aid, byte[] content, String username) {
+  public void saveKey(String aid, String content, String username) {
     User owner = userRepository.findFirstByEmail(username);
     Key toSave = new Key();
     toSave.setAid(aid);

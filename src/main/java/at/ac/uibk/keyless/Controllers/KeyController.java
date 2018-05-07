@@ -24,10 +24,10 @@ public class KeyController {
   SessionService sessionService;
 
   @RequestMapping(value = "/key/register", method = RequestMethod.POST)
-  public Map<String, String> registerKey(@RequestBody Map<String, Object> data) {
+  public Map<String, String> registerKey(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
     if (sessionService.isValidSession((String) data.get("session"))) {
-      keyService.saveKey((byte[]) data.get("aid"), (byte[] ) data.get("content"), (String) data.get("username"));
+      keyService.saveKey(data.get("aid"), data.get("content"), data.get("username"));
       response.put("status", "Successfully added key.");
       return response;
     }
