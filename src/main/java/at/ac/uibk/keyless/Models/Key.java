@@ -13,10 +13,9 @@ public class Key {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long keyId;
 
-  private Byte[] content;
+  private byte[] content;
 
-  @Column(nullable = false)
-  private int aid;
+  private byte[] aid;
 
   @ManyToOne
   private User owner;
@@ -34,19 +33,19 @@ public class Key {
     this.owner = owner;
   }
 
-  public Byte[] getContent() {
+  public byte[] getContent() {
     return content;
   }
 
-  public void setContent(Byte[] content) {
+  public void setContent(byte[] content) {
     this.content = content;
   }
 
-  public int getAid() {
+  public byte[] getAid() {
     return aid;
   }
 
-  public void setAid(int aid) {
+  public void setAid(byte[] aid) {
     this.aid = aid;
   }
 }
