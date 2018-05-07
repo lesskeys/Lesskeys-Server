@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Lukas Dötlinger.
@@ -36,6 +38,13 @@ public class User {
 
   @Column(nullable = false)
   private String firstName;
+
+  @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private Set<Key> keys;
+
+  @ElementCollection(targetClass = Long.class, fetch = FetchType.LAZY)
+  @CollectionTable(name = "users_subusers")
+  private List<Long> subUsers;
 
 
   public String getPassword() {
@@ -84,5 +93,21 @@ public class User {
 
   public void setFirstName(String firstName) {
     this.firstName = firstName;
+  }
+
+  public Set<Key> getKeys() {
+    return keys;
+  }
+
+  public void setKeys(Set<Key> keys) {
+    this.keys = keys;
+  }
+
+  public List<Long> getSubUsers() {
+    return subUsers;
+  }
+
+  public void setSubUsers(List<Long> subUsers) {
+    this.subUsers = subUsers;
   }
 }
