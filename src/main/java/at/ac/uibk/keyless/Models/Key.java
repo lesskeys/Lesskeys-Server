@@ -1,5 +1,7 @@
 package at.ac.uibk.keyless.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 /**
@@ -17,6 +19,7 @@ public class Key {
 
   private String aid;
 
+  @JsonIgnore
   @ManyToOne
   private User owner;
 
