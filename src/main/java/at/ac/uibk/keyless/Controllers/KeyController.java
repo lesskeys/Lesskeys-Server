@@ -37,12 +37,16 @@ public class KeyController {
     return response;
   }
 
-  @RequestMapping(value = "/keys")
+  @RequestMapping(value = "/keys", method = RequestMethod.POST)
   public List<Key> getUsersKeys(@RequestBody Map<String, String> data) {
-    Map<String, String> response = new HashMap<>();
     if (sessionService.isValidSession(data.get("session"))) {
       return keyService.getKeysForUser(data.get("username"));
     }
     return null;
+  }
+
+  @RequestMapping(value = "/all-keys", method = RequestMethod.POST)
+  public List<Key> getAllKeys(@RequestBody Map<String, String> data) {
+    return keyService.getAllKeys();
   }
 }

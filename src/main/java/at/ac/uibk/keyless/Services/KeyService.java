@@ -34,4 +34,8 @@ public class KeyService {
   public List<Key> getKeysForUser(String username) {
     return keyRepository.findKeyForUser(userRepository.findFirstByEmail(username));
   }
+
+  public List<Key> getAllKeys() {
+    return keyRepository.findAll();
+  }
 }
