@@ -7,6 +7,8 @@ import at.ac.uibk.keyless.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Lukas Dötlinger.
  */
@@ -27,5 +29,13 @@ public class KeyService {
     toSave.setContent(content);
     toSave.setOwner(owner);
     keyRepository.save(toSave);
+  }
+
+  public List<Key> getKeysForUser(String username) {
+    return keyRepository.findKeyForUser(userRepository.findFirstByEmail(username));
+  }
+
+  public List<Key> getAllKeys() {
+    return keyRepository.findAll();
   }
 }
