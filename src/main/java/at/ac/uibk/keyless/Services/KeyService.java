@@ -22,12 +22,13 @@ public class KeyService {
   UserRepository userRepository;
 
 
-  public void saveKey(String aid, String content, String username) {
+  public void saveKey(String aid, String content, String username, String keyName) {
     User owner = userRepository.findFirstByEmail(username);
     Key toSave = new Key();
     toSave.setAid(aid);
     toSave.setContent(content);
     toSave.setOwner(owner);
+    toSave.setName(keyName);
     keyRepository.save(toSave);
   }
 

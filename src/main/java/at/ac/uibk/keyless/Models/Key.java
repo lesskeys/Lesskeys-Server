@@ -15,6 +15,9 @@ public class Key {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long keyId;
 
+  @Column(name = "keyname",nullable = false)
+  private String keyName;
+
   private String content;
 
   private String aid;
@@ -50,5 +53,13 @@ public class Key {
 
   public void setAid(String aid) {
     this.aid = aid;
+  }
+
+  public String getName() {
+    return keyName;
+  }
+
+  public void setName(String name) {
+    this.keyName = name;
   }
 }

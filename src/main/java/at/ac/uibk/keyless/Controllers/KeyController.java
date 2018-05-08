@@ -29,7 +29,7 @@ public class KeyController {
   public Map<String, String> registerKey(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
     if (sessionService.isValidSession(data.get("session"))) {
-      keyService.saveKey(data.get("aid"), data.get("content"), data.get("username"));
+      keyService.saveKey(data.get("aid"), data.get("content"), data.get("username"), data.get("name"));
       response.put("status", "Successfully added key.");
       return response;
     }
