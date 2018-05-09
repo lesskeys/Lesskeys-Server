@@ -1,6 +1,7 @@
 package at.ac.uibk.keyless.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javafx.beans.DefaultProperty;
 
 import javax.persistence.*;
 
@@ -15,7 +16,7 @@ public class Key {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long keyId;
 
-  @Column(name = "keyname",nullable = false)
+  @Column(name = "keyname", nullable = false)
   private String keyName;
 
   private String content;
@@ -55,11 +56,11 @@ public class Key {
     this.aid = aid;
   }
 
-  public String getName() {
+  public String getKeyName() {
     return keyName;
   }
 
-  public void setName(String name) {
-    this.keyName = name;
+  public void setKeyName(String keyName) {
+    this.keyName = keyName;
   }
 }

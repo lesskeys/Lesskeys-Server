@@ -28,7 +28,7 @@ public class KeyService {
     toSave.setAid(aid);
     toSave.setContent(content);
     toSave.setOwner(owner);
-    toSave.setName(keyName);
+    toSave.setKeyName(keyName);
     keyRepository.save(toSave);
   }
 
