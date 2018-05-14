@@ -8,6 +8,7 @@ import at.ac.uibk.keyless.Services.LogInService;
 import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.SystemLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -55,7 +56,7 @@ public class LogInController {
     User loggedIn = userRepository.findFirstByEmail(data.get("username"));
     if (!(loggedIn == null)) {
       if (data.get("username").equals(loggedIn.getEmail()) &&
-        data.get("password").equals(loggedIn.getPassword())) {
+        new BCryptPasswordEncoder().matches(data.get("password"), loggedIn.getPassword())) {
         LogInEntry entry = logInService.updateLogInEntry(data.get("deviceId"), loggedIn.getUserId(),
           generateToken(data.get("deviceId")));
         response.put("answer", "Success");
