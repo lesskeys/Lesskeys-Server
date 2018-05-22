@@ -46,6 +46,12 @@ public class User {
   @CollectionTable(name = "users_subusers")
   private List<Long> subUsers;
 
+  @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
+  @CollectionTable(name = "user_roles")
+  @Enumerated(EnumType.STRING)
+  private Set<UserRole> roles;
+
+
 
   public String getPassword() {
     return password;
