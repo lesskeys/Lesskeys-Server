@@ -25,7 +25,20 @@ public class KeyService {
   UserService userService;
 
 
-  public void saveKey(String aid, String content, String username, String keyName) {
+  /**
+   * Function to edit an existing key.
+   * TODO: Extend method for new parameters.
+   */
+  public void editKey(String username, String keyName, Key changes) {
+    Key toEdit = keyRepository.findKeyForUser(userRepository.findFirstByEmail(username)).stream()
+      .filter(k -> k.getKeyName().equals(keyName))
+      .findFirst().orElse(null);
+    if (toEdit != null) {
+      toEdit.setKeyName(changes.getKeyName());
+    }
+  }
+
+  public void registerKey(String aid, String content, String username, String keyName) {
     User owner = userRepository.findFirstByEmail(username);
     Key toSave = new Key();
     toSave.setAid(aid);

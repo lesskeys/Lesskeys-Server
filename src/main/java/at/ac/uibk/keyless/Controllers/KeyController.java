@@ -25,11 +25,19 @@ public class KeyController {
   @Autowired
   SessionService sessionService;
 
+
+  @RequestMapping(value = "/key/edit", method = RequestMethod.PUT)
+  public void editKey(@RequestBody Map<String, String> data) {
+    if (sessionService.isValidSession(data.get("session"))) {
+
+    }
+  }
+
   @RequestMapping(value = "/key/register", method = RequestMethod.POST)
   public Map<String, String> registerKey(@RequestBody Map<String, String> data) {
     Map<String, String> response = new HashMap<>();
     if (sessionService.isValidSession(data.get("session"))) {
-      keyService.saveKey(data.get("aid"), data.get("content"), data.get("username"), data.get("name"));
+      keyService.registerKey(data.get("aid"), data.get("content"), data.get("username"), data.get("name"));
       response.put("status", "Successfully added key.");
       return response;
     }
