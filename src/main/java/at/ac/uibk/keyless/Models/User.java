@@ -116,4 +116,12 @@ public class User {
   public void setSubUsers(List<Long> subUsers) {
     this.subUsers = subUsers;
   }
+
+  public Set<UserRole> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(Set<UserRole> roles) {
+    this.roles = roles;
+  }
 }

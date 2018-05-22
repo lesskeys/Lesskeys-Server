@@ -33,7 +33,12 @@ public class KeyService {
   }
 
   public List<Key> getKeysForUser(String username) {
-    return keyRepository.findKeyForUser(userRepository.findFirstByEmail(username));
+    User operator = userRepository.findFirstByEmail(username);
+    if (operator.getRoles().contains("ADMIN")) {
+      return getAllKeys();
+    } else {
+      return keyRepository.findKeyForUser(operator);
+    }
   }
 
   public List<Key> getAllKeys() {
