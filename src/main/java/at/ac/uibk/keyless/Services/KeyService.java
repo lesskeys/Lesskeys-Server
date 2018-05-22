@@ -21,6 +21,9 @@ public class KeyService {
   @Autowired
   UserRepository userRepository;
 
+  @Autowired
+  UserService userService;
+
 
   public void saveKey(String aid, String content, String username, String keyName) {
     User owner = userRepository.findFirstByEmail(username);
@@ -33,7 +36,12 @@ public class KeyService {
   }
 
   public List<Key> getKeysForUser(String username) {
-    return keyRepository.findKeyForUser(userRepository.findFirstByEmail(username));
+    User operator = userRepository.findFirstByEmail(username);
+    if (userService.hasRole(operator, "Admin")) {
+      return getAllKeys();
+    } else {
+      return keyRepository.findKeyForUser(operator);
+    }
   }
 
   public List<Key> getAllKeys() {

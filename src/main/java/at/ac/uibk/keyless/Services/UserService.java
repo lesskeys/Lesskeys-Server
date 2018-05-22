@@ -27,4 +27,8 @@ public class UserService {
       userRepository.save(toSave);
     }
   }
+
+  public boolean hasRole(User user, String role) {
+    return user.getRoles().stream().anyMatch(r -> r.toString().equals(role));
+  }
 }
