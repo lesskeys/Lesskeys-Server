@@ -29,12 +29,12 @@ public class KeyService {
    * Function to edit an existing key.
    * TODO: Extend method for new parameters.
    */
-  public void editKey(String username, String keyName, Key changes) {
+  public void editKey(String username, String keyName, String newName) {
     Key toEdit = keyRepository.findKeyForUser(userRepository.findFirstByEmail(username)).stream()
       .filter(k -> k.getKeyName().equals(keyName))
       .findFirst().orElse(null);
     if (toEdit != null) {
-      toEdit.setKeyName(changes.getKeyName());
+      toEdit.setKeyName(newName);
     }
   }
 
