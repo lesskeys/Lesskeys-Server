@@ -27,6 +27,10 @@ public class Key {
   @ManyToOne
   private User owner;
 
+  @JsonIgnore
+  @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "key")
+  private KeyPermission permission;
+
 
   public Long getKeyId() {
     return keyId;
