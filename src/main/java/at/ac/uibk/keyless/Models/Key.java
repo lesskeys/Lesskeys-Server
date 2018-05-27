@@ -44,6 +44,14 @@ public class Key {
     this.owner = owner;
   }
 
+  public KeyPermission getPermission() {
+    return permission;
+  }
+
+  public void setPermission(KeyPermission permission) {
+    this.permission = permission;
+  }
+
   public String getContent() {
     return content;
   }

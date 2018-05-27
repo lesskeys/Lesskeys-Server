@@ -25,6 +25,10 @@ public class KeyService {
   UserService userService;
 
 
+  public Key getKeyById(Long id) {
+    return keyRepository.findByKeyId(id);
+  }
+
   /**
    * Function to edit an existing key.
    * TODO: Extend method for new parameters.
