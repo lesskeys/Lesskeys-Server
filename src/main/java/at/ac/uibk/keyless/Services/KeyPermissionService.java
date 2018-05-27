@@ -57,6 +57,9 @@ public class KeyPermissionService {
    * @return true if permission given for the current time, false otherwise
    */
   public boolean isValid(KeyPermission permission) {
+    if (!permission.getKey().isHasCustomPermission()) {
+      return true;
+    }
     Date current = new Date();
     Calendar cal = Calendar.getInstance();
     cal.setTime(current);

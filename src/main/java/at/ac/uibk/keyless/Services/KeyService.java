@@ -33,13 +33,15 @@ public class KeyService {
    * Function to edit an existing key.
    * TODO: Extend method for new parameters.
    */
-  public void editKey(String username, String keyName, String newName) {
+  public void editKey(String username, String keyName, Key newKey) {
     Key toEdit = keyRepository.findKeyForUser(userRepository.findFirstByEmail(username)).stream()
       .filter(k -> k.getKeyName().equals(keyName))
       .findFirst().orElse(null);
     if (toEdit != null) {
-      toEdit.setKeyName(newName);
+      toEdit.setKeyName(newKey.getKeyName());
+      toEdit.setHasCustomPermission(newKey.isHasCustomPermission());
     }
+    keyRepository.save(toEdit);
   }
 
   public void registerKey(String aid, String content, String username, String keyName) {

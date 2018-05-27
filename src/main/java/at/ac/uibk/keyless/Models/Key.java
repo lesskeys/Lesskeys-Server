@@ -1,7 +1,6 @@
 package at.ac.uibk.keyless.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javafx.beans.DefaultProperty;
 
 import javax.persistence.*;
 
@@ -22,6 +21,8 @@ public class Key {
   private String content;
 
   private String aid;
+
+  private boolean hasCustomPermission;
 
   @JsonIgnore
   @ManyToOne
@@ -74,5 +75,13 @@ public class Key {
 
   public void setKeyName(String keyName) {
     this.keyName = keyName;
+  }
+
+  public boolean isHasCustomPermission() {
+    return hasCustomPermission;
+  }
+
+  public void setHasCustomPermission(boolean hasCustomPermission) {
+    this.hasCustomPermission = hasCustomPermission;
   }
 }

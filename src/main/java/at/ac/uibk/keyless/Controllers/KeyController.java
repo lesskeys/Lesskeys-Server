@@ -45,7 +45,10 @@ public class KeyController {
   @RequestMapping(value = "/key/edit", method = RequestMethod.PUT)
   public void editKey(@RequestBody Map<String, String> data) {
     if (sessionService.isValidSession(data.get("session"))) {
-      keyService.editKey(data.get("username"), data.get("keyName"), data.get("newName"));
+      Key newKey = new Key();
+      newKey.setKeyName(data.get("newName"));
+      newKey.setHasCustomPermission(Boolean.parseBoolean("isCustom"));
+      keyService.editKey(data.get("username"), data.get("keyName"), newKey);
     }
   }
 
