@@ -71,4 +71,41 @@ public class KeyPermissionService {
       return false;
     }
   }
+
+  /**
+   * Method to set new permission-times for a given day.
+   */
+  public void editPermissionDay(int day, String newFrom, String newTo, KeyPermission permission) {
+    switch (day) {
+      case Calendar.MONDAY:
+        permission.setMondayFrom(newFrom);
+        permission.setMondayTo(newTo);
+        break;
+      case Calendar.TUESDAY:
+        permission.setTuesdayFrom(newFrom);
+        permission.setTuesdayTo(newTo);
+        break;
+      case Calendar.WEDNESDAY:
+        permission.setWednesdayFrom(newFrom);
+        permission.setWednesdayTo(newTo);
+        break;
+      case Calendar.THURSDAY:
+        permission.setThursdayFrom(newFrom);
+        permission.setThursdayTo(newTo);
+        break;
+      case Calendar.FRIDAY:
+        permission.setFridayFrom(newFrom);
+        permission.setFridayTo(newTo);
+        break;
+      case Calendar.SATURDAY:
+        permission.setSaturdayFrom(newFrom);
+        permission.setSaturdayTo(newTo);
+        break;
+      case Calendar.SUNDAY:
+        permission.setSundayFrom(newFrom);
+        permission.setSundayTo(newTo);
+        break;
+    }
+    keyPermissionRepository.save(permission);
+  }
 }
