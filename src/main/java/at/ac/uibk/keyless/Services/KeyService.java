@@ -33,10 +33,8 @@ public class KeyService {
    * Function to edit an existing key.
    * TODO: Extend method for new parameters.
    */
-  public void editKey(String username, String keyName, Key newKey) {
-    Key toEdit = keyRepository.findKeyForUser(userRepository.findFirstByEmail(username)).stream()
-      .filter(k -> k.getKeyName().equals(keyName))
-      .findFirst().orElse(null);
+  public void editKey(Long keyId, Key newKey) {
+    Key toEdit = keyRepository.findByKeyId(keyId);
     if (toEdit != null) {
       toEdit.setKeyName(newKey.getKeyName());
       toEdit.setHasCustomPermission(newKey.isHasCustomPermission());
@@ -65,5 +63,16 @@ public class KeyService {
 
   public List<Key> getAllKeys() {
     return keyRepository.findAll();
+  }
+
+  /**
+   * Method to delete a Key if the operating user is an owner or has the role Admin.
+   */
+  public void deleteKey(Long keyId, String username) {
+    Key toDelete = keyRepository.findByKeyId(keyId);
+    if (toDelete.getOwner().getEmail().equals(username) ||
+      userService.hasRole(toDelete.getOwner(), "Admin")) {
+      keyRepository.delete(toDelete);
+    }
   }
 }

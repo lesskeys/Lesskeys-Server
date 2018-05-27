@@ -77,6 +77,7 @@ public class KeyPermissionService {
 
   /**
    * Method to set new permission-times for a given day.
+   * TODO: Check if user is allowed to do that!
    */
   public void editPermissionDay(int day, String newFrom, String newTo, KeyPermission permission) {
     switch (day) {

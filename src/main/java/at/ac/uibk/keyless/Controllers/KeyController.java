@@ -48,7 +48,7 @@ public class KeyController {
       Key newKey = new Key();
       newKey.setKeyName(data.get("newName"));
       newKey.setHasCustomPermission(Boolean.parseBoolean("isCustom"));
-      keyService.editKey(data.get("username"), data.get("keyName"), newKey);
+      keyService.editKey(Long.parseLong(data.get("keyId")), newKey);
     }
   }
 
@@ -58,6 +58,19 @@ public class KeyController {
       int day = Integer.parseInt(data.get("day"));
       Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
       keyPermissionService.editPermissionDay(day, data.get("newFrom"), data.get("newTo"), key.getPermission());
+    }
+  }
+
+  @RequestMapping(value = "/key/delete", method = RequestMethod.POST)
+  public Map<String, String> deleteKey(@RequestBody Map<String, String> data) {
+    Map<String, String> toReturn = new HashMap<>();
+    if (sessionService.isValidSession(data.get("session"))) {
+      keyService.deleteKey(Long.parseLong(data.get("keyId")), data.get("username"));
+      toReturn.put("status", "Success");
+      return toReturn;
+    } else {
+      toReturn.put("status", "Failure");
+      return toReturn;
     }
   }
 
