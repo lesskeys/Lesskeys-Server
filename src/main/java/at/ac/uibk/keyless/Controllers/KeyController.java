@@ -51,7 +51,7 @@ public class KeyController {
       keyService.editKey(Long.parseLong(data.get("keyId")), newKey);
     }
   }
-
+  /*
   @RequestMapping(value = "/key/edit/permission", method = RequestMethod.PUT)
   public void editKeyPermission(@RequestBody Map<String, String> data) {
     if (sessionService.isValidSession(data.get("session"))) {
@@ -59,7 +59,7 @@ public class KeyController {
       Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
       keyPermissionService.editPermissionDay(day, data.get("newFrom"), data.get("newTo"), key.getPermission());
     }
-  }
+  }*/
 
   @RequestMapping(value = "/key/delete", method = RequestMethod.POST)
   public Map<String, String> deleteKey(@RequestBody Map<String, String> data) {

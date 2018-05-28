@@ -27,6 +27,6 @@ public class KeyPermissionController {
   @RequestMapping(value = "/key/validation", method = RequestMethod.POST)
   public boolean isValidKey(@RequestBody Map<String, String> data) {
     Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
-    return keyPermissionService.isValid(key.getPermission());
+    return key != null;
   }
 }

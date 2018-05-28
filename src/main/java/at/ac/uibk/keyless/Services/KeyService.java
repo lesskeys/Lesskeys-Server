@@ -38,8 +38,8 @@ public class KeyService {
     if (toEdit != null) {
       toEdit.setKeyName(newKey.getKeyName());
       toEdit.setHasCustomPermission(newKey.isHasCustomPermission());
+      keyRepository.save(toEdit);
     }
-    keyRepository.save(toEdit);
   }
 
   public void registerKey(String aid, String content, String username, String keyName) {
@@ -72,7 +72,8 @@ public class KeyService {
     Key toDelete = keyRepository.findByKeyId(keyId);
     if (toDelete.getOwner().getEmail().equals(username) ||
       userService.hasRole(toDelete.getOwner(), "Admin")) {
-      keyRepository.delete(toDelete);
+
     }
+    keyRepository.delete(toDelete);
   }
 }
