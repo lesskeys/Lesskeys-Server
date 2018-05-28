@@ -22,6 +22,7 @@ public class Key {
 
   private String aid;
 
+  @Column(name = "custom_permission")
   private boolean hasCustomPermission;
 
   @JsonIgnore
