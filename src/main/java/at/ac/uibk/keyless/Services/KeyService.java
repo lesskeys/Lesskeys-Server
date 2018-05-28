@@ -72,8 +72,7 @@ public class KeyService {
     Key toDelete = keyRepository.findByKeyId(keyId);
     if (toDelete.getOwner().getEmail().equals(username) ||
       userService.hasRole(toDelete.getOwner(), "Admin")) {
-
+      keyRepository.delete(toDelete);
     }
-    keyRepository.delete(toDelete);
   }
 }
