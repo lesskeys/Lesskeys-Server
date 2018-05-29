@@ -19,6 +19,11 @@ public class UserService {
   @Autowired
   PasswordEncoder passwordEncoder;
 
+
+  public User getUserByEmail(String email) {
+    return userRepository.findFirstByEmail(email);
+  }
+
   public void saveUser(User toSave) {
     if (userRepository.findFirstByEmail(toSave.getEmail()) != null) {
 
@@ -30,5 +35,9 @@ public class UserService {
 
   public boolean hasRole(User user, String role) {
     return user.getRoles().stream().anyMatch(r -> r.toString().equals(role));
+  }
+
+  public void saveEditedUser(User user) {
+    userRepository.save(user);
   }
 }
