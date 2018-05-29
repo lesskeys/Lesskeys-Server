@@ -3,6 +3,9 @@ package at.ac.uibk.keyless.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Optional;
 
 /**
  * Created by Lukas Dötlinger.
@@ -23,7 +26,13 @@ public class Key {
   private String aid;
 
   @Column(name = "custom_permission")
-  private boolean hasCustomPermission;
+  private boolean customPermission;
+
+  @Temporal(TemporalType.DATE)
+  private Date validFrom;
+
+  @Temporal(TemporalType.DATE)
+  private Date validTo;
 
   @JsonIgnore
   @ManyToOne
@@ -34,6 +43,13 @@ public class Key {
   @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "key")
   private KeyPermission permission;*/
 
+  @PostLoad
+  public void setupValidationTimes() {
+    Calendar cal = Calendar.getInstance();
+    validFrom = Optional.ofNullable(validFrom).orElse(cal.getTime());
+    cal.add(Calendar.YEAR, 1);
+    validTo   = Optional.ofNullable(validTo  ).orElse(cal.getTime());
+  }
 
   public Long getKeyId() {
     return keyId;
@@ -79,11 +95,27 @@ public class Key {
     this.keyName = keyName;
   }
 
-  public boolean isHasCustomPermission() {
-    return hasCustomPermission;
+  public boolean isCustomPermission() {
+    return customPermission;
   }
 
-  public void setHasCustomPermission(boolean hasCustomPermission) {
-    this.hasCustomPermission = hasCustomPermission;
+  public void setCustomPermission(boolean customPermission) {
+    this.customPermission = customPermission;
+  }
+
+  public Date getValidFrom() {
+    return validFrom;
+  }
+
+  public void setValidFrom(Date validFrom) {
+    this.validFrom = validFrom;
+  }
+
+  public Date getValidTo() {
+    return validTo;
+  }
+
+  public void setValidTo(Date validTo) {
+    this.validTo = validTo;
   }
 }

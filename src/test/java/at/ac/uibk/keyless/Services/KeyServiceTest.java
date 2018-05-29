@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Comparator;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,11 +58,11 @@ public class KeyServiceTest {
 
     Key newKey = new Key();
     newKey.setKeyName("test");
-    newKey.setHasCustomPermission(!toEdit.isHasCustomPermission());
+    newKey.setCustomPermission(!toEdit.isCustomPermission());
     keyService.editKey(1L, newKey);
 
     Key edited = keyService.getKeyById(1L);
     assertThat(edited.getKeyName(), is("test"));
-    assertThat(edited.isHasCustomPermission(), not(toEdit.isHasCustomPermission()));
+    assertThat(edited.isCustomPermission(), not(toEdit.isCustomPermission()));
   }
 }

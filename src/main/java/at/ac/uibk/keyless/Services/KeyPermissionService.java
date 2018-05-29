@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,7 +56,7 @@ public class KeyPermissionService {
    * @return true if permission given for the current time, false otherwise
    */
   public boolean isValid(KeyPermission permission) {
-    if (!permission.getKey().isHasCustomPermission()) {
+    if (!permission.getKey().isCustomPermission()) {
       return true;
     }
     Date current = new Date();

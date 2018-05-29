@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by Lukas Dötlinger.
@@ -47,7 +46,16 @@ public class KeyController {
     if (sessionService.isValidSession(data.get("session"))) {
       Key newKey = new Key();
       newKey.setKeyName(data.get("newName"));
-      newKey.setHasCustomPermission(Boolean.parseBoolean("isCustom"));
+      newKey.setCustomPermission(Boolean.parseBoolean(data.get("isCustom")));
+      SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+      Date newValidFrom = null;
+      Date newValidTo = null;
+      try {
+        newValidFrom = sdf.parse(data.get("validFrom"));
+        newValidTo = sdf.parse(data.get("validTo"));
+      } catch (Exception e) {}
+      newKey.setValidFrom(Optional.ofNullable(newValidFrom).orElse(newKey.getValidFrom()));
+      newKey.setValidTo(Optional.ofNullable(newValidTo).orElse(newKey.getValidTo()));
       keyService.editKey(Long.parseLong(data.get("keyId")), newKey);
     }
   }

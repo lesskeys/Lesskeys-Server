@@ -7,6 +7,7 @@ import at.ac.uibk.keyless.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,7 +38,9 @@ public class KeyService {
     Key toEdit = keyRepository.findByKeyId(keyId);
     if (toEdit != null) {
       toEdit.setKeyName(newKey.getKeyName());
-      toEdit.setHasCustomPermission(newKey.isHasCustomPermission());
+      toEdit.setCustomPermission(newKey.isCustomPermission());
+      toEdit.setValidFrom(newKey.getValidFrom());
+      toEdit.setValidTo(newKey.getValidTo());
       keyRepository.save(toEdit);
     }
   }
@@ -49,6 +52,7 @@ public class KeyService {
     toSave.setContent(content);
     toSave.setOwner(owner);
     toSave.setKeyName(keyName);
+    toSave.setCustomPermission(false);
     keyRepository.save(toSave);
   }
 
@@ -73,6 +77,15 @@ public class KeyService {
     if (toDelete.getOwner().getEmail().equals(username) ||
       userService.hasRole(toDelete.getOwner(), "Admin")) {
       keyRepository.delete(toDelete);
+    }
+  }
+
+  public boolean isValid(Key key) {
+    Date current = new Date();
+    if (!key.isCustomPermission() || (key.getValidFrom().before(current) && key.getValidTo().after(current))) {
+      return true;
+    } else {
+      return false;
     }
   }
 }
