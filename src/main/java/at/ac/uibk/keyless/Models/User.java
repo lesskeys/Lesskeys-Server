@@ -39,8 +39,8 @@ public class User {
   @Column(nullable = false)
   private String firstName;
 
-  @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<Key> keys;
+  @OneToMany(mappedBy = "owner", orphanRemoval = true, cascade = CascadeType.ALL)
+  private List<Key> keys;
 
   @ElementCollection(targetClass = Long.class, fetch = FetchType.LAZY)
   @CollectionTable(name = "users_subusers")
@@ -101,11 +101,11 @@ public class User {
     this.firstName = firstName;
   }
 
-  public Set<Key> getKeys() {
+  public List<Key> getKeys() {
     return keys;
   }
 
-  public void setKeys(Set<Key> keys) {
+  public void setKeys(List<Key> keys) {
     this.keys = keys;
   }
 
