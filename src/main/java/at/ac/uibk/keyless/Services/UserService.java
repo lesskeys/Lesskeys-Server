@@ -1,11 +1,14 @@
 package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.User;
+import at.ac.uibk.keyless.Models.UserRole;
 import at.ac.uibk.keyless.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by Lukas Dötlinger.
@@ -44,6 +47,16 @@ public class UserService {
       return "Success";
     } else {
       return "Failure";
+    }
+  }
+
+  public UserRole getRoleForString(String role) {
+    switch (role) {
+      case "Admin": return UserRole.ADMIN;
+      case "Custodian": return UserRole.CUSTODIAN;
+      case "Tenant": return UserRole.TENANT;
+      case "Visitor": return UserRole.VISITOR;
+      default: return UserRole.VISITOR;
     }
   }
 }
