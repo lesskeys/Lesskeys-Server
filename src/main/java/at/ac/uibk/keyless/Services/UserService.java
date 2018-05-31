@@ -25,8 +25,8 @@ public class UserService {
   }
 
   public void saveUser(User toSave) {
-    if (userRepository.findFirstByEmail(toSave.getEmail()) != null) {
-
+    if (userRepository.findByUserId(toSave.getUserId()) != null) {
+      userRepository.save(toSave);
     } else {
       toSave.setPassword(passwordEncoder.encode(toSave.getPassword()));
       userRepository.save(toSave);

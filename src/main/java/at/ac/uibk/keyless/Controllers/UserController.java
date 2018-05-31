@@ -39,7 +39,7 @@ public class UserController {
         newBirthday = sdf.parse(data.get("newBirthday"));
       } catch (Exception e) {}
       toEdit.setBirthday(Optional.ofNullable(newBirthday).orElse(toEdit.getBirthday()));
-      userService.saveEditedUser(toEdit);
+      userService.saveUser(toEdit);
     }
   }
 }
