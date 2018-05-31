@@ -4,6 +4,7 @@ import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,6 +31,7 @@ public class UserController {
   @RequestMapping(value = "/user/edit", method = RequestMethod.PUT)
   public void editUser(@RequestBody Map<String, String> data) {
     if (sessionService.isValidSession(data.get("session"))) {
+      //TODO: Only get user if session is valid for it.
       User toEdit = userService.getUserByEmail(data.get("username"));
       toEdit.setEmail(Optional.ofNullable(data.get("newUsername")).orElse(toEdit.getEmail()));
       toEdit.setFirstName(Optional.ofNullable(data.get("newFirstName")).orElse(toEdit.getFirstName()));
@@ -41,5 +43,15 @@ public class UserController {
       toEdit.setBirthday(Optional.ofNullable(newBirthday).orElse(toEdit.getBirthday()));
       userService.saveUser(toEdit);
     }
+  }
+
+  @RequestMapping(value = "/user/edit-password", method = RequestMethod.POST)
+  public String editPassword(@RequestBody Map<String, String> data) {
+    if (sessionService.isValidSession(data.get("session"))) {
+      //TODO: Only get user if session is valid for it.
+      User toEdit = userService.getUserByEmail(data.get("username"));
+      return userService.editUsersPassword(toEdit, data.get("oldPw"), data.get("newPw1"), data.get("newPw2"));
+    }
+    return "Failure";
   }
 }

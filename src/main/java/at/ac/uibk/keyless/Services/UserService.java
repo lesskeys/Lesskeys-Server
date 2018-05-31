@@ -37,7 +37,13 @@ public class UserService {
     return user.getRoles().stream().anyMatch(r -> r.toString().equals(role));
   }
 
-  public void saveEditedUser(User user) {
-    userRepository.save(user);
+  public String editUsersPassword(User user, String oldPw, String newPw1, String newPw2) {
+    if (passwordEncoder.matches(oldPw, user.getPassword()) && newPw1.equals(newPw2)) {
+      user.setPassword(passwordEncoder.encode(newPw1));
+      userRepository.save(user);
+      return "Success";
+    } else {
+      return "Failure";
+    }
   }
 }
