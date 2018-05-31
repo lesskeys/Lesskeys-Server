@@ -30,9 +30,9 @@ public class UserController {
 
   @RequestMapping(value = "/user/edit", method = RequestMethod.PUT)
   public void editUser(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
-      //TODO: Only get user if session is valid for it.
-      User toEdit = userService.getUserByEmail(data.get("username"));
+    User toEdit = userService.getUserByEmail(data.get("username"));
+    String session = data.get("session");
+    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, toEdit.getUserId())) {
       toEdit.setEmail(Optional.ofNullable(data.get("newUsername")).orElse(toEdit.getEmail()));
       toEdit.setFirstName(Optional.ofNullable(data.get("newFirstName")).orElse(toEdit.getFirstName()));
       SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -47,9 +47,9 @@ public class UserController {
 
   @RequestMapping(value = "/user/edit-password", method = RequestMethod.POST)
   public String editPassword(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
-      //TODO: Only get user if session is valid for it.
-      User toEdit = userService.getUserByEmail(data.get("username"));
+    User toEdit = userService.getUserByEmail(data.get("username"));
+    String session = data.get("session");
+    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, toEdit.getUserId())) {
       return userService.editUsersPassword(toEdit, data.get("oldPw"), data.get("newPw1"), data.get("newPw2"));
     }
     return "Failure";
