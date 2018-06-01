@@ -29,6 +29,19 @@ public class UserController {
 
 
   /**
+   * Get User if User matches the valid session.
+   */
+  @RequestMapping(value = "/user/current", method = RequestMethod.POST)
+  public User getCurrentUser(@RequestBody Map<String, String> data) {
+    User user = userService.getUserByEmail(data.get("username"));
+    String session = data.get("session");
+    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())) {
+      return user;
+    }
+    return null;
+  }
+
+  /**
    * Method used by a user to change his settings.
    */
   @RequestMapping(value = "/user/edit", method = RequestMethod.PUT)
