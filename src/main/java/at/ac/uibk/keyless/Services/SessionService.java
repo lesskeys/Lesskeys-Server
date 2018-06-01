@@ -58,4 +58,11 @@ public class SessionService {
       .anyMatch(s -> s.getSessionToken().equals(token) &&
         !Minutes.minutesBetween(new DateTime(s.getLastAction()), new DateTime()).isGreaterThan(Minutes.minutes(30)));
   }
+
+  /**
+   * Check if a user matches a given session token.
+   */
+  public boolean userMatchesSession(String session, Long userId) {
+    return sessionRepository.findByUserId(userId).getSessionToken().equals(session);
+  }
 }

@@ -15,5 +15,4 @@ public enum UserRole {
     String role = super.toString();
     return role.charAt(0) + role.substring(1).toLowerCase();
   }
-
 }
