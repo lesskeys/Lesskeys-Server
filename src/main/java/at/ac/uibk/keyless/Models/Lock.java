@@ -1,7 +1,10 @@
 package at.ac.uibk.keyless.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -20,13 +23,15 @@ public class Lock {
   @Column(nullable = false)
   private String address;
 
+  @JsonIgnore
   @ElementCollection(targetClass = Long.class, fetch = FetchType.LAZY)
   @CollectionTable(name = "locks_unlockusers")
   private List<Long> relevantUsers;
 
-  @ElementCollection(targetClass = Long.class, fetch = FetchType.LAZY)
+  @JsonIgnore
+  @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER)
   @CollectionTable(name = "locks_unlockkeys")
-  private List<Long> relevantKeys;
+  private List<Key> relevantKeys;
 
 
   public Long getLockId() {
@@ -57,11 +62,17 @@ public class Lock {
     this.relevantUsers = relevantUsers;
   }
 
-  public List<Long> getRelevantKeys() {
+  public List<Key> getRelevantKeys() {
     return relevantKeys;
   }
 
-  public void setRelevantKeys(List<Long> relevantKeys) {
+  public List<Long> getRelevantKeyIds() {
+    return relevantKeys.stream()
+      .map(k -> k.getKeyId())
+      .collect(Collectors.toList());
+  }
+
+  public void setRelevantKeys(List<Key> relevantKeys) {
     this.relevantKeys = relevantKeys;
   }
 }
