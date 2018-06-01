@@ -15,7 +15,4 @@ import java.util.List;
 public interface LockRepository extends JpaRepository<Lock, Long> {
 
   Lock findByLockId(Long lockId);
-
-  @Query("SELECT l FROM Lock l WHERE :keyId MEMBER OF l.relevantKeyIds ")
-  List<Lock> findByKey(@Param("keyId") Long keyId);
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -22,6 +23,8 @@ public class LockService {
    * @return locks for which a given key is valid.
    */
   public List<Lock> getLocksForKey(Long keyId) {
-    return lockRepository.findByKey(keyId);
+    return lockRepository.findAll().stream()
+      .filter(l -> l.getRelevantKeyIds().contains(keyId))
+      .collect(Collectors.toList());
   }
 }
