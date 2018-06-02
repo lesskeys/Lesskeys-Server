@@ -24,9 +24,9 @@ public class Lock {
   private String address;
 
   @JsonIgnore
-  @ElementCollection(targetClass = Long.class, fetch = FetchType.LAZY)
+  @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER)
   @CollectionTable(name = "locks_unlockusers")
-  private List<Long> relevantUsers;
+  private List<User> relevantUsers;
 
   @JsonIgnore
   @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER)
@@ -54,11 +54,17 @@ public class Lock {
     this.address = address;
   }
 
-  public List<Long> getRelevantUsers() {
+  public List<User> getRelevantUsers() {
     return relevantUsers;
   }
 
-  public void setRelevantUsers(List<Long> relevantUsers) {
+  public List<Long> getRelevantUserIds() {
+    return relevantUsers.stream()
+      .map(u -> u.getUserId())
+      .collect(Collectors.toList());
+  }
+
+  public void setRelevantUsers(List<User> relevantUsers) {
     this.relevantUsers = relevantUsers;
   }
 

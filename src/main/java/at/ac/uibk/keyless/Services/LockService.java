@@ -20,11 +20,20 @@ public class LockService {
 
 
   /**
-   * @return locks for which a given key is valid.
+   * @return locks for which a given keyId is valid.
    */
   public List<Lock> getLocksForKey(Long keyId) {
     return lockRepository.findAll().stream()
       .filter(l -> l.getRelevantKeyIds().contains(keyId))
+      .collect(Collectors.toList());
+  }
+
+  /**
+   * @return locks for which a given userId is valid.
+   */
+  public List<Lock> getLocksForUser(Long userId) {
+    return lockRepository.findAll().stream()
+      .filter(l -> l.getRelevantUserIds().contains(userId))
       .collect(Collectors.toList());
   }
 }
