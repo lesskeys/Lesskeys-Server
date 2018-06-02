@@ -17,19 +17,19 @@ public class Lock {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long lockId;
 
-  @Column(nullable = false)
+  @Column(name = "lock_name", nullable = false)
   private String name;
 
   @Column(nullable = false)
   private String address;
 
   @JsonIgnore
-  @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY)
   @CollectionTable(name = "locks_unlockusers")
   private List<User> relevantUsers;
 
   @JsonIgnore
-  @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY)
   @CollectionTable(name = "locks_unlockkeys")
   private List<Key> relevantKeys;
 
