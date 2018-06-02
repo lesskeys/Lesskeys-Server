@@ -69,6 +69,10 @@ public class Lock {
     this.relevantUsers = relevantUsers;
   }
 
+  public void addRelevantUser(User user) {
+    this.relevantUsers.add(user);
+  }
+
   public List<Key> getRelevantKeys() {
     return relevantKeys;
   }
@@ -82,5 +86,9 @@ public class Lock {
 
   public void setRelevantKeys(List<Key> relevantKeys) {
     this.relevantKeys = relevantKeys;
+  }
+
+  public void addRelevantKey(Key key) {
+    this.relevantKeys.add(key);
   }
 }

@@ -1,9 +1,7 @@
 package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.Key;
-import at.ac.uibk.keyless.Services.KeyPermissionService;
-import at.ac.uibk.keyless.Services.KeyService;
-import at.ac.uibk.keyless.Services.SessionService;
+import at.ac.uibk.keyless.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,18 +24,32 @@ public class KeyController {
   KeyPermissionService keyPermissionService;
 
   @Autowired
+  LockService lockService;
+
+  @Autowired
   SessionService sessionService;
+
+  @Autowired
+  SystemLogService systemLogService;
 
 
   @RequestMapping(value = "/key/register", method = RequestMethod.POST)
-  public Map<String, String> registerKey(@RequestBody Map<String, String> data) {
+  public Map<String, String> registerKey(@RequestBody Map<String, Object> data) {
     Map<String, String> response = new HashMap<>();
-    if (sessionService.isValidSession(data.get("session"))) {
-      keyService.registerKey(data.get("aid"), data.get("content"), data.get("username"), data.get("name"));
-      response.put("status", "Successfully added key.");
+    if (sessionService.isValidSession(data.get("session").toString())) {
+      Key newKey = new Key();
+      keyService.registerKey(data.get("aid").toString(), data.get("content").toString(),
+        data.get("username").toString(), data.get("name").toString(), newKey);
+      ArrayList lockIds = (ArrayList) data.get("lockIds");
+      if (lockIds != null) {
+        for (Object o : lockIds) {
+          lockService.addKeyToLock(Long.parseLong(o.toString()), newKey.getKeyId());
+        }
+      }
+      response.put("status", "Successfully added key!");
       return response;
     }
-    response.put("status", "Failed to register key.");
+    response.put("status", "Failed to register key!");
     return response;
   }
 

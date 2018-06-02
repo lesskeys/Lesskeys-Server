@@ -45,9 +45,8 @@ public class KeyService {
     }
   }
 
-  public void registerKey(String aid, String content, String username, String keyName) {
+  public void registerKey(String aid, String content, String username, String keyName, Key toSave) {
     User owner = userRepository.findFirstByEmail(username);
-    Key toSave = new Key();
     toSave.setAid(aid);
     toSave.setContent(content);
     toSave.setOwner(owner);

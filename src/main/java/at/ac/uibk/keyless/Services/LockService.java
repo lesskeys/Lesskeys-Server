@@ -2,6 +2,7 @@ package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
 import at.ac.uibk.keyless.Models.Lock;
+import at.ac.uibk.keyless.Repositories.KeyRepository;
 import at.ac.uibk.keyless.Repositories.LockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ public class LockService {
 
   @Autowired
   LockRepository lockRepository;
+
+  @Autowired
+  KeyRepository keyRepository;
 
 
   /**
@@ -35,5 +39,11 @@ public class LockService {
     return lockRepository.findAll().stream()
       .filter(l -> l.getRelevantUserIds().contains(userId))
       .collect(Collectors.toList());
+  }
+
+  public void addKeyToLock(Long lockId, Long keyId) {
+    Lock lock = lockRepository.findByLockId(lockId);
+    lock.addRelevantKey(keyRepository.findByKeyId(keyId));
+    lockRepository.save(lock);
   }
 }

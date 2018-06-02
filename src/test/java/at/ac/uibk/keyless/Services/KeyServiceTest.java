@@ -33,7 +33,7 @@ public class KeyServiceTest {
     assertThat(keyService.getKeysForUser("admin@keyless.com").stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(false));
 
-    keyService.registerKey("010", "AAAA", "admin@keyless.com", "newestKey");
+    keyService.registerKey("010", "AAAA", "admin@keyless.com", "newestKey", new Key());
     assertThat(keyService.getKeyById(highestKeyId+1), is(notNullValue()));
     assertThat(keyService.getKeysForUser("admin@keyless.com").stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(true));
