@@ -24,12 +24,12 @@ public class Lock {
   private String address;
 
   @JsonIgnore
-  @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER)
+  @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
   @CollectionTable(name = "locks_unlockusers")
   private List<User> relevantUsers;
 
   @JsonIgnore
-  @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER)
+  @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
   @CollectionTable(name = "locks_unlockkeys")
   private List<Key> relevantKeys;
 
