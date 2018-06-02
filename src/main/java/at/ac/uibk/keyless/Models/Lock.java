@@ -58,6 +58,7 @@ public class Lock {
     return relevantUsers;
   }
 
+  @JsonIgnore
   public List<Long> getRelevantUserIds() {
     return relevantUsers.stream()
       .map(u -> u.getUserId())
@@ -72,6 +73,7 @@ public class Lock {
     return relevantKeys;
   }
 
+  @JsonIgnore
   public List<Long> getRelevantKeyIds() {
     return relevantKeys.stream()
       .map(k -> k.getKeyId())
