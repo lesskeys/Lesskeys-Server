@@ -2,6 +2,7 @@ package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Models.User;
+import at.ac.uibk.keyless.Services.KeyService;
 import at.ac.uibk.keyless.Services.LockService;
 import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.UserService;
@@ -30,15 +31,20 @@ public class LockController {
   @Autowired
   UserService userService;
 
+  @Autowired
+  KeyService keyService;
+
 
   /**
    * @return locks for a given keyId.
-   * TODO: Verify that a user can only retrieve the data for his keys.
    */
   @RequestMapping(value = "/lock/get-for-key", method = RequestMethod.POST)
   public List<Lock> getLocksForKey(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
-      return lockService.getLocksForKey(Long.parseLong(data.get("keyId")));
+    long keyId = Long.parseLong(data.get("keyId"));
+    if (sessionService.isValidSession(data.get("session")) &&
+      keyService.getKeysForUser(data.get("username")).stream()
+        .anyMatch(key -> key.getKeyId() == keyId)) {
+      return lockService.getLocksForKey(keyId);
     }
     return null;
   }
