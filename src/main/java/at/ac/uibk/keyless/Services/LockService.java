@@ -50,6 +50,20 @@ public class LockService {
     }
   }
 
+  public void addUserToLock(Long lockId, Long userId) {
+    Lock lock = lockRepository.findByLockId(lockId);
+    lock.addRelevantUser(userService.getUserById(userId));
+    lockRepository.save(lock);
+  }
+
+  public void addUserToLocks(List<Object> lockIds, Long userId) {
+    if (lockIds != null) {
+      for (Object o : lockIds) {
+        addUserToLock(Long.parseLong(o.toString()), userId);
+      }
+    }
+  }
+
   public void addKeyToLock(Long lockId, Long keyId) {
     Lock lock = lockRepository.findByLockId(lockId);
     lock.addRelevantKey(keyRepository.findByKeyId(keyId));

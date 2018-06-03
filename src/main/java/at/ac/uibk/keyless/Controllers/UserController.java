@@ -2,6 +2,7 @@ package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Models.UserRole;
+import at.ac.uibk.keyless.Services.LockService;
 import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.UserService;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,9 @@ public class UserController {
 
   @Autowired
   SessionService sessionService;
+
+  @Autowired
+  LockService lockService;
 
 
   /**
@@ -55,16 +59,16 @@ public class UserController {
    * Method used by a user to change his settings.
    */
   @RequestMapping(value = "/user/edit", method = RequestMethod.PUT)
-  public void editUser(@RequestBody Map<String, String> data) {
-    User toEdit = userService.getUserByEmail(data.get("username"));
-    String session = data.get("session");
+  public void editUser(@RequestBody Map<String, Object> data) {
+    User toEdit = userService.getUserByEmail(data.get("username").toString());
+    String session = data.get("session").toString();
     if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, toEdit.getUserId())) {
-      toEdit.setEmail(Optional.ofNullable(data.get("newUsername")).orElse(toEdit.getEmail()));
-      toEdit.setFirstName(Optional.ofNullable(data.get("newFirstName")).orElse(toEdit.getFirstName()));
+      toEdit.setEmail(Optional.ofNullable(data.get("newUsername").toString()).orElse(toEdit.getEmail()));
+      toEdit.setFirstName(Optional.ofNullable(data.get("newFirstName").toString()).orElse(toEdit.getFirstName()));
       SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
       Date newBirthday = null;
       try {
-        newBirthday = sdf.parse(data.get("newBirthday"));
+        newBirthday = sdf.parse(data.get("newBirthday").toString());
       } catch (Exception e) {}
       toEdit.setBirthday(Optional.ofNullable(newBirthday).orElse(toEdit.getBirthday()));
       userService.saveUser(toEdit);
@@ -89,31 +93,31 @@ public class UserController {
    * TODO: refactor this.
    */
   @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-  public Map<String, String> addUser(@RequestBody Map<String, String> data) {
+  public Map<String, String> addUser(@RequestBody Map<String, Object> data) {
     Map<String, String> response = new HashMap<>();
-    User operatingUser = userService.getUserByEmail(data.get("username"));
-    if (sessionService.isValidSession(data.get("session"))) {
+    User operatingUser = userService.getUserByEmail(data.get("username").toString());
+    if (sessionService.isValidSession(data.get("session").toString())) {
       User newUser = new User();
-      newUser.setEmail(data.get("newUsername"));
+      newUser.setEmail(data.get("newUsername").toString());
       if (data.get("newPw1").equals(data.get("newPw2"))) {
-        newUser.setPassword(data.get("newPw1"));
+        newUser.setPassword(data.get("newPw1").toString());
       } else {
         response.put("status", "Passwords don't match!");
         return response;
       }
-      newUser.setFirstName(data.get("newFirstName"));
+      newUser.setFirstName(data.get("newFirstName").toString());
       Set<UserRole> roles = new HashSet<>();
-      roles.add(userService.getRoleForString(data.get("newRole")));
+      roles.add(userService.getRoleForString(data.get("newRole").toString()));
       newUser.setRoles(roles);
       newUser.setCreatedAt(new Date());
 
       SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
       try {
-        newUser.setBirthday(sdf.parse(data.get("newBirthday")));
+        newUser.setBirthday(sdf.parse(data.get("newBirthday").toString()));
       } catch (Exception e) {}
       newUser.setCreator(operatingUser);
       userService.saveUser(newUser);
-
+      lockService.addUserToLocks((List<Object>) data.get("lockIds"), newUser.getUserId());
       response.put("status", "Added new user!");
       return response;
     }
