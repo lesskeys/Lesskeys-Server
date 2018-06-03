@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,7 +34,7 @@ public class KeyServiceTest {
     assertThat(keyService.getKeysForUser("admin@keyless.com").stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(false));
 
-    keyService.registerKey("010", "AAAA", "admin@keyless.com", "newestKey");
+    keyService.registerKey("010", "AAAA", "admin@keyless.com", "newestKey", new Key());
     assertThat(keyService.getKeyById(highestKeyId+1), is(notNullValue()));
     assertThat(keyService.getKeysForUser("admin@keyless.com").stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(true));

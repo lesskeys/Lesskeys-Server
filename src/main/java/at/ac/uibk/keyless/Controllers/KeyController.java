@@ -1,9 +1,7 @@
 package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.Key;
-import at.ac.uibk.keyless.Services.KeyPermissionService;
-import at.ac.uibk.keyless.Services.KeyService;
-import at.ac.uibk.keyless.Services.SessionService;
+import at.ac.uibk.keyless.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,37 +24,48 @@ public class KeyController {
   KeyPermissionService keyPermissionService;
 
   @Autowired
+  LockService lockService;
+
+  @Autowired
   SessionService sessionService;
+
+  @Autowired
+  SystemLogService systemLogService;
 
 
   @RequestMapping(value = "/key/register", method = RequestMethod.POST)
-  public Map<String, String> registerKey(@RequestBody Map<String, String> data) {
+  public Map<String, String> registerKey(@RequestBody Map<String, Object> data) {
     Map<String, String> response = new HashMap<>();
-    if (sessionService.isValidSession(data.get("session"))) {
-      keyService.registerKey(data.get("aid"), data.get("content"), data.get("username"), data.get("name"));
-      response.put("status", "Successfully added key.");
+    if (sessionService.isValidSession(data.get("session").toString())) {
+      Key newKey = new Key();
+      keyService.registerKey(data.get("aid").toString(), data.get("content").toString(),
+        data.get("username").toString(), data.get("name").toString(), newKey);
+      lockService.addKeysToLocks((List<Object>) data.get("lockIds"), newKey.getKeyId());
+      response.put("status", "Successfully added key!");
       return response;
     }
-    response.put("status", "Failed to register key.");
+    response.put("status", "Failed to register key!");
     return response;
   }
 
   @RequestMapping(value = "/key/edit", method = RequestMethod.PUT)
-  public void editKey(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
+  public void editKey(@RequestBody Map<String, Object> data) {
+    if (sessionService.isValidSession(data.get("session").toString())) {
       Key newKey = new Key();
-      newKey.setKeyName(data.get("newName"));
-      newKey.setCustomPermission(Boolean.parseBoolean(data.get("isCustom")));
+      newKey.setKeyName(data.get("newName").toString());
+      newKey.setCustomPermission(Boolean.parseBoolean(data.get("isCustom").toString()));
       SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
       Date newValidFrom = null;
       Date newValidTo = null;
       try {
-        newValidFrom = sdf.parse(data.get("validFrom"));
-        newValidTo = sdf.parse(data.get("validTo"));
+        newValidFrom = sdf.parse(data.get("validFrom").toString());
+        newValidTo = sdf.parse(data.get("validTo").toString());
       } catch (Exception e) {}
       newKey.setValidFrom(Optional.ofNullable(newValidFrom).orElse(newKey.getValidFrom()));
       newKey.setValidTo(Optional.ofNullable(newValidTo).orElse(newKey.getValidTo()));
-      keyService.editKey(Long.parseLong(data.get("keyId")), newKey);
+      keyService.editKey(Long.parseLong(data.get("keyId").toString()), newKey);
+      lockService.removeKeyFromLocks(Long.parseLong(data.get("keyId").toString()));
+      lockService.addKeysToLocks((List<Object>) data.get("lockIds"), Long.parseLong(data.get("keyId").toString()));
     }
   }
   /*

@@ -46,8 +46,9 @@ public class Key {
   @PostLoad
   public void setupValidationTimes() {
     Calendar cal = Calendar.getInstance();
+    cal.add(Calendar.YEAR, -1);
     validFrom = Optional.ofNullable(validFrom).orElse(cal.getTime());
-    cal.add(Calendar.YEAR, 1);
+    cal.add(Calendar.YEAR, 2);
     validTo   = Optional.ofNullable(validTo  ).orElse(cal.getTime());
   }
 

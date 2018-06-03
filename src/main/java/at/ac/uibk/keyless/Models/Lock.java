@@ -1,7 +1,10 @@
 package at.ac.uibk.keyless.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -14,19 +17,21 @@ public class Lock {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long lockId;
 
-  @Column(nullable = false)
+  @Column(name = "lock_name", nullable = false)
   private String name;
 
   @Column(nullable = false)
   private String address;
 
-  @ElementCollection(targetClass = Long.class, fetch = FetchType.LAZY)
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @CollectionTable(name = "locks_unlockusers")
-  private List<Long> relevantUsers;
+  private List<User> relevantUsers;
 
-  @ElementCollection(targetClass = Long.class, fetch = FetchType.LAZY)
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @CollectionTable(name = "locks_unlockkeys")
-  private List<Long> relevantKeys;
+  private List<Key> relevantKeys;
 
 
   public Long getLockId() {
@@ -49,19 +54,49 @@ public class Lock {
     this.address = address;
   }
 
-  public List<Long> getRelevantUsers() {
+  public List<User> getRelevantUsers() {
     return relevantUsers;
   }
 
-  public void setRelevantUsers(List<Long> relevantUsers) {
+  @JsonIgnore
+  public List<Long> getRelevantUserIds() {
+    return relevantUsers.stream()
+      .map(u -> u.getUserId())
+      .collect(Collectors.toList());
+  }
+
+  public void setRelevantUsers(List<User> relevantUsers) {
     this.relevantUsers = relevantUsers;
   }
 
-  public List<Long> getRelevantKeys() {
+  public void addRelevantUser(User user) {
+    this.relevantUsers.add(user);
+  }
+
+  public List<Key> getRelevantKeys() {
     return relevantKeys;
   }
 
-  public void setRelevantKeys(List<Long> relevantKeys) {
+  @JsonIgnore
+  public List<Long> getRelevantKeyIds() {
+    return relevantKeys.stream()
+      .map(k -> k.getKeyId())
+      .collect(Collectors.toList());
+  }
+
+  public void setRelevantKeys(List<Key> relevantKeys) {
     this.relevantKeys = relevantKeys;
+  }
+
+  public void addRelevantKey(Key key) {
+    this.relevantKeys.add(key);
+  }
+
+  public void removeRelevantKey(Key key) {
+    this.relevantKeys.remove(key);
+  }
+
+  public void removeRelevantUser(User user) {
+    this.relevantUsers.remove(user);
   }
 }
