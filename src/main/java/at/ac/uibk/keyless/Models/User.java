@@ -39,13 +39,21 @@ public class User {
   @Column(nullable = false)
   private String firstName;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "owner", orphanRemoval = true, cascade = CascadeType.ALL)
   private List<Key> keys;
 
-  @ElementCollection(targetClass = Long.class, fetch = FetchType.LAZY)
-  @CollectionTable(name = "users_subusers")
-  private List<Long> subUsers;
+  @JsonIgnore
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "creator_id")
+  private User creator;
 
+  @JsonIgnore
+  @OneToMany(mappedBy = "creator", orphanRemoval = true)
+  @CollectionTable(name = "users_subusers")
+  private List<User> subUsers;
+
+  @JsonIgnore
   @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
   @CollectionTable(name = "user_roles")
   @Enumerated(EnumType.STRING)
@@ -109,12 +117,20 @@ public class User {
     this.keys = keys;
   }
 
-  public List<Long> getSubUsers() {
+  public List<User> getSubUsers() {
     return subUsers;
   }
 
-  public void setSubUsers(List<Long> subUsers) {
+  public void setSubUsers(List<User> subUsers) {
     this.subUsers = subUsers;
+  }
+
+  public User getCreator() {
+    return creator;
+  }
+
+  public void setCreator(User creator) {
+    this.creator = creator;
   }
 
   public Set<UserRole> getRoles() {

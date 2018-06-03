@@ -41,6 +41,16 @@ public class UserController {
     return null;
   }
 
+  @RequestMapping(value = "/user/subusers", method = RequestMethod.POST)
+  public List<User> getSubUsers(@RequestBody Map<String, String> data) {
+    User user = userService.getUserByEmail(data.get("username"));
+    String session = data.get("session");
+    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())) {
+      return user.getSubUsers();
+    }
+    return null;
+  }
+
   /**
    * Method used by a user to change his settings.
    */
@@ -101,10 +111,8 @@ public class UserController {
       try {
         newUser.setBirthday(sdf.parse(data.get("newBirthday")));
       } catch (Exception e) {}
+      newUser.setCreator(operatingUser);
       userService.saveUser(newUser);
-
-      operatingUser.getSubUsers().add(newUser.getUserId());
-      userService.saveUser(operatingUser);
 
       response.put("status", "Added new user!");
       return response;
