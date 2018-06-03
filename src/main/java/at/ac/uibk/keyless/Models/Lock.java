@@ -95,4 +95,8 @@ public class Lock {
   public void removeRelevantKey(Key key) {
     this.relevantKeys.remove(key);
   }
+
+  public void removeRelevantUser(User user) {
+    this.relevantUsers.remove(user);
+  }
 }

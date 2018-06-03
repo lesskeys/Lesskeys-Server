@@ -55,6 +55,21 @@ public class UserController {
     return null;
   }
 
+  @RequestMapping(value = "/user/subuser/edit-permission", method = RequestMethod.POST)
+  public void editSubUsersPermissions(@RequestBody Map<String, Object> data) {
+    User user = userService.getUserByEmail(data.get("username").toString());
+    String session = data.get("session").toString();
+    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())) {
+      String subUserName = data.get("subUser").toString();
+      if (user.getSubUsers().stream()
+        .anyMatch(su -> su.getEmail().equals(subUserName))) {
+        User subUser = userService.getUserByEmail(subUserName);
+        lockService.removeUserFromLocks(subUser.getUserId());
+        lockService.addUserToLocks((List<Object>) data.get("lockIds"), subUser.getUserId());
+      }
+    }
+  }
+
   /**
    * Method used by a user to change his settings.
    */

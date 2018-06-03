@@ -78,6 +78,14 @@ public class LockService {
     }
   }
 
+  public void removeUserFromLocks(Long userId) {
+    lockRepository.findAll()
+      .forEach(l -> {
+        l.removeRelevantUser(userService.getUserById(userId));
+        lockRepository.save(l);
+      });
+  }
+
   public void removeKeyFromLocks(Long keyId) {
     lockRepository.findAll()
       .forEach(l -> {
