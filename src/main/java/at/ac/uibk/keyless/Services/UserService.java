@@ -27,6 +27,10 @@ public class UserService {
     return userRepository.findFirstByEmail(email);
   }
 
+  public User getUserById(Long userId) {
+    return userRepository.findByUserId(userId);
+  }
+
   public void saveUser(User toSave) {
     if (userRepository.findByUserId(toSave.getUserId()) != null) {
       userRepository.save(toSave);

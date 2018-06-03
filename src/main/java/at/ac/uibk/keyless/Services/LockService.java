@@ -2,6 +2,7 @@ package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
 import at.ac.uibk.keyless.Models.Lock;
+import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.KeyRepository;
 import at.ac.uibk.keyless.Repositories.LockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class LockService {
   @Autowired
   KeyRepository keyRepository;
 
+  @Autowired
+  UserService userService;
+
 
   /**
    * @return locks for which a given keyId is valid.
@@ -36,9 +40,14 @@ public class LockService {
    * @return locks for which a given userId is valid.
    */
   public List<Lock> getLocksForUser(Long userId) {
-    return lockRepository.findAll().stream()
-      .filter(l -> l.getRelevantUserIds().contains(userId))
-      .collect(Collectors.toList());
+    User operator = userService.getUserById(userId);
+    if (userService.hasRole(operator, "Admin")) {
+      return lockRepository.findAll();
+    } else {
+      return lockRepository.findAll().stream()
+        .filter(l -> l.getRelevantUserIds().contains(userId))
+        .collect(Collectors.toList());
+    }
   }
 
   public void addKeyToLock(Long lockId, Long keyId) {
