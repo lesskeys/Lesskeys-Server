@@ -24,12 +24,12 @@ public class Lock {
   private String address;
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @CollectionTable(name = "locks_unlockusers")
   private List<User> relevantUsers;
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @CollectionTable(name = "locks_unlockkeys")
   private List<Key> relevantKeys;
 
@@ -90,5 +90,9 @@ public class Lock {
 
   public void addRelevantKey(Key key) {
     this.relevantKeys.add(key);
+  }
+
+  public void removeRelevantKey(Key key) {
+    this.relevantKeys.remove(key);
   }
 }

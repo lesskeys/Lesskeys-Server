@@ -40,12 +40,7 @@ public class KeyController {
       Key newKey = new Key();
       keyService.registerKey(data.get("aid").toString(), data.get("content").toString(),
         data.get("username").toString(), data.get("name").toString(), newKey);
-      ArrayList lockIds = (ArrayList) data.get("lockIds");
-      if (lockIds != null) {
-        for (Object o : lockIds) {
-          lockService.addKeyToLock(Long.parseLong(o.toString()), newKey.getKeyId());
-        }
-      }
+      lockService.addKeysToLocks((List<Object>) data.get("lockIds"), newKey.getKeyId());
       response.put("status", "Successfully added key!");
       return response;
     }
@@ -54,21 +49,23 @@ public class KeyController {
   }
 
   @RequestMapping(value = "/key/edit", method = RequestMethod.PUT)
-  public void editKey(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
+  public void editKey(@RequestBody Map<String, Object> data) {
+    if (sessionService.isValidSession(data.get("session").toString())) {
       Key newKey = new Key();
-      newKey.setKeyName(data.get("newName"));
-      newKey.setCustomPermission(Boolean.parseBoolean(data.get("isCustom")));
+      newKey.setKeyName(data.get("newName").toString());
+      newKey.setCustomPermission(Boolean.parseBoolean(data.get("isCustom").toString()));
       SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
       Date newValidFrom = null;
       Date newValidTo = null;
       try {
-        newValidFrom = sdf.parse(data.get("validFrom"));
-        newValidTo = sdf.parse(data.get("validTo"));
+        newValidFrom = sdf.parse(data.get("validFrom").toString());
+        newValidTo = sdf.parse(data.get("validTo").toString());
       } catch (Exception e) {}
       newKey.setValidFrom(Optional.ofNullable(newValidFrom).orElse(newKey.getValidFrom()));
       newKey.setValidTo(Optional.ofNullable(newValidTo).orElse(newKey.getValidTo()));
-      keyService.editKey(Long.parseLong(data.get("keyId")), newKey);
+      keyService.editKey(Long.parseLong(data.get("keyId").toString()), newKey);
+      lockService.removeKeyFromLocks(Long.parseLong(data.get("keyId").toString()));
+      lockService.addKeysToLocks((List<Object>) data.get("lockIds"), Long.parseLong(data.get("keyId").toString()));
     }
   }
   /*
