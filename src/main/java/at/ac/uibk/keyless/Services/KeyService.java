@@ -87,4 +87,10 @@ public class KeyService {
       return false;
     }
   }
+
+  public boolean isValidContent(String content) {
+    return keyRepository.findAll().stream()
+      .filter(k -> isValid(k))
+      .anyMatch(k -> k.getContent().equals(content));
+  }
 }
