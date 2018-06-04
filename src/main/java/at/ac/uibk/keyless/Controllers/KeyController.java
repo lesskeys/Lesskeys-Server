@@ -32,6 +32,9 @@ public class KeyController {
   @Autowired
   SystemLogService systemLogService;
 
+  @Autowired
+  SystemLogService logService;
+
 
   @RequestMapping(value = "/key/register", method = RequestMethod.POST)
   public Map<String, String> registerKey(@RequestBody Map<String, Object> data) {
@@ -42,6 +45,7 @@ public class KeyController {
         data.get("username").toString(), data.get("name").toString(), newKey);
       lockService.addKeysToLocks((List<Object>) data.get("lockIds"), newKey.getKeyId());
       response.put("status", "Successfully added key!");
+      logService.logEvent(data.get("username").toString()+" registered new key "+data.get("name").toString());
       return response;
     }
     response.put("status", "Failed to register key!");
@@ -84,6 +88,7 @@ public class KeyController {
     if (sessionService.isValidSession(data.get("session"))) {
       keyService.deleteKey(Long.parseLong(data.get("keyId")), data.get("username"));
       toReturn.put("status", "Success");
+      logService.logEvent(data.get("username")+" deleted key "+data.get("keyId"));
       return toReturn;
     } else {
       toReturn.put("status", "Failure");

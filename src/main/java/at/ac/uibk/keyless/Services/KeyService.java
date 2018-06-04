@@ -26,6 +26,9 @@ public class KeyService {
   @Autowired
   UserService userService;
 
+  @Autowired
+  SystemLogService logService;
+
 
   public Key getKeyById(Long id) {
     return keyRepository.findByKeyId(id);
@@ -43,6 +46,7 @@ public class KeyService {
       toEdit.setValidFrom(newKey.getValidFrom());
       toEdit.setValidTo(newKey.getValidTo());
       keyRepository.save(toEdit);
+      logService.logEvent(toEdit.getOwner().getEmail()+" edited key "+toEdit.getKeyId());
     }
   }
 
