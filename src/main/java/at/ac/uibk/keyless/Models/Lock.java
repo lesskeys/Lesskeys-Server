@@ -24,6 +24,9 @@ public class Lock {
   private String address;
 
   @JsonIgnore
+  private String code;
+
+  @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @CollectionTable(name = "locks_unlockusers")
   private List<User> relevantUsers;
@@ -52,6 +55,14 @@ public class Lock {
 
   public void setAddress(String address) {
     this.address = address;
+  }
+
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(String code) {
+    this.code = code;
   }
 
   public List<User> getRelevantUsers() {

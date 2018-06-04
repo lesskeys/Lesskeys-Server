@@ -50,6 +50,11 @@ public class LockService {
     }
   }
 
+  public Lock getLockForIdAndCode(Long lockId, String code) {
+    Lock lock = lockRepository.findByLockId(lockId);
+    return lock.getCode().equals(code) ? lock : null;
+  }
+
   public void addUserToLock(Long lockId, Long userId) {
     Lock lock = lockRepository.findByLockId(lockId);
     lock.addRelevantUser(userService.getUserById(userId));
