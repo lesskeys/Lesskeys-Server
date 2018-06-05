@@ -63,6 +63,9 @@ public class SessionService {
    * Check if a user matches a given session token.
    */
   public boolean userMatchesSession(String session, Long userId) {
-    return sessionRepository.findByUserId(userId).getSessionToken().equals(session);
+    if (session != null && userId != null) {
+      return sessionRepository.findByUserId(userId).getSessionToken().equals(session);
+    }
+    return false;
   }
 }
