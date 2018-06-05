@@ -61,4 +61,27 @@ public class LockController {
     }
     return null;
   }
+
+  @RequestMapping(value = "/lock/verify-user", method = RequestMethod.POST)
+  public boolean verifyUser(@RequestBody Map<String, String> data) {
+    Lock lock = lockService.getLockForIdAndCode(Long.parseLong(data.get("lockId")), data.get("code"));
+    if (lock != null) {
+      User user = userService.getUserByEmail(data.get("username"));
+      String session = data.get("session");
+      return sessionService.userMatchesSession(session, user.getUserId()) &&
+        lock.getRelevantUserIds().contains(user.getUserId());
+    }
+    return false;
+  }
+
+  @RequestMapping(value = "/lock/verify-key", method = RequestMethod.POST)
+  public boolean verifyKey(@RequestBody Map<String, String> data) {
+    Lock lock = lockService.getLockForIdAndCode(Long.parseLong(data.get("lockId")), data.get("code"));
+    if (lock != null) {
+      User user = userService.getUserByEmail(data.get("username"));
+      return keyService.isValidContent(data.get("content")) &&
+        lock.getRelevantUserIds().contains(user.getUserId());
+    }
+    return false;
+  }
 }
