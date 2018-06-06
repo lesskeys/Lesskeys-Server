@@ -78,9 +78,7 @@ public class LockController {
   public boolean verifyKey(@RequestBody Map<String, String> data) {
     Lock lock = lockService.getLockForIdAndCode(Long.parseLong(data.get("lockId")), data.get("code"));
     if (lock != null) {
-      User user = userService.getUserByEmail(data.get("username"));
-      return keyService.isValidContent(data.get("content")) &&
-        lock.getRelevantUserIds().contains(user.getUserId());
+      return keyService.isValidContent(data.get("content"), lock);
     }
     return false;
   }

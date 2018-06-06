@@ -1,6 +1,7 @@
 package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
+import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.KeyRepository;
 import at.ac.uibk.keyless.Repositories.UserRepository;
@@ -88,9 +89,10 @@ public class KeyService {
     }
   }
 
-  public boolean isValidContent(String content) {
+  public boolean isValidContent(String content, Lock lock) {
     return keyRepository.findAll().stream()
       .filter(k -> isValid(k))
-      .anyMatch(k -> k.getContent().equals(content));
+      .filter(k -> k.getContent().equals(content))
+      .anyMatch(k -> lock.getRelevantKeyIds().contains(k.getKeyId()));
   }
 }
