@@ -67,7 +67,8 @@ public class LogInController {
         response.put("token", entry.getToken());
         response.put("date", entry.getDateAsString());
         response.put("session", sessionService.initSession(loggedIn));
-        systemLogService.logEvent("user"+loggedIn.getUserId()+" logged in manually");
+        systemLogService.logEvent("logged in manually", "User: "+loggedIn.getUserId(),
+          "LogInEntry: "+entry.getLoginId());
         return response;
       }
     }
@@ -90,6 +91,8 @@ public class LogInController {
         response.put("token", newToken);
         response.put("date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(newDate));
         response.put("session", sessionService.initSession(userRepository.findByUserId(entry.getUserId())));
+        systemLogService.logEvent("logged in automatically", "User: "+entry.getUserId(),
+          "LogInEntry: "+entry.getLoginId());
         return response;
       }
     }

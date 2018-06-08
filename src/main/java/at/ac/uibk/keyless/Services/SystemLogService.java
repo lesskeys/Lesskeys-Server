@@ -18,10 +18,12 @@ public class SystemLogService {
   @Autowired
   private SystemLogEntryRepository systemLogRepository;
 
-  public void logEvent(String message) {
-    String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+  public void logEvent(String message, String actor, String target) {
     SystemLogEntry toSave = new SystemLogEntry();
-    toSave.setEvent(date+" "+message);
+    toSave.setLogTime(new Date());
+    toSave.setActor(actor);
+    toSave.setTarget(target);
+    toSave.setEvent(message);
     systemLogRepository.save(toSave);
   }
 
