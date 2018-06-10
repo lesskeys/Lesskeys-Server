@@ -62,6 +62,22 @@ public class LockController {
     return null;
   }
 
+  /**
+   * @return locks for a given userId if the requesting user is it's superior.
+   */
+  @RequestMapping(value = "/lock/get-for-subuser", method = RequestMethod.POST)
+  public List<Lock> getLocksForSubUser(@RequestBody Map<String, String> data) {
+    User user = userService.getUserByEmail(data.get("username"));
+    String session = data.get("session");
+    Long subUserId = Long.parseLong(data.get("subUserId"));
+    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())
+      && user.getSubUsers().stream()
+        .anyMatch(u -> u.getUserId() == subUserId)) {
+      return lockService.getLocksForUser(subUserId);
+    }
+    return null;
+  }
+
   @RequestMapping(value = "/lock/verify-user", method = RequestMethod.POST)
   public boolean verifyUser(@RequestBody Map<String, String> data) {
     Lock lock = lockService.getLockForIdAndCode(Long.parseLong(data.get("lockId")), data.get("code"));
