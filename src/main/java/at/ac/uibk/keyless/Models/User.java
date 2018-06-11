@@ -60,6 +60,18 @@ public class User {
   private Set<UserRole> roles;
 
 
+  public String getRole() {
+    Set<UserRole> r = getRoles();
+    if (r.contains(UserRole.ADMIN)) {
+      return UserRole.ADMIN.toString();
+    } else if (r.contains(UserRole.CUSTODIAN)) {
+      return UserRole.CUSTODIAN.toString();
+    } else if (r.contains(UserRole.TENANT)) {
+      return UserRole.TENANT.toString();
+    } else {
+      return UserRole.VISITOR.toString();
+    }
+  }
 
   public String getPassword() {
     return password;
