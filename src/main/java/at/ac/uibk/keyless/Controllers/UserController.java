@@ -4,6 +4,7 @@ import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Models.UserRole;
 import at.ac.uibk.keyless.Services.LockService;
 import at.ac.uibk.keyless.Services.SessionService;
+import at.ac.uibk.keyless.Services.SystemLogService;
 import at.ac.uibk.keyless.Services.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class UserController {
 
   @Autowired
   LockService lockService;
+
+  @Autowired
+  SystemLogService logService;
 
 
   /**
@@ -66,6 +70,8 @@ public class UserController {
         User subUser = userService.getUserByEmail(subUserName);
         lockService.removeUserFromLocks(subUser.getUserId());
         lockService.addUserToLocks((List<Object>) data.get("lockIds"), subUser.getUserId());
+        logService.logEvent("edited permissions", "User: "+user.getUserId(),
+          "User: "+subUser.getUserId());
       }
     }
   }
@@ -134,6 +140,8 @@ public class UserController {
       userService.saveUser(newUser);
       lockService.addUserToLocks((List<Object>) data.get("lockIds"), newUser.getUserId());
       response.put("status", "Added new user!");
+      logService.logEvent("added new user", "User: "+operatingUser.getUserId(),
+        "User: "+newUser.getUserId());
       return response;
     }
     response.put("status", "Failure!");
