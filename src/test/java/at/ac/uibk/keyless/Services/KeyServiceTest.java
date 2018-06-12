@@ -1,6 +1,8 @@
 package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
+import at.ac.uibk.keyless.Models.Lock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,6 +28,16 @@ public class KeyServiceTest {
 
   @Autowired
   KeyService keyService;
+
+
+  private Key newKey;
+
+  @Before
+  public void addKey() {
+    Key toSave = new Key();
+    keyService.registerKey("test", "test", "admin@keyless.com", "test", toSave);
+    newKey = keyService.getKeyById(toSave.getKeyId());
+  }
 
   @Test
   public void testKeyRegistration() {
@@ -65,5 +79,29 @@ public class KeyServiceTest {
     Key edited = keyService.getKeyById(1L);
     assertThat(edited.getKeyName(), is("test"));
     assertThat(edited.isCustomPermission(), not(toEdit.isCustomPermission()));
+  }
+
+  @Test
+  public void testIsValid() {
+    newKey.setCustomPermission(true);
+    Calendar c = Calendar.getInstance();
+    c.add(Calendar.MONTH, -1);
+    newKey.setValidFrom(c.getTime());
+    c.add(Calendar.MONTH, 2);
+    newKey.setValidTo(c.getTime());
+
+    assertThat(keyService.isValid(newKey), is(true));
+
+    c.setTime(new Date());
+    c.add(Calendar.HOUR, -24);
+    newKey.setValidTo(c.getTime());
+
+    assertThat(keyService.isValid(newKey), is(false));
+  }
+
+  public void testDeleteKey() {
+    assertThat(keyService.getKeyById(newKey.getKeyId()), is(notNullValue()));
+    keyService.deleteKey(newKey.getKeyId(), "admin@keyless.com");
+    assertThat(keyService.getKeyById(newKey.getKeyId()), is(nullValue()));
   }
 }
