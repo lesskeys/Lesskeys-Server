@@ -26,6 +26,9 @@ public class KeyService {
   @Autowired
   UserService userService;
 
+  @Autowired
+  SystemLogService logService;
+
 
   public Key getKeyById(Long id) {
     return keyRepository.findByKeyId(id);
@@ -35,7 +38,7 @@ public class KeyService {
    * Function to edit an existing key.
    * TODO: Extend method for new parameters.
    */
-  public void editKey(Long keyId, Key newKey) {
+  public void editKey(Long keyId, Key newKey, String username) {
     Key toEdit = keyRepository.findByKeyId(keyId);
     if (toEdit != null) {
       toEdit.setKeyName(newKey.getKeyName());
@@ -43,6 +46,8 @@ public class KeyService {
       toEdit.setValidFrom(newKey.getValidFrom());
       toEdit.setValidTo(newKey.getValidTo());
       keyRepository.save(toEdit);
+      logService.logEvent("edited key", "User: "+userService.getUserByEmail(username).getUserId(),
+        "Key: "+toEdit.getKeyId());
     }
   }
 
@@ -54,6 +59,8 @@ public class KeyService {
     toSave.setKeyName(keyName);
     toSave.setCustomPermission(false);
     keyRepository.save(toSave);
+    logService.logEvent("registered new key", "User: "+owner.getUserId(),
+      "Key: "+toSave.getKeyId());
   }
 
   public List<Key> getKeysForUser(String username) {
@@ -77,6 +84,8 @@ public class KeyService {
     if (toDelete.getOwner().getEmail().equals(username) ||
       userService.hasRole(toDelete.getOwner(), "Admin")) {
       keyRepository.delete(toDelete);
+      logService.logEvent("deleted key", "User: "+toDelete.getOwner().getUserId(),
+        "Key: "+toDelete.getKeyId());
     }
   }
 

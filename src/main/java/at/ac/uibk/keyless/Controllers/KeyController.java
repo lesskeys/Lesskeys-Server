@@ -32,6 +32,9 @@ public class KeyController {
   @Autowired
   SystemLogService systemLogService;
 
+  @Autowired
+  SystemLogService logService;
+
 
   @RequestMapping(value = "/key/register", method = RequestMethod.POST)
   public Map<String, String> registerKey(@RequestBody Map<String, Object> data) {
@@ -42,6 +45,7 @@ public class KeyController {
         data.get("username").toString(), data.get("name").toString(), newKey);
       lockService.addKeysToLocks((List<Object>) data.get("lockIds"), newKey.getKeyId());
       response.put("status", "Successfully added key!");
+      // Log event implemented in service method.
       return response;
     }
     response.put("status", "Failed to register key!");
@@ -63,9 +67,10 @@ public class KeyController {
       } catch (Exception e) {}
       newKey.setValidFrom(Optional.ofNullable(newValidFrom).orElse(newKey.getValidFrom()));
       newKey.setValidTo(Optional.ofNullable(newValidTo).orElse(newKey.getValidTo()));
-      keyService.editKey(Long.parseLong(data.get("keyId").toString()), newKey);
+      keyService.editKey(Long.parseLong(data.get("keyId").toString()), newKey, data.get("username").toString());
       lockService.removeKeyFromLocks(Long.parseLong(data.get("keyId").toString()));
       lockService.addKeysToLocks((List<Object>) data.get("lockIds"), Long.parseLong(data.get("keyId").toString()));
+      // Log event implemented in service method.
     }
   }
   /*
@@ -89,6 +94,7 @@ public class KeyController {
       toReturn.put("status", "Failure");
       return toReturn;
     }
+    // Log event implemented in service method.
   }
 
   @RequestMapping(value = "/keys", method = RequestMethod.POST)
@@ -97,10 +103,5 @@ public class KeyController {
       return keyService.getKeysForUser(data.get("username"));
     }
     return null;
-  }
-
-  @RequestMapping(value = "/all-keys", method = RequestMethod.POST)
-  public List<Key> getAllKeys(@RequestBody Map<String, String> data) {
-    return keyService.getAllKeys();
   }
 }

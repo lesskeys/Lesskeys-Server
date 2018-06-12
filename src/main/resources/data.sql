@@ -34,11 +34,11 @@ INSERT INTO key_permission (PERMISSION_ID, KEY_KEY_ID) VALUES (6, 6)
 INSERT INTO key_permission (PERMISSION_ID, KEY_KEY_ID) VALUES (7, 7)
 INSERT INTO key_permission (PERMISSION_ID, KEY_KEY_ID) VALUES (8, 8)*/
 
-INSERT into system_log (SYSTEM_LOG_ID, EVENT) VALUES (1, 'Now: This is a test log-entry.')
-INSERT into system_log (SYSTEM_LOG_ID, EVENT) VALUES (2, 'Now: This is the second test log-entry.')
-INSERT into system_log (SYSTEM_LOG_ID, EVENT) VALUES (3, 'Now: This is the third test log-entry.')
-INSERT into system_log (SYSTEM_LOG_ID, EVENT) VALUES (4, 'Now: This is the fourth test log-entry.')
-INSERT into system_log (SYSTEM_LOG_ID, EVENT) VALUES (5, 'Now: This is the fifth test log-entry.')
+INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, TARGET, EVENT) VALUES (1, CURRENT_TIMESTAMP, 'User 1', 'Key 1', 'This is a test log-entry.')
+INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, TARGET, EVENT) VALUES (2, CURRENT_TIMESTAMP, 'User 1', 'Key 1', 'This is the second test log-entry.')
+INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, TARGET, EVENT) VALUES (3, CURRENT_TIMESTAMP, 'User 1', 'Key 1', 'This is the third test log-entry.')
+INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, TARGET, EVENT) VALUES (4, CURRENT_TIMESTAMP, 'User 1', 'Key 1', 'This is the fourth test log-entry.')
+INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, TARGET, EVENT) VALUES (5, CURRENT_TIMESTAMP, 'User 1', 'Key 1', 'This is the fifth test log-entry.')
 
 /* Locks */
 INSERT INTO locks (LOCK_ID, LOCK_NAME, ADDRESS, CODE) VALUES (1, 'Main', '192.168.0.101', 'code')

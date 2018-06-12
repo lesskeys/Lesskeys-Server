@@ -27,7 +27,7 @@ public class SystemLogServiceTest {
 
   @Before
   public void addLog() {
-    systemLogService.logEvent("test");
+    systemLogService.logEvent("test", "User: 1", "Key: 1");
   }
 
   @Test

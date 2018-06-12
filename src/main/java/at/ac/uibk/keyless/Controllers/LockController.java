@@ -2,10 +2,7 @@ package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Models.User;
-import at.ac.uibk.keyless.Services.KeyService;
-import at.ac.uibk.keyless.Services.LockService;
-import at.ac.uibk.keyless.Services.SessionService;
-import at.ac.uibk.keyless.Services.UserService;
+import at.ac.uibk.keyless.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +31,9 @@ public class LockController {
   @Autowired
   KeyService keyService;
 
+  @Autowired
+  SystemLogService systemLogService;
+
 
   /**
    * @return locks for a given keyId.
@@ -44,6 +44,8 @@ public class LockController {
     if (sessionService.isValidSession(data.get("session")) &&
       keyService.getKeysForUser(data.get("username")).stream()
         .anyMatch(key -> key.getKeyId() == keyId)) {
+      systemLogService.logEvent("requested lock for key", "User: "
+          +userService.getUserByEmail(data.get("username")).getUserId(), "Key: "+keyId);
       return lockService.getLocksForKey(keyId);
     }
     return null;
@@ -57,6 +59,8 @@ public class LockController {
     User user = userService.getUserByEmail(data.get("username"));
     String session = data.get("session");
     if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())) {
+      systemLogService.logEvent("requested lock for user", "User: "
+        +userService.getUserByEmail(data.get("username")).getUserId(), "self");
       return lockService.getLocksForUser(user.getUserId());
     }
     return null;
@@ -73,6 +77,8 @@ public class LockController {
     if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())
       && user.getSubUsers().stream()
         .anyMatch(u -> u.getUserId() == subUserId)) {
+      systemLogService.logEvent("requested lock for user", "User: "
+        +userService.getUserByEmail(data.get("username")).getUserId(), "User: "+subUserId);
       return lockService.getLocksForUser(subUserId);
     }
     return null;
@@ -84,6 +90,8 @@ public class LockController {
     if (lock != null) {
       User user = userService.getUserByEmail(data.get("username"));
       String session = data.get("session");
+      systemLogService.logEvent("lock tried to verify user", "Lock: "+lock.getLockId(),
+        "User: "+user.getUserId());
       return sessionService.userMatchesSession(session, user.getUserId()) &&
         lock.getRelevantUserIds().contains(user.getUserId());
     }

@@ -60,7 +60,7 @@ public class KeyServiceTest {
     Key newKey = new Key();
     newKey.setKeyName("test");
     newKey.setCustomPermission(!toEdit.isCustomPermission());
-    keyService.editKey(1L, newKey);
+    keyService.editKey(1L, newKey, "admin@keyless.com");
 
     Key edited = keyService.getKeyById(1L);
     assertThat(edited.getKeyName(), is("test"));
