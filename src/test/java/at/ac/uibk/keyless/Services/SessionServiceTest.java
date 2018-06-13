@@ -35,5 +35,6 @@ public class SessionServiceTest {
     assertThat(sessionService.isValidSession(token), is(true));
     assertThat(sessionService.userMatchesSession(token, userId), is(true));
     assertThat(sessionService.initSession(admin), is(not(token)));
+    assertThat(sessionService.userMatchesSession(token, userId), is(false));
   }
 }
