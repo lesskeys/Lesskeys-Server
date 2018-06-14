@@ -21,7 +21,7 @@ public class KeyPermissionService {
 
   /**
    * @return lower limit of time for which permission is granted for a day
-   */
+   *//*
   public String getFromTimeForDay(int day, KeyPermission permission) {
     switch (day) {
       case Calendar.MONDAY:    return permission.getMondayFrom();
@@ -33,11 +33,11 @@ public class KeyPermissionService {
       case Calendar.SUNDAY:    return permission.getSundayFrom();
       default:                 return "00:00";
     }
-  }
+  }*/
 
   /**
    * @return upper limit of time for which permission is granted for a day
-   */
+   *//*
   public String getToTimeForDay(int day, KeyPermission permission) {
     switch (day) {
       case Calendar.MONDAY:    return permission.getMondayTo();
@@ -49,12 +49,12 @@ public class KeyPermissionService {
       case Calendar.SUNDAY:    return permission.getSundayTo();
       default:                 return "24:00";
     }
-  }
+  }*/
 
   /**
    * @param permission
    * @return true if permission given for the current time, false otherwise
-   */
+   *//*
   public boolean isValid(KeyPermission permission) {
     if (!permission.getKey().isCustomPermission()) {
       return true;
@@ -72,12 +72,12 @@ public class KeyPermissionService {
     } else {
       return false;
     }
-  }
+  }*/
 
   /**
    * Method to set new permission-times for a given day.
    * TODO: Check if user is allowed to do that!
-   */
+   *//*
   public void editPermissionDay(int day, String newFrom, String newTo, KeyPermission permission) {
     switch (day) {
       case Calendar.MONDAY:
@@ -110,5 +110,5 @@ public class KeyPermissionService {
         break;
     }
     keyPermissionRepository.save(permission);
-  }
+  }*/
 }
