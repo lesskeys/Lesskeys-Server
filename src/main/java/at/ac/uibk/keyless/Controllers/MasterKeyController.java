@@ -25,6 +25,7 @@ public class MasterKeyController {
 
   @RequestMapping(value = "/master-key/aes", method = RequestMethod.POST)
   public byte[] getAESMasterKey(@RequestBody Map<String, String> data) {
+    //TODO: Check if requesting user is allowed to have master-key
     if (sessionService.isValidSession(data.get("session"))) {
       return DEFAULT_KEY_AES128;
     }
