@@ -6,6 +6,7 @@ import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.KeyRepository;
 import at.ac.uibk.keyless.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -28,6 +29,9 @@ public class KeyService {
 
   @Autowired
   SystemLogService logService;
+
+  @Autowired
+  PasswordEncoder passwordEncoder;
 
 
   public Key getKeyById(Long id) {
@@ -54,7 +58,7 @@ public class KeyService {
   public void registerKey(String aid, String content, String username, String keyName, Key toSave) {
     User owner = userRepository.findFirstByEmail(username);
     toSave.setAid(aid);
-    toSave.setContent(content);
+    toSave.setContent(passwordEncoder.encode(content));
     toSave.setOwner(owner);
     toSave.setKeyName(keyName);
     toSave.setCustomPermission(false);
@@ -101,7 +105,7 @@ public class KeyService {
   public boolean isValidContent(String content, Lock lock) {
     return keyRepository.findAll().stream()
       .filter(k -> isValid(k))
-      .filter(k -> k.getContent().equals(content))
+      .filter(k -> k.contentMatches(content))
       .anyMatch(k -> lock.getRelevantKeyIds().contains(k.getKeyId()));
   }
 }
