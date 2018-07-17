@@ -18,7 +18,10 @@ public class MasterKeyController {
   @Autowired
   SessionService sessionService;
 
-  private static final byte[] DEFAULT_KEY_AES128= {
+  /**
+   * This byte-array represents the master-key, which is used to communicate with the MIFARE DESFire Tags.
+   */
+  private static final byte[] DEFAULT_KEY_AES128 = {
     (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
     (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
   };
