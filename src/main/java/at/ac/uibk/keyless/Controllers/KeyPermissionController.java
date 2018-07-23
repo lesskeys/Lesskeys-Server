@@ -3,6 +3,7 @@ package at.ac.uibk.keyless.Controllers;
 import at.ac.uibk.keyless.Models.Key;
 import at.ac.uibk.keyless.Services.KeyPermissionService;
 import at.ac.uibk.keyless.Services.KeyService;
+import at.ac.uibk.keyless.Services.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +24,16 @@ public class KeyPermissionController {
   @Autowired
   KeyService keyService;
 
+  @Autowired
+  SessionService sessionService;
 
-  @RequestMapping(value = "/key/validation", method = RequestMethod.POST)
-  public boolean isValidKey(@RequestBody Map<String, String> data) {
-    Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
-    return keyService.isValid(key);
+
+  @RequestMapping(value = "/key/edit/permission", method = RequestMethod.PUT)
+  public void editKeyPermission(@RequestBody Map<String, String> data) {
+    if (sessionService.isValidSession(data.get("session"))) {
+      int day = Integer.parseInt(data.get("day"));
+      Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
+      keyPermissionService.editPermissionDay(day, data.get("newFrom"), data.get("newTo"), key.getPermission());
+    }
   }
 }

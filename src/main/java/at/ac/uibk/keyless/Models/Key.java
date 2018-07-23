@@ -41,10 +41,10 @@ public class Key {
   @ManyToOne
   private User owner;
 
-  /*
+  
   @JsonIgnore
   @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "key")
-  private KeyPermission permission;*/
+  private KeyPermission permission;
 
   @PostLoad
   public void setupValidationTimes() {
@@ -70,7 +70,7 @@ public class Key {
   public void setOwner(User owner) {
     this.owner = owner;
   }
-  /*
+
   public KeyPermission getPermission() {
     return permission;
   }
@@ -78,7 +78,7 @@ public class Key {
   public void setPermission(KeyPermission permission) {
     this.permission = permission;
   }
-  */
+
   public String getContent() {
     return content;
   }
