@@ -100,7 +100,8 @@ public class KeyService {
 
   public boolean isValid(Key key) {
     Date current = new Date();
-    if (!key.isCustomPermission() || (key.getValidFrom().before(current) && key.getValidTo().after(current))) {
+    if ((key.getValidFrom().before(current) && key.getValidTo().after(current))
+      && keyPermissionService.isValid(key.getPermission())) {
       return true;
     } else {
       return false;
@@ -109,7 +110,7 @@ public class KeyService {
 
   public boolean isValidContent(String content, Lock lock) {
     return keyRepository.findAll().stream()
-      .filter(k -> isValid(k))
+      .filter(this::isValid)
       .filter(k -> k.contentMatches(content))
       .anyMatch(k -> lock.getRelevantKeyIds().contains(k.getKeyId()));
   }
