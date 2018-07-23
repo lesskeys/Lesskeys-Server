@@ -1,6 +1,8 @@
 package at.ac.uibk.keyless.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.Calendar;
@@ -21,6 +23,7 @@ public class Key {
   @Column(name = "keyname", nullable = false)
   private String keyName;
 
+  @JsonIgnore
   private String content;
 
   private String aid;
@@ -50,6 +53,10 @@ public class Key {
     validFrom = Optional.ofNullable(validFrom).orElse(cal.getTime());
     cal.add(Calendar.YEAR, 2);
     validTo   = Optional.ofNullable(validTo  ).orElse(cal.getTime());
+  }
+
+  public boolean contentMatches(String matcher) {
+    return new BCryptPasswordEncoder().matches(matcher, this.content);
   }
 
   public Long getKeyId() {
