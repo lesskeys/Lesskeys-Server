@@ -20,6 +20,15 @@ public class KeyPermissionService {
 
 
   /**
+   * Method to save a new KeyPermission.
+   * @param toSave Entity to be saved.
+   * @return the saved entity.
+   */
+  public KeyPermission savePermission(KeyPermission toSave) {
+    return keyPermissionRepository.save(toSave);
+  }
+
+  /**
    * @return lower limit of time for which permission is granted for a day
    */
   public String getFromTimeForDay(int day, KeyPermission permission) {

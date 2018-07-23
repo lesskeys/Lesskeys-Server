@@ -1,6 +1,7 @@
 package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
+import at.ac.uibk.keyless.Models.KeyPermission;
 import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.KeyRepository;
@@ -33,6 +34,9 @@ public class KeyService {
   @Autowired
   PasswordEncoder passwordEncoder;
 
+  @Autowired
+  KeyPermissionService keyPermissionService;
+
 
   public Key getKeyById(Long id) {
     return keyRepository.findByKeyId(id);
@@ -62,7 +66,8 @@ public class KeyService {
     toSave.setOwner(owner);
     toSave.setKeyName(keyName);
     toSave.setCustomPermission(false);
-    keyRepository.save(toSave);
+    Key saved = keyRepository.save(toSave);
+    keyPermissionService.savePermission(new KeyPermission(saved));
     logService.logEvent("registered new key", "User: "+owner.getUserId(),
       "Key: "+toSave.getKeyId());
   }

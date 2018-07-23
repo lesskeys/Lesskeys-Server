@@ -41,13 +41,12 @@ public class Key {
   @ManyToOne
   private User owner;
 
-  
   @JsonIgnore
   @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "key")
   private KeyPermission permission;
 
   @PostLoad
-  public void setupValidationTimes() {
+  public void setupValidationTimesAndPermission() {
     Calendar cal = Calendar.getInstance();
     cal.add(Calendar.YEAR, -1);
     validFrom = Optional.ofNullable(validFrom).orElse(cal.getTime());
