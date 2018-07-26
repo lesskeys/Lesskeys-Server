@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by Lukas Dötlinger.
@@ -78,6 +79,24 @@ public class KeyPermissionService {
     } else {
       return false;
     }
+  }
+
+  public void editPermission(Map<String, String> newPermission, KeyPermission oldPermission) {
+    oldPermission.setMondayFrom(newPermission.get("mondayFrom"));
+    oldPermission.setMondayTo(newPermission.get("mondayTo"));
+    oldPermission.setTuesdayFrom(newPermission.get("tuesdayFrom"));
+    oldPermission.setTuesdayTo(newPermission.get("tuesdayTo"));
+    oldPermission.setWednesdayFrom(newPermission.get("wednesdayFrom"));
+    oldPermission.setWednesdayTo(newPermission.get("wednesdayTo"));
+    oldPermission.setThursdayFrom(newPermission.get("thursdayFrom"));
+    oldPermission.setThursdayTo(newPermission.get("thursdayTo"));
+    oldPermission.setFridayFrom(newPermission.get("fridayFrom"));
+    oldPermission.setFridayTo(newPermission.get("fridayTo"));
+    oldPermission.setSaturdayFrom(newPermission.get("saturdayFrom"));
+    oldPermission.setSaturdayTo(newPermission.get("saturdayTo"));
+    oldPermission.setSundayFrom(newPermission.get("sundayFrom"));
+    oldPermission.setSundayTo(newPermission.get("sundayTo"));
+    keyPermissionRepository.save(oldPermission);
   }
 
   /**

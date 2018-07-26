@@ -40,6 +40,14 @@ public class KeyPermissionController {
     }
   }
 
+  @RequestMapping(value = "/key/edit/entire-permission", method = RequestMethod.PUT)
+  public void editEntireKeyPermission(@RequestBody Map<String, Object> data) {
+    if (sessionService.isValidSession(data.get("session").toString())) {
+      Key key = keyService.getKeyById(Long.parseLong(data.get("keyId").toString()));
+      keyPermissionService.editPermission((Map<String, String>) data.get("permission"), key.getPermission());
+    }
+  }
+
   @RequestMapping(value = "/key/permission", method = RequestMethod.POST)
   public KeyPermission getPermissionForKey(@RequestBody Map<String, String> data) {
     if (sessionService.isValidSession(data.get("session"))) {
