@@ -43,6 +43,19 @@ public class KeyService {
   }
 
   /**
+   * @param id Id of the key to return.
+   * @param username Email of the requesting user.
+   * @return Return the key if the user is the owner.
+   */
+  public Key getKeyByIdForUser(Long id, String username) {
+    Key k = getKeyById(id);
+    if (k.getOwner().getEmail().equals(username)) {
+      return k;
+    }
+    return null;
+  }
+
+  /**
    * Function to edit an existing key.
    * TODO: Extend method for new parameters.
    */

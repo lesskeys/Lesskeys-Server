@@ -95,4 +95,12 @@ public class KeyController {
     }
     return null;
   }
+
+  @RequestMapping(value = "/key-by-id", method = RequestMethod.POST)
+  public Key getSpecificKey(@RequestBody Map<String, String> data) {
+    if (sessionService.isValidSession(data.get("session"))) {
+      return keyService.getKeyByIdForUser(Long.parseLong(data.get("keyId")), data.get("username"));
+    }
+    return null;
+  }
 }
