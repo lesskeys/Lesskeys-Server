@@ -73,15 +73,6 @@ public class KeyController {
       // Log event implemented in service method.
     }
   }
-  /*
-  @RequestMapping(value = "/key/edit/permission", method = RequestMethod.PUT)
-  public void editKeyPermission(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
-      int day = Integer.parseInt(data.get("day"));
-      Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
-      keyPermissionService.editPermissionDay(day, data.get("newFrom"), data.get("newTo"), key.getPermission());
-    }
-  }*/
 
   @RequestMapping(value = "/key/delete", method = RequestMethod.POST)
   public Map<String, String> deleteKey(@RequestBody Map<String, String> data) {
@@ -101,6 +92,14 @@ public class KeyController {
   public List<Key> getUsersKeys(@RequestBody Map<String, String> data) {
     if (sessionService.isValidSession(data.get("session"))) {
       return keyService.getKeysForUser(data.get("username"));
+    }
+    return null;
+  }
+
+  @RequestMapping(value = "/key-by-id", method = RequestMethod.POST)
+  public Key getSpecificKey(@RequestBody Map<String, String> data) {
+    if (sessionService.isValidSession(data.get("session"))) {
+      return keyService.getKeyByIdForUser(Long.parseLong(data.get("keyId")), data.get("username"));
     }
     return null;
   }

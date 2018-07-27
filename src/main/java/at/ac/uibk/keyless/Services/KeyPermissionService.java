@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by Lukas Dötlinger.
@@ -20,8 +21,17 @@ public class KeyPermissionService {
 
 
   /**
+   * Method to save a new KeyPermission.
+   * @param toSave Entity to be saved.
+   * @return the saved entity.
+   */
+  public KeyPermission savePermission(KeyPermission toSave) {
+    return keyPermissionRepository.save(toSave);
+  }
+
+  /**
    * @return lower limit of time for which permission is granted for a day
-   *//*
+   */
   public String getFromTimeForDay(int day, KeyPermission permission) {
     switch (day) {
       case Calendar.MONDAY:    return permission.getMondayFrom();
@@ -33,11 +43,11 @@ public class KeyPermissionService {
       case Calendar.SUNDAY:    return permission.getSundayFrom();
       default:                 return "00:00";
     }
-  }*/
+  }
 
   /**
    * @return upper limit of time for which permission is granted for a day
-   *//*
+   */
   public String getToTimeForDay(int day, KeyPermission permission) {
     switch (day) {
       case Calendar.MONDAY:    return permission.getMondayTo();
@@ -49,16 +59,13 @@ public class KeyPermissionService {
       case Calendar.SUNDAY:    return permission.getSundayTo();
       default:                 return "24:00";
     }
-  }*/
+  }
 
   /**
    * @param permission
    * @return true if permission given for the current time, false otherwise
-   *//*
+   */
   public boolean isValid(KeyPermission permission) {
-    if (!permission.getKey().isCustomPermission()) {
-      return true;
-    }
     Date current = new Date();
     Calendar cal = Calendar.getInstance();
     cal.setTime(current);
@@ -72,12 +79,30 @@ public class KeyPermissionService {
     } else {
       return false;
     }
-  }*/
+  }
+
+  public void editPermission(Map<String, String> newPermission, KeyPermission oldPermission) {
+    oldPermission.setMondayFrom(newPermission.get("mondayFrom"));
+    oldPermission.setMondayTo(newPermission.get("mondayTo"));
+    oldPermission.setTuesdayFrom(newPermission.get("tuesdayFrom"));
+    oldPermission.setTuesdayTo(newPermission.get("tuesdayTo"));
+    oldPermission.setWednesdayFrom(newPermission.get("wednesdayFrom"));
+    oldPermission.setWednesdayTo(newPermission.get("wednesdayTo"));
+    oldPermission.setThursdayFrom(newPermission.get("thursdayFrom"));
+    oldPermission.setThursdayTo(newPermission.get("thursdayTo"));
+    oldPermission.setFridayFrom(newPermission.get("fridayFrom"));
+    oldPermission.setFridayTo(newPermission.get("fridayTo"));
+    oldPermission.setSaturdayFrom(newPermission.get("saturdayFrom"));
+    oldPermission.setSaturdayTo(newPermission.get("saturdayTo"));
+    oldPermission.setSundayFrom(newPermission.get("sundayFrom"));
+    oldPermission.setSundayTo(newPermission.get("sundayTo"));
+    keyPermissionRepository.save(oldPermission);
+  }
 
   /**
    * Method to set new permission-times for a given day.
    * TODO: Check if user is allowed to do that!
-   *//*
+   */
   public void editPermissionDay(int day, String newFrom, String newTo, KeyPermission permission) {
     switch (day) {
       case Calendar.MONDAY:
@@ -110,5 +135,5 @@ public class KeyPermissionService {
         break;
     }
     keyPermissionRepository.save(permission);
-  }*/
+  }
 }

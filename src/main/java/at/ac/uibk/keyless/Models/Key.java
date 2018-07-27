@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -31,9 +32,11 @@ public class Key {
   @Column(name = "custom_permission")
   private boolean customPermission;
 
+  @JsonIgnore
   @Temporal(TemporalType.DATE)
   private Date validFrom;
 
+  @JsonIgnore
   @Temporal(TemporalType.DATE)
   private Date validTo;
 
@@ -41,13 +44,12 @@ public class Key {
   @ManyToOne
   private User owner;
 
-  /*
   @JsonIgnore
   @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "key")
-  private KeyPermission permission;*/
+  private KeyPermission permission;
 
   @PostLoad
-  public void setupValidationTimes() {
+  public void setupValidationTimesAndPermission() {
     Calendar cal = Calendar.getInstance();
     cal.add(Calendar.YEAR, -1);
     validFrom = Optional.ofNullable(validFrom).orElse(cal.getTime());
@@ -57,6 +59,16 @@ public class Key {
 
   public boolean contentMatches(String matcher) {
     return new BCryptPasswordEncoder().matches(matcher, this.content);
+  }
+
+  public String getValidFromString() {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    return sdf.format(validFrom);
+  }
+
+  public String getValidToString() {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    return sdf.format(validTo);
   }
 
   public Long getKeyId() {
@@ -70,7 +82,7 @@ public class Key {
   public void setOwner(User owner) {
     this.owner = owner;
   }
-  /*
+
   public KeyPermission getPermission() {
     return permission;
   }
@@ -78,7 +90,7 @@ public class Key {
   public void setPermission(KeyPermission permission) {
     this.permission = permission;
   }
-  */
+
   public String getContent() {
     return content;
   }

@@ -1,5 +1,7 @@
 package at.ac.uibk.keyless.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Optional;
 
@@ -10,9 +12,11 @@ import java.util.Optional;
 public class KeyPermission {
 
   @Id
+  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long permissionId;
 
+  @JsonIgnore
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(nullable = false)
   private Key key;
@@ -66,6 +70,12 @@ public class KeyPermission {
   @Column(length = 5)
   private String sundayTo;
 
+
+  public KeyPermission() {}
+
+  public KeyPermission(Key key) {
+    this.key = key;
+  }
 
   public Long getPermissionId() {
     return permissionId;

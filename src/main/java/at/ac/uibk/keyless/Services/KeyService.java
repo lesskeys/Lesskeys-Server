@@ -1,6 +1,7 @@
 package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
+import at.ac.uibk.keyless.Models.KeyPermission;
 import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.KeyRepository;
@@ -33,9 +34,25 @@ public class KeyService {
   @Autowired
   PasswordEncoder passwordEncoder;
 
+  @Autowired
+  KeyPermissionService keyPermissionService;
+
 
   public Key getKeyById(Long id) {
     return keyRepository.findByKeyId(id);
+  }
+
+  /**
+   * @param id Id of the key to return.
+   * @param username Email of the requesting user.
+   * @return Return the key if the user is the owner.
+   */
+  public Key getKeyByIdForUser(Long id, String username) {
+    Key k = getKeyById(id);
+    if (k.getOwner().getEmail().equals(username)) {
+      return k;
+    }
+    return null;
   }
 
   /**
@@ -62,7 +79,8 @@ public class KeyService {
     toSave.setOwner(owner);
     toSave.setKeyName(keyName);
     toSave.setCustomPermission(false);
-    keyRepository.save(toSave);
+    Key saved = keyRepository.save(toSave);
+    keyPermissionService.savePermission(new KeyPermission(saved));
     logService.logEvent("registered new key", "User: "+owner.getUserId(),
       "Key: "+toSave.getKeyId());
   }
@@ -95,7 +113,8 @@ public class KeyService {
 
   public boolean isValid(Key key) {
     Date current = new Date();
-    if (!key.isCustomPermission() || (key.getValidFrom().before(current) && key.getValidTo().after(current))) {
+    if ((key.getValidFrom().before(current) && key.getValidTo().after(current))
+      && keyPermissionService.isValid(key.getPermission())) {
       return true;
     } else {
       return false;
@@ -104,7 +123,7 @@ public class KeyService {
 
   public boolean isValidContent(String content, Lock lock) {
     return keyRepository.findAll().stream()
-      .filter(k -> isValid(k))
+      .filter(this::isValid)
       .filter(k -> k.contentMatches(content))
       .anyMatch(k -> lock.getRelevantKeyIds().contains(k.getKeyId()));
   }
