@@ -42,8 +42,8 @@ public class KeyPermissionController {
 
   @RequestMapping(value = "/key/edit/entire-permission", method = RequestMethod.PUT)
   public void editEntireKeyPermission(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session").toString())) {
-      Key key = keyService.getKeyById(Long.parseLong(data.get("keyId").toString()));
+    if (sessionService.isValidSession(data.get("session"))) {
+      Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
       keyPermissionService.editPermission(data, key.getPermission());
     }
   }

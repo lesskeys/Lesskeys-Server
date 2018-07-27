@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -31,9 +32,11 @@ public class Key {
   @Column(name = "custom_permission")
   private boolean customPermission;
 
+  @JsonIgnore
   @Temporal(TemporalType.DATE)
   private Date validFrom;
 
+  @JsonIgnore
   @Temporal(TemporalType.DATE)
   private Date validTo;
 
@@ -56,6 +59,16 @@ public class Key {
 
   public boolean contentMatches(String matcher) {
     return new BCryptPasswordEncoder().matches(matcher, this.content);
+  }
+
+  public String getValidFromString() {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    return sdf.format(validFrom);
+  }
+
+  public String getValidToString() {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    return sdf.format(validTo);
   }
 
   public Long getKeyId() {
