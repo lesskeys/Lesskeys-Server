@@ -1,4 +1,4 @@
-package at.ac.uibk.keyless;
+package at.ac.uibk.keyless.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
