@@ -204,5 +204,7 @@
     <orderEntry type="library" name="Maven: com.sun.faces:jsf-api:2.2.8" level="project" />
     <orderEntry type="library" name="Maven: com.sun.faces:jsf-impl:2.2.8" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces:primefaces:6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.web:el-impl:2.2" level="project" />
+    <orderEntry type="library" name="Maven: javax.el:el-api:2.2" level="project" />
   </component>
 </module>

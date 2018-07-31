@@ -5,8 +5,17 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui" >
 
-    <h:head>Header</h:head>
     <body>
         <h1>Hello World!</h1>
+        <p:dataTable id="people" var="user" value="#{ringController.allUsers}">
+            <f:facet name="header" value="#{ringController.test}"/>
+            <p:column headerText="Id">
+                <h:outputText value="#{user.userId}" />
+            </p:column>
+            <p:column headerText="Email">
+                <h:outputText value="#{user.email}" />
+            </p:column>
+
+        </p:dataTable>
     </body>
 </html>

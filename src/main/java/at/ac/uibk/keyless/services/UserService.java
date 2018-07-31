@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Lukas Dötlinger.
  */
@@ -19,6 +21,10 @@ public class UserService {
   @Autowired
   PasswordEncoder passwordEncoder;
 
+
+  public List<User> getAllUsers() {
+    return userRepository.findAll();
+  }
 
   public User getUserByEmail(String email) {
     return userRepository.findFirstByEmail(email);
