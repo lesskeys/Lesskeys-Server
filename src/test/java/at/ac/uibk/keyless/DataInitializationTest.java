@@ -1,6 +1,6 @@
 package at.ac.uibk.keyless;
 
-import at.ac.uibk.keyless.Repositories.UserRepository;
+import at.ac.uibk.keyless.repositories.UserRepository;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
