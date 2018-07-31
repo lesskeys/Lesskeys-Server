@@ -33,11 +33,15 @@ public class SessionService {
       .collect(Collectors.joining());
   }
 
+  public Session getByUserId(long userId) {
+    return sessionRepository.findByUserId(userId);
+  }
+
   /**
    * @param user
    * @return initializes a new session for a user and returns the session-token
    */
-  public String initSession(User user) {
+  public String initSession(User user, String fireBaseToken) {
     Session s = sessionRepository.findByUserId(user.getUserId());
     if (s == null) {
       s = new Session();
@@ -45,6 +49,7 @@ public class SessionService {
     }
     s.setSessionToken(generateSessionToken());
     s.setLastAction(new Date());
+    s.setFireBaseToken(fireBaseToken);
     sessionRepository.save(s);
     return s.getSessionToken();
   }
