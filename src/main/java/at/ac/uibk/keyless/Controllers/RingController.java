@@ -43,6 +43,7 @@ public class RingController {
     Message toSend = Message.builder()
       .setToken(registrationToken)
       .setAndroidConfig(AndroidConfig.builder()
+        .setPriority(AndroidConfig.Priority.HIGH)
         .setNotification(AndroidNotification.builder()
           .setTitle("Klingel")
           .setBody(message)
