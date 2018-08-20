@@ -2,3 +2,7 @@
 
 .idea
 target
+
+#Private key files
+
+src/main/resources/firebase-adminsdk.json

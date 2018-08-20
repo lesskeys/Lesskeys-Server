@@ -31,10 +31,10 @@ public class SessionServiceTest {
   public void testSessionService() {
     long userId = 1L;
     User admin = userService.getUserById(userId);
-    String token = sessionService.initSession(admin);
+    String token = sessionService.initSession(admin, "test");
     assertThat(sessionService.isValidSession(token), is(true));
     assertThat(sessionService.userMatchesSession(token, userId), is(true));
-    assertThat(sessionService.initSession(admin), is(not(token)));
+    assertThat(sessionService.initSession(admin, "test"), is(not(token)));
     assertThat(sessionService.userMatchesSession(token, userId), is(false));
   }
 }

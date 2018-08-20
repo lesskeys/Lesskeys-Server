@@ -1,5 +1,7 @@
 package at.ac.uibk.keyless.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -22,6 +24,9 @@ public class Session {
   @Column(nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
   private Date lastAction;
+
+  @JsonIgnore
+  private String fireBaseToken;
 
 
   public Long getSessionId() {
@@ -50,5 +55,13 @@ public class Session {
 
   public void setLastAction(Date lastAction) {
     this.lastAction = lastAction;
+  }
+
+  public String getFireBaseToken() {
+    return fireBaseToken;
+  }
+
+  public void setFireBaseToken(String fireBaseToken) {
+    this.fireBaseToken = fireBaseToken;
   }
 }
