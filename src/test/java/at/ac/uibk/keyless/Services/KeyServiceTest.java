@@ -2,6 +2,8 @@ package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
 import at.ac.uibk.keyless.Models.Lock;
+import at.ac.uibk.keyless.Repositories.LockRepository;
+import org.hibernate.Hibernate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,34 +32,49 @@ public class KeyServiceTest {
   @Autowired
   KeyService keyService;
 
+  @Autowired
+  LockService lockService;
+
+  @Autowired
+  LockRepository lockRepository;
+
 
   private Key newKey;
+
+  private final long lockId = 1L;
+  private final String username = "admin@keyless.com";
+  private final String keyContent = "test";
 
   @Before
   public void addKey() {
     Key toSave = new Key();
-    keyService.registerKey("test", "test", "admin@keyless.com", "test", toSave);
+    keyService.registerKey("test", keyContent, username, "test", toSave);
     newKey = keyService.getKeyById(toSave.getKeyId());
   }
 
   @Test
   public void testKeyRegistration() {
+    assertThat(keyService.getKeyByIdForUser(newKey.getKeyId(), username).getKeyName(),
+      is(newKey.getKeyName()));
+    assertThat(keyService.getKeyByIdForUser(newKey.getKeyId(), "test@keyless.com"),
+      is(nullValue()));
+
     long highestKeyId = keyService.getAllKeys().stream()
-      .mapToLong(k -> k.getKeyId())
+      .mapToLong(Key::getKeyId)
       .max().orElse(1L);
     assertThat(keyService.getKeyById(highestKeyId+1), is(nullValue()));
-    assertThat(keyService.getKeysForUser("admin@keyless.com").stream()
+    assertThat(keyService.getKeysForUser(username).stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(false));
 
-    keyService.registerKey("010", "AAAA", "admin@keyless.com", "newestKey", new Key());
+    keyService.registerKey("010", "AAAA", username, "newestKey", new Key());
     assertThat(keyService.getKeyById(highestKeyId+1), is(notNullValue()));
-    assertThat(keyService.getKeysForUser("admin@keyless.com").stream()
+    assertThat(keyService.getKeysForUser(username).stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(true));
   }
 
   @Test
   public void testGetKeysForUser() {
-    List<Key> adminList = keyService.getKeysForUser("admin@keyless.com");
+    List<Key> adminList = keyService.getKeysForUser(username);
     List<Key> modList = keyService.getKeysForUser("lukas@keyless.com");
     assertThat(modList.stream()
       .allMatch(k1 -> adminList.stream()
@@ -74,7 +92,7 @@ public class KeyServiceTest {
     Key newKey = new Key();
     newKey.setKeyName("test");
     newKey.setCustomPermission(!toEdit.isCustomPermission());
-    keyService.editKey(1L, newKey, "admin@keyless.com");
+    keyService.editKey(1L, newKey, username);
 
     Key edited = keyService.getKeyById(1L);
     assertThat(edited.getKeyName(), is("test"));
@@ -99,9 +117,10 @@ public class KeyServiceTest {
     assertThat(keyService.isValid(newKey), is(false));
   }
 
+  @Test
   public void testDeleteKey() {
     assertThat(keyService.getKeyById(newKey.getKeyId()), is(notNullValue()));
-    keyService.deleteKey(newKey.getKeyId(), "admin@keyless.com");
+    keyService.deleteKey(newKey.getKeyId(), username);
     assertThat(keyService.getKeyById(newKey.getKeyId()), is(nullValue()));
   }
 }

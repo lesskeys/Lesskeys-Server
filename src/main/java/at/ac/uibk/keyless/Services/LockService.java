@@ -27,6 +27,10 @@ public class LockService {
   UserService userService;
 
 
+  public Lock getLockById(long lockId) {
+    return lockRepository.findByLockId(lockId);
+  }
+
   /**
    * @return locks for which a given keyId is valid.
    */
