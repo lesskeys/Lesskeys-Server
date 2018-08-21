@@ -112,10 +112,17 @@ public class LockController {
   }
 
   @RequestMapping(value = "/lock/keys", method = RequestMethod.POST)
-  public List<Key> getKeysForLock(@RequestBody Map<String, String> data) {
+  public List<Map<String, Object>> getKeysForLock(@RequestBody Map<String, String> data) {
     Lock lock = lockService.getLockForIdAndCode(Long.parseLong(data.get("lockId")), data.get("code"));
+    ObjectMapper mapper = new ObjectMapper();
     if (lock != null) {
-      return lock.getRelevantKeys();
+      return lock.getRelevantKeys().stream()
+        .map(k -> {
+          Map<String, Object> asMap = mapper.convertValue(k, new TypeReference<Map<String, Object>>() {});
+          asMap.put("content", k.getContent());
+          return asMap;
+        })
+        .collect(Collectors.toList());
     }
     return null;
   }
