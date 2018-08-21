@@ -22,6 +22,7 @@ public class Session {
   private String sessionToken;
 
   @Column(nullable = false)
+  @JsonIgnore
   @Temporal(TemporalType.TIMESTAMP)
   private Date lastAction;
 
