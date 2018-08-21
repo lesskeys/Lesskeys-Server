@@ -20,6 +20,10 @@ public class KeyPermissionService {
   KeyPermissionRepository keyPermissionRepository;
 
 
+  public KeyPermission getKeyPermissionById(long keyPermissionId) {
+    return keyPermissionRepository.findByPermissionId(keyPermissionId);
+  }
+
   /**
    * Method to save a new KeyPermission.
    * @param toSave Entity to be saved.
