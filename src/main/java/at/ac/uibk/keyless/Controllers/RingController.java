@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -25,6 +27,21 @@ public class RingController {
   @Autowired
   SessionService sessionService;
 
+
+  private String authCode = "";
+
+  @RequestMapping(value = "/ring/auth/gen", method = RequestMethod.GET)
+  public String getAuthCode() {
+    synchronized (this) {
+      this.authCode = generateAuthCode();
+    }
+    return authCode;
+  }
+
+  @RequestMapping(value = "/ring/auth/verify", method = RequestMethod.POST)
+  public boolean verifyAuthCode(@RequestBody Map<String, String> data) {
+    return authCode.equals(data.get("authCode"));
+  }
 
   @RequestMapping(value = "/ring/list", method = RequestMethod.GET)
   public List<User> getRingList() {
@@ -57,5 +74,15 @@ public class RingController {
     } catch (FirebaseMessagingException e) {
       e.printStackTrace();
     }
+  }
+
+  private String generateAuthCode() {
+    String alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+    return ThreadLocalRandom.current()
+      .ints(0, alphabet.length())
+      .limit(6)
+      .mapToObj(i -> alphabet.charAt(i))
+      .map(Object::toString)
+      .collect(Collectors.joining());
   }
 }
