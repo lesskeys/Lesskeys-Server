@@ -31,6 +31,21 @@ public class LockService {
     return lockRepository.findByLockId(lockId);
   }
 
+  public List<Lock> getAllLocks() {
+    return lockRepository.findAll();
+  }
+
+  /**
+   * Method to change the IP address of a lock.
+   * @param lockId, the id of the lock
+   * @param newAddress, the new IP address for the lock
+   */
+  public void updateAddress(long lockId, String newAddress) {
+    Lock toChange = lockRepository.findByLockId(lockId);
+    toChange.setAddress(newAddress);
+    lockRepository.save(toChange);
+  }
+
   /**
    * @return locks for which a given keyId is valid.
    */
