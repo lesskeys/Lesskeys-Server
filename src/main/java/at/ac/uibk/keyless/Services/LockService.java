@@ -35,6 +35,10 @@ public class LockService {
     return lockRepository.findAll();
   }
 
+  public Lock saveLock(Lock lock) {
+    return lockRepository.save(lock);
+  }
+
   /**
    * Method to change the IP address of a lock.
    * @param lockId, the id of the lock
@@ -44,6 +48,22 @@ public class LockService {
     Lock toChange = lockRepository.findByLockId(lockId);
     toChange.setAddress(newAddress);
     lockRepository.save(toChange);
+  }
+
+  /**
+   * Method to create a new lock.
+   * @param creatorId , the userId of the creating user
+   * @param code , the code for contacting the lock
+   * @return the created lock
+   */
+  public Lock addLock(long creatorId, String name, String address, String code) {
+    Lock newLock = new Lock();
+    newLock.setName(name);
+    newLock.setAddress(address);
+    newLock.setCode(code);
+    newLock = saveLock(newLock);
+    addUserToLock(newLock.getLockId(), creatorId);
+    return newLock;
   }
 
   /**

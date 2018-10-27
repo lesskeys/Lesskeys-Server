@@ -41,6 +41,17 @@ public class AdminInterfaceController {
     return lockService.getAllLocks();
   }
 
+  @RequestMapping(value = "/ai/add-lock", method = RequestMethod.POST)
+  public boolean addLock(@RequestBody Map<String, String> data) {
+    Lock createdLock = lockService.addLock(
+      Long.parseLong(data.get("userId")),
+      data.get("name"),
+      data.get("address"),
+      data.get("code")
+    );
+    return createdLock != null;
+  }
+
   @RequestMapping(value = "/ai/{lockId}/address", method = RequestMethod.PUT)
   public void updateLockAddress(@PathVariable(value = "lockId") long lockId,
                                 @RequestBody String newAddress) {
