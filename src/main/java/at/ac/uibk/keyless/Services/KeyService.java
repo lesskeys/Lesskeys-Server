@@ -56,6 +56,17 @@ public class KeyService {
   }
 
   /**
+   * Method to get a Key by its uid
+   * @return a Key or null
+   */
+  public Key getKeyByUid(byte[] uid) {
+    return keyRepository.findAll().stream()
+      .filter(k -> k.getUid().equals(uid))
+      .findFirst()
+      .orElse(null);
+  }
+
+  /**
    * Function to edit an existing key.
    * TODO: Extend method for new parameters.
    */

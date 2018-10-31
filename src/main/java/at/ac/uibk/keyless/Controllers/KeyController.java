@@ -103,4 +103,18 @@ public class KeyController {
     }
     return null;
   }
+
+  @RequestMapping(value = "/key/find", method = RequestMethod.POST)
+  public Map<String, String> getKeyOwner(@RequestBody Map<String, Object> data) {
+    Map<String, String> toReturn = new HashMap<>();
+    if (sessionService.isValidSession(data.get("session").toString())) {
+      Key found = keyService.getKeyByUid((byte[]) data.get("uid"));
+      if (found != null) {
+        toReturn.put("firstName", found.getOwner().getFirstName());
+        toReturn.put("lastName", found.getOwner().getLastName());
+        return toReturn;
+      }
+    }
+    return null;
+  }
 }
