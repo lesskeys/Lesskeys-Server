@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,12 +29,14 @@ public class AdminInterfaceController {
 
 
   @RequestMapping(value = "/ai/login", method = RequestMethod.POST)
-  public boolean adminLogin(@RequestBody Map<String, String> data) {
+  public Map<String, String> adminLogin(@RequestBody Map<String, String> data) {
+    Map<String, String> toReturn = new HashMap<>();
     String username = data.get("username");
     User user = userService.getUserByEmail(username);
     String password = data.get("password");
-    return (userService.hasRole(user, "Admin") &&
-      passwordEncoder.matches(password, user.getPassword()));
+    toReturn.put("value", (userService.hasRole(user, "Admin") &&
+      passwordEncoder.matches(password, user.getPassword())) ? "true" : "false");
+    return toReturn;
   }
 
   @RequestMapping(value = "/ai/locks", method = RequestMethod.GET)
@@ -42,14 +45,16 @@ public class AdminInterfaceController {
   }
 
   @RequestMapping(value = "/ai/add-lock", method = RequestMethod.POST)
-  public boolean addLock(@RequestBody Map<String, String> data) {
+  public Map<String, String> addLock(@RequestBody Map<String, String> data) {
+    Map<String, String> toReturn = new HashMap<>();
     Lock createdLock = lockService.addLock(
       Long.parseLong(data.get("userId")),
       data.get("name"),
       data.get("address"),
       data.get("code")
     );
-    return createdLock != null;
+    toReturn.put("value", createdLock != null ? "true" : "false");
+    return toReturn;
   }
 
   @RequestMapping(value = "/ai/{lockId}/address", method = RequestMethod.PUT)
