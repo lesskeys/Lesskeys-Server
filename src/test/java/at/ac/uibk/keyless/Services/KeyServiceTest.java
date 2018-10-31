@@ -48,7 +48,7 @@ public class KeyServiceTest {
   @Before
   public void addKey() {
     Key toSave = new Key();
-    keyService.registerKey("test", keyContent, username, "test", toSave);
+    keyService.registerKey("test", keyContent, username, "test", toSave, "test".getBytes());
     newKey = keyService.getKeyById(toSave.getKeyId());
   }
 
@@ -66,7 +66,7 @@ public class KeyServiceTest {
     assertThat(keyService.getKeysForUser(username).stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(false));
 
-    keyService.registerKey("010", "AAAA", username, "newestKey", new Key());
+    keyService.registerKey("010", "AAAA", username, "newestKey", new Key(), "test".getBytes());
     assertThat(keyService.getKeyById(highestKeyId+1), is(notNullValue()));
     assertThat(keyService.getKeysForUser(username).stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(true));

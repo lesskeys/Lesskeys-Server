@@ -42,7 +42,7 @@ public class KeyController {
     if (sessionService.isValidSession(data.get("session").toString())) {
       Key newKey = new Key();
       keyService.registerKey(data.get("aid").toString(), data.get("content").toString(),
-        data.get("username").toString(), data.get("name").toString(), newKey);
+        data.get("username").toString(), data.get("name").toString(), newKey, (byte[]) data.get("uid"));
       lockService.addKeysToLocks((List<Object>) data.get("lockIds"), newKey.getKeyId());
       response.put("status", "Successfully added key!");
       // Log event implemented in service method.

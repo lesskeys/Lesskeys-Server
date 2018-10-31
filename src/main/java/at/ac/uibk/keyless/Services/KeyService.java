@@ -72,12 +72,13 @@ public class KeyService {
     }
   }
 
-  public void registerKey(String aid, String content, String username, String keyName, Key toSave) {
+  public void registerKey(String aid, String content, String username, String keyName, Key toSave, byte[] uid) {
     User owner = userRepository.findFirstByEmail(username);
     toSave.setAid(aid);
     toSave.setContent(passwordEncoder.encode(content));
     toSave.setOwner(owner);
     toSave.setKeyName(keyName);
+    toSave.setUid(uid);
     toSave.setCustomPermission(false);
     Key saved = keyRepository.save(toSave);
     keyPermissionService.savePermission(new KeyPermission(saved));
