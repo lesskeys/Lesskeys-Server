@@ -39,6 +39,9 @@ public class User {
   @Column(nullable = false)
   private String firstName;
 
+  @Column(nullable = false)
+  private String lastName;
+
   @JsonIgnore
   @OneToMany(mappedBy = "owner", orphanRemoval = true, cascade = CascadeType.ALL)
   private List<Key> keys;
@@ -119,6 +122,14 @@ public class User {
 
   public void setFirstName(String firstName) {
     this.firstName = firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   public List<Key> getKeys() {
