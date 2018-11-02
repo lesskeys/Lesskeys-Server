@@ -57,7 +57,7 @@ public class AdminInterfaceController {
     return toReturn;
   }
 
-  @RequestMapping(value = "/ai/{lockId}/edit", method = RequestMethod.PUT)
+  @RequestMapping(value = "/ai/{lockId}/edit", method = RequestMethod.POST)
   public Map<String, String> updateLockAddress(@PathVariable(value = "lockId") long lockId,
                                 @RequestBody Map<String, String> data) {
     lockService.updateAddressAndName(lockId, data.get("address"), data.get("name"));
