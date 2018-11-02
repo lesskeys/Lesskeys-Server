@@ -33,7 +33,7 @@ public class Key {
   private boolean customPermission;
 
   @Column
-  private byte[] uid;
+  private String uid;
 
   @JsonIgnore
   @Temporal(TemporalType.DATE)
@@ -110,11 +110,11 @@ public class Key {
     this.aid = aid;
   }
 
-  public byte[] getUid() {
+  public String getUid() {
     return uid;
   }
 
-  public void setUid(byte[] uid) {
+  public void setUid(String uid) {
     this.uid = uid;
   }
 
