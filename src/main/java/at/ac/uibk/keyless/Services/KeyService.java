@@ -61,6 +61,7 @@ public class KeyService {
    */
   public Key getKeyByUid(String uid) {
     return keyRepository.findAll().stream()
+      .filter(k -> k.getUid() != null)
       .filter(k -> k.getUid().equals(uid))
       .findFirst()
       .orElse(null);
