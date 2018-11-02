@@ -57,9 +57,12 @@ public class AdminInterfaceController {
     return toReturn;
   }
 
-  @RequestMapping(value = "/ai/{lockId}/address", method = RequestMethod.PUT)
-  public void updateLockAddress(@PathVariable(value = "lockId") long lockId,
-                                @RequestBody String newAddress) {
-    lockService.updateAddress(lockId, newAddress);
+  @RequestMapping(value = "/ai/{lockId}/edit", method = RequestMethod.PUT)
+  public Map<String, String> updateLockAddress(@PathVariable(value = "lockId") long lockId,
+                                @RequestBody Map<String, String> data) {
+    lockService.updateAddressAndName(lockId, data.get("address"), data.get("name"));
+    Map<String, String> toReturn = new HashMap<>();
+    toReturn.put("value", "true");
+    return toReturn;
   }
 }

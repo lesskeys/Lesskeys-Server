@@ -43,10 +43,12 @@ public class LockService {
    * Method to change the IP address of a lock.
    * @param lockId, the id of the lock
    * @param newAddress, the new IP address for the lock
+   * @param newName, the new name for the lock
    */
-  public void updateAddress(long lockId, String newAddress) {
+  public void updateAddressAndName(long lockId, String newAddress, String newName) {
     Lock toChange = lockRepository.findByLockId(lockId);
     toChange.setAddress(newAddress);
+    toChange.setName(newName);
     lockRepository.save(toChange);
   }
 
