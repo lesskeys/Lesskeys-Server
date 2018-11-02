@@ -108,7 +108,7 @@ public class KeyController {
   public Map<String, String> getKeyOwner(@RequestBody Map<String, Object> data) {
     Map<String, String> toReturn = new HashMap<>();
     if (sessionService.isValidSession(data.get("session").toString())) {
-      Key found = keyService.getKeyByUid((byte[]) data.get("uid"));
+      Key found = keyService.getKeyByUid(data.get("uid").toString());
       if (found != null) {
         toReturn.put("firstName", found.getOwner().getFirstName());
         toReturn.put("lastName", found.getOwner().getLastName());

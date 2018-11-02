@@ -59,7 +59,7 @@ public class KeyService {
    * Method to get a Key by its uid
    * @return a Key or null
    */
-  public Key getKeyByUid(byte[] uid) {
+  public Key getKeyByUid(String uid) {
     return keyRepository.findAll().stream()
       .filter(k -> k.getUid().equals(uid))
       .findFirst()
