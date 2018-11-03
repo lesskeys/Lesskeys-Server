@@ -127,6 +127,7 @@ public class UserController {
         return response;
       }
       newUser.setFirstName(data.get("newFirstName").toString());
+      newUser.setLastName(data.get("newLastName").toString());
       Set<UserRole> roles = new HashSet<>();
       roles.add(userService.getRoleForString(data.get("newRole").toString()));
       newUser.setRoles(roles);

@@ -43,8 +43,8 @@ public class KeyPermissionServiceTest {
 
   @Before
   public void init() {
-    keyService.registerKey("test1", "test1", "admin@keyless.com", "test1", test1);
-    keyService.registerKey("test2", "test2", "admin@keyless.com", "test2", test2);
+    keyService.registerKey("test1", "test1", "admin@keyless.com", "test1", test1, "test");
+    keyService.registerKey("test2", "test2", "admin@keyless.com", "test2", test2, "test");
     test1 = keyService.getKeyById(test1.getKeyId());
     test2 = keyService.getKeyById(test2.getKeyId());
     permission = permissionService.savePermission(new KeyPermission(test1));

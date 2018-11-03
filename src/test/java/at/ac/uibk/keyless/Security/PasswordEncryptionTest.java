@@ -40,6 +40,7 @@ public class PasswordEncryptionTest {
     User newUser = new User();
     newUser.setEmail("newmail@keyless.com");
     newUser.setFirstName("newUser");
+    newUser.setLastName("newUser");
     newUser.setCreatedAt(new Date());
     newUser.setPassword("password");
     userService.saveUser(newUser);

@@ -32,6 +32,9 @@ public class Key {
   @Column(name = "custom_permission")
   private boolean customPermission;
 
+  @Column
+  private String uid;
+
   @JsonIgnore
   @Temporal(TemporalType.DATE)
   private Date validFrom;
@@ -105,6 +108,14 @@ public class Key {
 
   public void setAid(String aid) {
     this.aid = aid;
+  }
+
+  public String getUid() {
+    return uid;
+  }
+
+  public void setUid(String uid) {
+    this.uid = uid;
   }
 
   public String getKeyName() {

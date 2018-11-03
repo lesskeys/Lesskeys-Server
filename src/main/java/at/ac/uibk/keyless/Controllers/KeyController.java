@@ -42,7 +42,7 @@ public class KeyController {
     if (sessionService.isValidSession(data.get("session").toString())) {
       Key newKey = new Key();
       keyService.registerKey(data.get("aid").toString(), data.get("content").toString(),
-        data.get("username").toString(), data.get("name").toString(), newKey);
+        data.get("username").toString(), data.get("name").toString(), newKey, data.get("uid").toString());
       lockService.addKeysToLocks((List<Object>) data.get("lockIds"), newKey.getKeyId());
       response.put("status", "Successfully added key!");
       // Log event implemented in service method.
@@ -100,6 +100,20 @@ public class KeyController {
   public Key getSpecificKey(@RequestBody Map<String, String> data) {
     if (sessionService.isValidSession(data.get("session"))) {
       return keyService.getKeyByIdForUser(Long.parseLong(data.get("keyId")), data.get("username"));
+    }
+    return null;
+  }
+
+  @RequestMapping(value = "/key/find", method = RequestMethod.POST)
+  public Map<String, String> getKeyOwner(@RequestBody Map<String, Object> data) {
+    Map<String, String> toReturn = new HashMap<>();
+    if (sessionService.isValidSession(data.get("session").toString())) {
+      Key found = keyService.getKeyByUid(data.get("uid").toString());
+      if (found != null) {
+        toReturn.put("firstName", found.getOwner().getFirstName());
+        toReturn.put("lastName", found.getOwner().getLastName());
+        return toReturn;
+      }
     }
     return null;
   }
