@@ -29,13 +29,16 @@ public class AdminInterfaceController {
 
 
   @RequestMapping(value = "/ai/login", method = RequestMethod.POST)
-  public Map<String, String> adminLogin(@RequestBody Map<String, String> data) {
-    Map<String, String> toReturn = new HashMap<>();
+  public Map<String, Object> adminLogin(@RequestBody Map<String, String> data) {
+    Map<String, Object> toReturn = new HashMap<>();
     String username = data.get("username");
     User user = userService.getUserByEmail(username);
     String password = data.get("password");
     toReturn.put("value", (userService.hasRole(user, "Admin") &&
       passwordEncoder.matches(password, user.getPassword())) ? "true" : "false");
+    if (toReturn.get("value").toString().equals("true")) {
+      toReturn.put("user", user);
+    }
     return toReturn;
   }
 
