@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Lukas Dötlinger.
@@ -75,7 +76,7 @@ public class AdminInterfaceController {
   }
 
   @RequestMapping(value = "/ai/log", method = RequestMethod.POST)
-  public List<SystemLogEntry> getEntries(@RequestBody Map<String, String> data) {
+  public Set<SystemLogEntry> getEntries(@RequestBody Map<String, String> data) {
     return systemLogService.getEntriesForUser(Long.parseLong(data.get("userId")));
   }
 }
