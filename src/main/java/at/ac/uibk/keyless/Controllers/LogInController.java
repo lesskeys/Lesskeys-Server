@@ -67,8 +67,7 @@ public class LogInController {
         response.put("token", entry.getToken());
         response.put("date", entry.getDateAsString());
         response.put("session", sessionService.initSession(loggedIn, data.get("firebaseToken")));
-        systemLogService.logEvent("logged in manually", "User: "+loggedIn.getUserId(),
-          "LogInEntry: "+entry.getLoginId());
+        systemLogService.logEvent("User "+loggedIn.getEmail()+" logged in manually", loggedIn.getUserId());
         return response;
       }
     }
@@ -92,8 +91,8 @@ public class LogInController {
         response.put("date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(newDate));
         response.put("session", sessionService.initSession(userRepository.findByUserId(entry.getUserId()),
           data.get("firebaseToken")));
-        systemLogService.logEvent("logged in automatically", "User: "+entry.getUserId(),
-          "LogInEntry: "+entry.getLoginId());
+        systemLogService.logEvent("User "+userRepository.findByUserId(entry.getUserId()).getEmail()+" logged in automatically",
+          entry.getUserId());
         return response;
       }
     }

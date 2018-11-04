@@ -18,11 +18,10 @@ public class SystemLogService {
   @Autowired
   private SystemLogEntryRepository systemLogRepository;
 
-  public void logEvent(String message, String actor, String target) {
+  public void logEvent(String message, long ownerId) {
     SystemLogEntry toSave = new SystemLogEntry();
     toSave.setLogTime(new Date());
-    toSave.setActor(actor);
-    toSave.setTarget(target);
+    toSave.setOwnerId(ownerId);
     toSave.setEvent(message);
     systemLogRepository.save(toSave);
   }

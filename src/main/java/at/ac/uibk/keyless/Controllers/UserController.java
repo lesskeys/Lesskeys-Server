@@ -70,8 +70,8 @@ public class UserController {
         User subUser = userService.getUserByEmail(subUserName);
         lockService.removeUserFromLocks(subUser.getUserId());
         lockService.addUserToLocks((List<Object>) data.get("lockIds"), subUser.getUserId());
-        logService.logEvent("edited permissions", "User: "+user.getUserId(),
-          "User: "+subUser.getUserId());
+        logService.logEvent("User "+user.getEmail()+" edited permissions of "+subUser.getEmail(),
+          user.getUserId());
       }
     }
   }
@@ -141,8 +141,8 @@ public class UserController {
       userService.saveUser(newUser);
       lockService.addUserToLocks((List<Object>) data.get("lockIds"), newUser.getUserId());
       response.put("status", "Added new user!");
-      logService.logEvent("added new user", "User: "+operatingUser.getUserId(),
-        "User: "+newUser.getUserId());
+      logService.logEvent("User "+operatingUser.getEmail()+" added new user "+newUser.getEmail(),
+        operatingUser.getUserId());
       return response;
     }
     response.put("status", "Failure!");
