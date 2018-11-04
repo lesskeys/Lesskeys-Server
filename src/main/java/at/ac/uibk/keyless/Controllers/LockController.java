@@ -40,6 +40,16 @@ public class LockController {
 
 
   /**
+   *  Method for a lock to log an event that opened it.
+   */
+  @RequestMapping(value = "/lock/log-unlock", method = RequestMethod.PUT)
+  public void logUnlock(@RequestBody Map<String, String> data) {
+    Lock lock = lockService.getLockById(Long.parseLong(data.get("lockId")));
+    systemLogService.logEvent(data.get("message"), lock.getRelevantUserIds().stream()
+      .findFirst().orElse(0L));
+  }
+
+  /**
    * @return locks for a given keyId.
    */
   @RequestMapping(value = "/lock/get-for-key", method = RequestMethod.POST)
