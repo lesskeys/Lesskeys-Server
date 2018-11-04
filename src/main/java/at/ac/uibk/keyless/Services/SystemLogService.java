@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -28,5 +29,11 @@ public class SystemLogService {
 
   public List<SystemLogEntry> getAll() {
     return systemLogRepository.findAll();
+  }
+
+  public List<SystemLogEntry> getEntriesForUser(long userId) {
+    return systemLogRepository.findAll().stream()
+      .filter(e -> e.getOwnerId() == userId)
+      .collect(Collectors.toList());
   }
 }

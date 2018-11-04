@@ -1,8 +1,10 @@
 package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.Lock;
+import at.ac.uibk.keyless.Models.SystemLogEntry;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Services.LockService;
+import at.ac.uibk.keyless.Services.SystemLogService;
 import at.ac.uibk.keyless.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +25,9 @@ public class AdminInterfaceController {
 
   @Autowired
   UserService userService;
+
+  @Autowired
+  SystemLogService systemLogService;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -67,5 +72,10 @@ public class AdminInterfaceController {
     Map<String, String> toReturn = new HashMap<>();
     toReturn.put("value", "true");
     return toReturn;
+  }
+
+  @RequestMapping(value = "/ai/log", method = RequestMethod.POST)
+  public List<SystemLogEntry> getEntries(@RequestBody Map<String, String> data) {
+    return systemLogService.getEntriesForUser(Long.parseLong(data.get("userId")));
   }
 }
