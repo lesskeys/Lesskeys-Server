@@ -53,4 +53,21 @@ public class LockRequestService {
     request.setIssued(new Date());
     unlockRequestRepository.save(request);
   }
+
+
+  /**
+   * @return true if a Socket can be opened to a Lock, false otherwise
+   */
+  public boolean isLockOnline() {
+    Lock lock = lockService.getLockById(1L);
+    String[] connectionData = lock.getAddress().split(":");
+    boolean toReturn = true;
+    try {
+      Socket socket = new Socket(connectionData[0], Integer.parseInt(connectionData[1]));
+      socket.close();
+    } catch (Exception e) {
+      toReturn = false;
+    }
+    return toReturn;
+  }
 }

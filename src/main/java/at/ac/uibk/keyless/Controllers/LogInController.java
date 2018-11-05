@@ -4,6 +4,7 @@ import at.ac.uibk.keyless.Models.LogInEntry;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.LogInEntryRepository;
 import at.ac.uibk.keyless.Repositories.UserRepository;
+import at.ac.uibk.keyless.Services.LockRequestService;
 import at.ac.uibk.keyless.Services.LogInService;
 import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.SystemLogService;
@@ -43,6 +44,9 @@ public class LogInController {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  @Autowired
+  private LockRequestService lockRequestService;
+
 
   private static String generateToken(String deviceId) {
     String alphabet = deviceId;
@@ -68,6 +72,7 @@ public class LogInController {
         response.put("date", entry.getDateAsString());
         response.put("session", sessionService.initSession(loggedIn, data.get("firebaseToken")));
         systemLogService.logLoginEvent(loggedIn, "Logged in automatically");
+        response.put("lockOnline", Boolean.toString(lockRequestService.isLockOnline()));
         return response;
       }
     }
@@ -92,6 +97,7 @@ public class LogInController {
         response.put("session", sessionService.initSession(userRepository.findByUserId(entry.getUserId()),
           data.get("firebaseToken")));
         systemLogService.logLoginEvent(userRepository.findByUserId(entry.getUserId()), "Logged in automatically");
+        response.put("lockOnline", Boolean.toString(lockRequestService.isLockOnline()));
         return response;
       }
     }
