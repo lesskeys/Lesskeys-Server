@@ -32,7 +32,7 @@ public class LockRequestService {
     try {
       Socket socket = new Socket(connectionData[0], Integer.parseInt(connectionData[1]));
       DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-      output.writeUTF(message);
+      output.write(message.getBytes());
       socket.close();
     } catch (Exception e) {
       System.err.println("Failed to request!");
