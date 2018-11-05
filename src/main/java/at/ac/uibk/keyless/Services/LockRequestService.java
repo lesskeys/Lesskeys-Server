@@ -1,11 +1,16 @@
 package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Lock;
+import at.ac.uibk.keyless.Models.UnlockRequest;
+import at.ac.uibk.keyless.Repositories.UnlockRequestRepository;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -15,6 +20,9 @@ public class LockRequestService {
 
   @Autowired
   private LockService lockService;
+
+  @Autowired
+  private UnlockRequestRepository unlockRequestRepository;
 
 
   public void sendMessageToLock(long lockId, String message) {
@@ -29,5 +37,18 @@ public class LockRequestService {
       System.err.println("Failed to request!");
       e.printStackTrace();
     }
+  }
+
+  public boolean isToUnlock(long lockId) {
+    return unlockRequestRepository.findAll().stream()
+      .filter(r -> r.getLockId() == lockId)
+      .filter(r -> Minutes.minutesBetween(new DateTime(r.getIssued()), new DateTime()).isLessThan(Minutes.minutes(5)))
+      .collect(Collectors.toList()).size() > 0;
+  }
+
+  public void addNewUnlockRequest(long lockId) {
+    UnlockRequest request = new UnlockRequest();
+    request.setLockId(lockId);
+    unlockRequestRepository.save(request);
   }
 }
