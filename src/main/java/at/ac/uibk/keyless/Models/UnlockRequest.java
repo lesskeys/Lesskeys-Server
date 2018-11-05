@@ -19,7 +19,6 @@ public class UnlockRequest {
   private Long lockId;
 
   @Temporal(TemporalType.TIMESTAMP)
-  @CreatedDate
   @Column(nullable = false, updatable = false)
   private Date issued;
 
@@ -37,5 +36,9 @@ public class UnlockRequest {
 
   public Date getIssued() {
     return issued;
+  }
+
+  public void setIssued(Date issued) {
+    this.issued = issued;
   }
 }

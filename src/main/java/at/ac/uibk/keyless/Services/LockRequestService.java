@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +50,7 @@ public class LockRequestService {
   public void addNewUnlockRequest(long lockId) {
     UnlockRequest request = new UnlockRequest();
     request.setLockId(lockId);
+    request.setIssued(new Date());
     unlockRequestRepository.save(request);
   }
 }
