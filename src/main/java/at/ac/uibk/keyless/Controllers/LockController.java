@@ -40,6 +40,16 @@ public class LockController {
 
 
   /**
+   *  Method for a lock to log an event that opened it.
+   */
+  @RequestMapping(value = "/lock/log-unlock", method = RequestMethod.PUT)
+  public void logUnlock(@RequestBody Map<String, String> data) {
+    Lock lock = lockService.getLockById(Long.parseLong(data.get("lockId")));
+    systemLogService.logEvent(data.get("message"), lock.getRelevantUserIds().stream()
+      .findFirst().orElse(0L));
+  }
+
+  /**
    * @return locks for a given keyId.
    */
   @RequestMapping(value = "/lock/get-for-key", method = RequestMethod.POST)
@@ -48,8 +58,6 @@ public class LockController {
     if (sessionService.isValidSession(data.get("session")) &&
       keyService.getKeysForUser(data.get("username")).stream()
         .anyMatch(key -> key.getKeyId() == keyId)) {
-      systemLogService.logEvent("requested lock for key", "User: "
-          +userService.getUserByEmail(data.get("username")).getUserId(), "Key: "+keyId);
       return lockService.getLocksForKey(keyId);
     }
     return null;
@@ -63,8 +71,6 @@ public class LockController {
     User user = userService.getUserByEmail(data.get("username"));
     String session = data.get("session");
     if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())) {
-      systemLogService.logEvent("requested lock for user", "User: "
-        +userService.getUserByEmail(data.get("username")).getUserId(), "self");
       return lockService.getLocksForUser(user.getUserId());
     }
     return null;
@@ -81,8 +87,6 @@ public class LockController {
     if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())
       && user.getSubUsers().stream()
         .anyMatch(u -> u.getUserId() == subUserId)) {
-      systemLogService.logEvent("requested lock for user", "User: "
-        +userService.getUserByEmail(data.get("username")).getUserId(), "User: "+subUserId);
       return lockService.getLocksForUser(subUserId);
     }
     return null;
@@ -94,10 +98,12 @@ public class LockController {
     if (lock != null) {
       User user = userService.getUserByEmail(data.get("username"));
       String session = data.get("session");
-      systemLogService.logEvent("lock tried to verify user", "Lock: "+lock.getLockId(),
-        "User: "+user.getUserId());
-      return sessionService.userMatchesSession(session, user.getUserId()) &&
-        lock.getRelevantUserIds().contains(user.getUserId());
+      if (sessionService.userMatchesSession(session, user.getUserId()) &&
+        lock.getRelevantUserIds().contains(user.getUserId())) {
+        systemLogService.logEvent("Lock "+lock.getName()+" opened by "+user.getEmail(), user.getUserId());
+        return true;
+      }
+      systemLogService.logEvent("Lock "+lock.getName()+" denied "+user.getEmail(), user.getUserId());
     }
     return false;
   }

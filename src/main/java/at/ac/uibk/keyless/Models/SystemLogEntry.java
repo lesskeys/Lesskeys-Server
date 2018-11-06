@@ -17,15 +17,12 @@ public class SystemLogEntry {
   private long systemLogId;
 
   @Column(nullable = false, updatable = false)
+  private long ownerId;
+
+  @Column(nullable = false, updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
   private Date logTime;
-
-  @Column(updatable = false)
-  private String actor;
-
-  @Column(updatable = false)
-  private String target;
 
   @Column(nullable = false, updatable = false)
   private String event;
@@ -35,28 +32,20 @@ public class SystemLogEntry {
     return systemLogId;
   }
 
+  public long getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(long ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public Date getLogTime() {
     return logTime;
   }
 
   public void setLogTime(Date logTime) {
     this.logTime = logTime;
-  }
-
-  public String getActor() {
-    return actor;
-  }
-
-  public void setActor(String actor) {
-    this.actor = actor;
-  }
-
-  public String getTarget() {
-    return target;
-  }
-
-  public void setTarget(String target) {
-    this.target = target;
   }
 
   public String getEvent() {

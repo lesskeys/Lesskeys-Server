@@ -3,6 +3,7 @@ package at.ac.uibk.keyless.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,11 @@ public class Lock {
   @CollectionTable(name = "locks_unlockkeys")
   private List<Key> relevantKeys;
 
+
+  public Lock() {
+    this.relevantUsers = new ArrayList<>();
+    this.relevantKeys = new ArrayList<>();
+  }
 
   public Long getLockId() {
     return lockId;

@@ -79,8 +79,8 @@ public class KeyService {
       toEdit.setValidFrom(newKey.getValidFrom());
       toEdit.setValidTo(newKey.getValidTo());
       keyRepository.save(toEdit);
-      logService.logEvent("edited key", "User: "+userService.getUserByEmail(username).getUserId(),
-        "Key: "+toEdit.getKeyId());
+      logService.logEvent("User "+username+" edited key "+toEdit.getKeyId(),
+        userService.getUserByEmail(username).getUserId());
     }
   }
 
@@ -94,8 +94,8 @@ public class KeyService {
     toSave.setCustomPermission(false);
     Key saved = keyRepository.save(toSave);
     keyPermissionService.savePermission(new KeyPermission(saved));
-    logService.logEvent("registered new key", "User: "+owner.getUserId(),
-      "Key: "+toSave.getKeyId());
+    logService.logEvent("User "+username+" registered key "+saved.getKeyId(),
+      userService.getUserByEmail(username).getUserId());
   }
 
   public List<Key> getKeysForUser(String username) {
@@ -119,8 +119,8 @@ public class KeyService {
     if (toDelete.getOwner().getEmail().equals(username) ||
       userService.hasRole(toDelete.getOwner(), "Admin")) {
       keyRepository.delete(toDelete);
-      logService.logEvent("deleted key", "User: "+toDelete.getOwner().getUserId(),
-        "Key: "+toDelete.getKeyId());
+      logService.logEvent("User "+username+" deleted key "+toDelete.getKeyName(),
+        userService.getUserByEmail(username).getUserId());
     }
   }
 
