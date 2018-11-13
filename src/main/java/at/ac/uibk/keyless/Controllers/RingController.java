@@ -1,6 +1,7 @@
 package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.User;
+import at.ac.uibk.keyless.Services.RingMessageService;
 import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.UserService;
 import com.google.firebase.messaging.*;
@@ -27,6 +28,9 @@ public class RingController {
   @Autowired
   SessionService sessionService;
 
+  @Autowired
+  RingMessageService messageService;
+
 
   private String authCode = "";
 
@@ -52,6 +56,7 @@ public class RingController {
   public void sendRingMessage(@RequestBody Map<String, String> data) {
     User receiver = userService.getUserById(Long.parseLong(data.get("userId")));
     String message = data.get("message");
+    String sender = data.get("sender");
 
     String registrationToken = sessionService.getByUserId(receiver.getUserId()).getFireBaseToken();
     if (registrationToken == null) {
@@ -62,7 +67,7 @@ public class RingController {
       .setAndroidConfig(AndroidConfig.builder()
         .setPriority(AndroidConfig.Priority.HIGH)
         .setNotification(AndroidNotification.builder()
-          .setTitle("Klingel")
+          .setTitle("Klingel von "+sender)
           .setBody(message)
           .setIcon("stock_ticker_update")
           .build())
@@ -71,6 +76,7 @@ public class RingController {
 
     try {
       FirebaseMessaging.getInstance().send(toSend);
+      messageService.saveRingMessage(sender, message, receiver.getUserId());
     } catch (FirebaseMessagingException e) {
       e.printStackTrace();
     }
