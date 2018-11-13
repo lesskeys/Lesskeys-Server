@@ -25,7 +25,7 @@ public class RingMessage {
   @Column(updatable = false)
   private String message;
 
-  @Column(nullable = false, updatable = false)
+  @Column(nullable = false, updatable = false, name = "sent_time")
   @Temporal(TemporalType.TIMESTAMP)
   private Date timestamp;
 
