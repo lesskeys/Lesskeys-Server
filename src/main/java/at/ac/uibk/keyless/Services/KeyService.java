@@ -1,9 +1,6 @@
 package at.ac.uibk.keyless.Services;
 
-import at.ac.uibk.keyless.Models.Key;
-import at.ac.uibk.keyless.Models.KeyPermission;
-import at.ac.uibk.keyless.Models.Lock;
-import at.ac.uibk.keyless.Models.User;
+import at.ac.uibk.keyless.Models.*;
 import at.ac.uibk.keyless.Repositories.KeyRepository;
 import at.ac.uibk.keyless.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +39,11 @@ public class KeyService {
     return keyRepository.findByKeyId(id);
   }
 
+
+  public List<Key> getAllKeys() {
+    return keyRepository.findAll();
+  }
+
   /**
    * @param id Id of the key to return.
    * @param username Email of the requesting user.
@@ -65,6 +67,14 @@ public class KeyService {
       .filter(k -> k.getUid().equals(uid))
       .findFirst()
       .orElse(null);
+  }
+
+  /**
+   * Method to set the mode of a Key to BLOCKED
+   */
+  public void deactivateKey(Key key) {
+    key.setMode(KeyMode.BLOCKED);
+    keyRepository.save(key);
   }
 
   /**
@@ -107,10 +117,6 @@ public class KeyService {
     }
   }
 
-  public List<Key> getAllKeys() {
-    return keyRepository.findAll();
-  }
-
   /**
    * Method to delete a Key if the operating user is an owner or has the role Admin.
    */
@@ -126,12 +132,11 @@ public class KeyService {
 
   public boolean isValid(Key key) {
     Date current = new Date();
-    if ((key.getValidFrom().before(current) && key.getValidTo().after(current))
-      && keyPermissionService.isValid(key.getPermission())) {
-      return true;
-    } else {
+    if (key.getMode().toString().equals("Blocked")) {
       return false;
     }
+    return (((key.getValidFrom().before(current) && key.getValidTo().after(current))
+      && keyPermissionService.isValid(key.getPermission())) || (key.getMode().toString().equals("Active")));
   }
 
   public boolean isValidContent(String content, Lock lock) {

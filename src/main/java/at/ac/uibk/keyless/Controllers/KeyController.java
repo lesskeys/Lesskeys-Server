@@ -110,6 +110,7 @@ public class KeyController {
     if (sessionService.isValidSession(data.get("session").toString())) {
       Key found = keyService.getKeyByUid(data.get("uid").toString());
       if (found != null) {
+        keyService.deactivateKey(found);
         toReturn.put("firstName", found.getOwner().getFirstName());
         toReturn.put("lastName", found.getOwner().getLastName());
         return toReturn;
