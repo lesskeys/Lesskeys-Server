@@ -58,10 +58,14 @@ public class RingController {
     String message = data.get("message");
     String sender = data.get("sender");
 
-    String registrationToken = sessionService.getByUserId(receiver.getUserId()).getFireBaseToken();
+    String registrationToken;
+    try {
+      registrationToken = sessionService.getByUserId(receiver.getUserId()).getFireBaseToken();
+    } catch (NullPointerException e) { return; }
     if (registrationToken == null) {
       return;
     }
+
     Message toSend = Message.builder()
       .setToken(registrationToken)
       .setAndroidConfig(AndroidConfig.builder()
