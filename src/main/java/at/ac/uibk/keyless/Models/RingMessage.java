@@ -30,6 +30,10 @@ public class RingMessage {
   private Date timestamp;
 
 
+  public Long getMessageId() {
+    return messageId;
+  }
+
   public Long getRecipientId() {
     return recipientId;
   }

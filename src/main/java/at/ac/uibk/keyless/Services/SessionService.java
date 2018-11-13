@@ -3,6 +3,7 @@ package at.ac.uibk.keyless.Services;
 import at.ac.uibk.keyless.Models.Session;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.SessionRepository;
+import at.ac.uibk.keyless.Repositories.UserRepository;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class SessionService {
+
+  @Autowired
+  private UserService userService;
 
   @Autowired
   private SessionRepository sessionRepository;
@@ -55,7 +59,7 @@ public class SessionService {
   }
 
   /**
-   * @param token
+   * @param token, the session token
    * @return checks if a token is valid and not older than 30 minutes
    */
   public boolean isValidSession(String token) {
@@ -70,6 +74,17 @@ public class SessionService {
   public boolean userMatchesSession(String session, Long userId) {
     if (session != null && userId != null) {
       return sessionRepository.findByUserId(userId).getSessionToken().equals(session);
+    }
+    return false;
+  }
+
+  /**
+   * Check if a user matches a given session token, which is also valid
+   */
+  public boolean userMatchesValidSession(String session, String username) {
+    User user = userService.getUserByEmail(username);
+    if (user != null) {
+      return (isValidSession(session) && userMatchesSession(session, user.getUserId()));
     }
     return false;
   }
