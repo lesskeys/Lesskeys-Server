@@ -27,13 +27,18 @@ public class Key {
   @JsonIgnore
   private String content;
 
+  @Column
   private String aid;
-
-  @Column(name = "custom_permission")
-  private boolean customPermission;
 
   @Column
   private String uid;
+
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private KeyMode mode;
+
+  @Column(name = "custom_permission")
+  private boolean customPermission;
 
   @JsonIgnore
   @Temporal(TemporalType.DATE)
@@ -116,6 +121,14 @@ public class Key {
 
   public void setUid(String uid) {
     this.uid = uid;
+  }
+
+  public KeyMode getMode() {
+    return mode;
+  }
+
+  public void setMode(KeyMode mode) {
+    this.mode = mode;
   }
 
   public String getKeyName() {
