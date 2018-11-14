@@ -37,9 +37,6 @@ public class Key {
   @Enumerated(EnumType.STRING)
   private KeyMode mode;
 
-  @Column(name = "custom_permission")
-  private boolean customPermission;
-
   @JsonIgnore
   @Temporal(TemporalType.DATE)
   private Date validFrom;
