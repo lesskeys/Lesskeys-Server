@@ -4,6 +4,9 @@ import at.ac.uibk.keyless.Models.Key;
 import at.ac.uibk.keyless.Models.KeyMode;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Services.*;
+import com.google.firebase.messaging.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.comparator.Comparators;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +44,11 @@ public class KeyController {
 
   @Autowired
   SystemLogService logService;
+
+  @Autowired
+  RingMessageService messageService;
+
+  private final Logger SpringConsoleLogger = LoggerFactory.getLogger(this.getClass());
 
 
   @RequestMapping(value = "/key/register", method = RequestMethod.POST)
@@ -134,6 +142,42 @@ public class KeyController {
         keyService.deactivateKey(found);
         toReturn.put("firstName", found.getOwner().getFirstName());
         toReturn.put("lastName", found.getOwner().getLastName());
+
+        // Send notification to key owner
+        String registrationToken;
+        try {
+          registrationToken = sessionService.getByUserId(found.getOwner().getUserId()).getFireBaseToken();
+        } catch (NullPointerException e) {
+          SpringConsoleLogger.error("/key/find: Owner wos not notified");
+          return toReturn;
+        }
+        if (registrationToken == null) {
+          SpringConsoleLogger.error("/key/find: Owner wos not notified");
+          return toReturn;
+        }
+        User finder = userService.getUserByEmail(data.get("username").toString());
+        String message = "Schlüssel "+found.getKeyName()+" wurde von "+finder.getFirstName()+" "+finder.getLastName()+" gefunden!";
+
+        Message toSend = Message.builder()
+          .setToken(registrationToken)
+          .setAndroidConfig(AndroidConfig.builder()
+            .setPriority(AndroidConfig.Priority.HIGH)
+            .setNotification(AndroidNotification.builder()
+              .setTitle("Lesskeys Systemnachricht")
+              .setBody(message)
+              .setIcon("stock_ticker_update")
+              .build())
+            .build())
+          .build();
+
+        try {
+          FirebaseMessaging.getInstance().send(toSend);
+          messageService.saveRingMessage("System", message, found.getOwner().getUserId());
+        } catch (FirebaseMessagingException e) {
+          SpringConsoleLogger.error("/key/find: Owner wos not notified");
+          e.printStackTrace();
+        }
+
         return toReturn;
       }
     }
