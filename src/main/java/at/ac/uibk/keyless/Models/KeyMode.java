@@ -9,8 +9,7 @@ public enum KeyMode {
   DISABLED,
   CUSTOM;
 
-  @Override
-  public String toString() {
+  public String toLowString() {
     String role = super.toString();
     return role.charAt(0) + role.substring(1).toLowerCase();
   }

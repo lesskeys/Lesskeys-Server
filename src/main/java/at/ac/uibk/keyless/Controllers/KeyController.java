@@ -71,10 +71,12 @@ public class KeyController {
       // check if the user is the owner of the key
       if (!(user.getKeys().stream()
         .filter(k -> k.getKeyId() == key.getKeyId())
-        .collect(Collectors.toList()).size() > 0)) { return; }
+        .collect(Collectors.toList()).size() > 0))
+      { return; }
 
-      key.setKeyName(Optional.ofNullable(data.get("newName").toString()).orElse(key.getKeyName()));
-      key.setMode(Optional.ofNullable((KeyMode) data.get("newMode")).orElse(key.getMode()));
+
+      key.setKeyName(Optional.ofNullable(data.get("newName")).orElse(key.getKeyName()).toString());
+      key.setMode(KeyMode.valueOf(Optional.ofNullable(data.get("newMode")).orElse(key.getMode()).toString()));
 
       SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
       Date newValidFrom = null;

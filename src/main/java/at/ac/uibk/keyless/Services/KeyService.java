@@ -121,11 +121,11 @@ public class KeyService {
 
   public boolean isValid(Key key) {
     Date current = new Date();
-    if (key.getMode().toString().equals("Disabled")) {
+    if (key.getMode().toLowString().equals("Disabled")) {
       return false;
     }
     return (((key.getValidFrom().before(current) && key.getValidTo().after(current))
-      && keyPermissionService.isValid(key.getPermission())) || (key.getMode().toString().equals("Enabled")));
+      && keyPermissionService.isValid(key.getPermission())) || (key.getMode().toLowString().equals("Enabled")));
   }
 
   public boolean isValidContent(String content, Lock lock) {
