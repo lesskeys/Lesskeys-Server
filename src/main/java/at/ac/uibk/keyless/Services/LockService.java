@@ -82,13 +82,9 @@ public class LockService {
    */
   public List<Lock> getLocksForUser(Long userId) {
     User operator = userService.getUserById(userId);
-    if (userService.hasRole(operator, "Admin")) {
-      return lockRepository.findAll();
-    } else {
-      return lockRepository.findAll().stream()
-        .filter(l -> l.getRelevantUserIds().contains(userId))
-        .collect(Collectors.toList());
-    }
+    return lockRepository.findAll().stream()
+      .filter(l -> l.getRelevantUserIds().contains(userId))
+      .collect(Collectors.toList());
   }
 
   public Lock getLockForIdAndCode(Long lockId, String code) {
