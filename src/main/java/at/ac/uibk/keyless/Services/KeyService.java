@@ -78,30 +78,20 @@ public class KeyService {
   }
 
   /**
-   * Function to edit an existing key.
-   * TODO: Extend method for new parameters.
+   * Method to edit an existing key.
    */
-  public void editKey(Long keyId, Key newKey, String username) {
-    Key toEdit = keyRepository.findByKeyId(keyId);
-    if (toEdit != null) {
-      toEdit.setKeyName(newKey.getKeyName());
-      toEdit.setCustomPermission(newKey.isCustomPermission());
-      toEdit.setValidFrom(newKey.getValidFrom());
-      toEdit.setValidTo(newKey.getValidTo());
-      keyRepository.save(toEdit);
-      logService.logEvent("User "+username+" edited key "+toEdit.getKeyId(),
-        userService.getUserByEmail(username).getUserId());
-    }
+  public void editKey(Key key, User user) {
+    keyRepository.save(key);
+    logService.logEvent("User "+user.getEmail()+" edited key "+key.getKeyId(), user.getUserId());
   }
 
-  public void registerKey(String aid, String content, String username, String keyName, Key toSave, String uid) {
+  /**
+   * Method to register a new key.
+   */
+  public void registerKey(String content, String username, Key toSave) {
     User owner = userRepository.findFirstByEmail(username);
-    toSave.setAid(aid);
     toSave.setContent(passwordEncoder.encode(content));
     toSave.setOwner(owner);
-    toSave.setKeyName(keyName);
-    toSave.setUid(uid);
-    toSave.setCustomPermission(false);
     Key saved = keyRepository.save(toSave);
     keyPermissionService.savePermission(new KeyPermission(saved));
     logService.logEvent("User "+username+" registered key "+saved.getKeyId(),

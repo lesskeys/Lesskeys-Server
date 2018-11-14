@@ -139,14 +139,6 @@ public class Key {
     this.keyName = keyName;
   }
 
-  public boolean isCustomPermission() {
-    return customPermission;
-  }
-
-  public void setCustomPermission(boolean customPermission) {
-    this.customPermission = customPermission;
-  }
-
   public Date getValidFrom() {
     return validFrom;
   }

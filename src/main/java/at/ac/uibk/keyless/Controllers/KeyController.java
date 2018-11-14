@@ -1,8 +1,11 @@
 package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.Key;
+import at.ac.uibk.keyless.Models.KeyMode;
+import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.comparator.Comparators;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -19,6 +23,9 @@ public class KeyController {
 
   @Autowired
   KeyService keyService;
+
+  @Autowired
+  UserService userService;
 
   @Autowired
   KeyPermissionService keyPermissionService;
@@ -41,8 +48,11 @@ public class KeyController {
     Map<String, String> response = new HashMap<>();
     if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       Key newKey = new Key();
-      keyService.registerKey(data.get("aid").toString(), data.get("content").toString(),
-        data.get("username").toString(), data.get("name").toString(), newKey, data.get("uid").toString());
+      newKey.setKeyName(data.get("name").toString());
+      newKey.setAid(data.get("aid").toString());
+      newKey.setUid(data.get("uid").toString());
+      newKey.setMode(KeyMode.valueOf(data.get("mode").toString()));
+      keyService.registerKey(data.get("content").toString(), data.get("username").toString(), newKey);
       lockService.addKeysToLocks((List<Object>) data.get("lockIds"), newKey.getKeyId());
       response.put("status", "Successfully added key!");
       // Log event implemented in service method.
@@ -55,9 +65,17 @@ public class KeyController {
   @RequestMapping(value = "/key/edit", method = RequestMethod.PUT)
   public void editKey(@RequestBody Map<String, Object> data) {
     if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
-      Key newKey = new Key();
-      newKey.setKeyName(data.get("newName").toString());
-      newKey.setCustomPermission(Boolean.parseBoolean(data.get("isCustom").toString()));
+      User user = userService.getUserByEmail(data.get("username").toString());
+      Key key = keyService.getKeyById(Long.parseLong(data.get("keyId").toString()));
+
+      // check if the user is the owner of the key
+      if (!(user.getKeys().stream()
+        .filter(k -> k.getKeyId() == key.getKeyId())
+        .collect(Collectors.toList()).size() > 0)) { return; }
+
+      key.setKeyName(Optional.ofNullable(data.get("newName").toString()).orElse(key.getKeyName()));
+      key.setMode(Optional.ofNullable((KeyMode) data.get("newMode")).orElse(key.getMode()));
+
       SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
       Date newValidFrom = null;
       Date newValidTo = null;
@@ -65,9 +83,10 @@ public class KeyController {
         newValidFrom = sdf.parse(data.get("validFrom").toString());
         newValidTo = sdf.parse(data.get("validTo").toString());
       } catch (Exception e) {}
-      newKey.setValidFrom(Optional.ofNullable(newValidFrom).orElse(newKey.getValidFrom()));
-      newKey.setValidTo(Optional.ofNullable(newValidTo).orElse(newKey.getValidTo()));
-      keyService.editKey(Long.parseLong(data.get("keyId").toString()), newKey, data.get("username").toString());
+      key.setValidFrom(Optional.ofNullable(newValidFrom).orElse(key.getValidFrom()));
+      key.setValidTo(Optional.ofNullable(newValidTo).orElse(key.getValidTo()));
+
+      keyService.editKey(key, user);
       lockService.removeKeyFromLocks(Long.parseLong(data.get("keyId").toString()));
       lockService.addKeysToLocks((List<Object>) data.get("lockIds"), Long.parseLong(data.get("keyId").toString()));
       // Log event implemented in service method.
