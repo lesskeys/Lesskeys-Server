@@ -39,7 +39,7 @@ public class KeyController {
   @RequestMapping(value = "/key/register", method = RequestMethod.POST)
   public Map<String, String> registerKey(@RequestBody Map<String, Object> data) {
     Map<String, String> response = new HashMap<>();
-    if (sessionService.isValidSession(data.get("session").toString())) {
+    if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       Key newKey = new Key();
       keyService.registerKey(data.get("aid").toString(), data.get("content").toString(),
         data.get("username").toString(), data.get("name").toString(), newKey, data.get("uid").toString());
@@ -54,7 +54,7 @@ public class KeyController {
 
   @RequestMapping(value = "/key/edit", method = RequestMethod.PUT)
   public void editKey(@RequestBody Map<String, Object> data) {
-    if (sessionService.isValidSession(data.get("session").toString())) {
+    if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       Key newKey = new Key();
       newKey.setKeyName(data.get("newName").toString());
       newKey.setCustomPermission(Boolean.parseBoolean(data.get("isCustom").toString()));
@@ -77,7 +77,7 @@ public class KeyController {
   @RequestMapping(value = "/key/delete", method = RequestMethod.POST)
   public Map<String, String> deleteKey(@RequestBody Map<String, String> data) {
     Map<String, String> toReturn = new HashMap<>();
-    if (sessionService.isValidSession(data.get("session"))) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       keyService.deleteKey(Long.parseLong(data.get("keyId")), data.get("username"));
       toReturn.put("status", "Success");
       return toReturn;
@@ -90,7 +90,7 @@ public class KeyController {
 
   @RequestMapping(value = "/keys", method = RequestMethod.POST)
   public List<Key> getUsersKeys(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       return keyService.getKeysForUser(data.get("username"));
     }
     return null;
@@ -98,7 +98,7 @@ public class KeyController {
 
   @RequestMapping(value = "/key-by-id", method = RequestMethod.POST)
   public Key getSpecificKey(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       return keyService.getKeyByIdForUser(Long.parseLong(data.get("keyId")), data.get("username"));
     }
     return null;
@@ -107,7 +107,7 @@ public class KeyController {
   @RequestMapping(value = "/key/find", method = RequestMethod.POST)
   public Map<String, String> getKeyOwner(@RequestBody Map<String, Object> data) {
     Map<String, String> toReturn = new HashMap<>();
-    if (sessionService.isValidSession(data.get("session").toString())) {
+    if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       Key found = keyService.getKeyByUid(data.get("uid").toString());
       if (found != null) {
         keyService.deactivateKey(found);

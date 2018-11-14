@@ -108,13 +108,12 @@ public class KeyService {
       userService.getUserByEmail(username).getUserId());
   }
 
+  /**
+   * @return all keys where a given user is the owner
+   */
   public List<Key> getKeysForUser(String username) {
     User operator = userRepository.findFirstByEmail(username);
-    if (userService.hasRole(operator, "Admin")) {
-      return getAllKeys();
-    } else {
-      return keyRepository.findKeyForUser(operator);
-    }
+    return keyRepository.findKeyForUser(operator);
   }
 
   /**
