@@ -1,6 +1,7 @@
 package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
+import at.ac.uibk.keyless.Models.KeyMode;
 import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Repositories.LockRepository;
 import org.hibernate.Hibernate;
@@ -38,6 +39,9 @@ public class KeyServiceTest {
   @Autowired
   LockRepository lockRepository;
 
+  @Autowired
+  UserService userService;
+
 
   private Key newKey;
 
@@ -48,7 +52,9 @@ public class KeyServiceTest {
   @Before
   public void addKey() {
     Key toSave = new Key();
-    keyService.registerKey("test", keyContent, username, "test", toSave, "test");
+    toSave.setKeyName("test");
+    toSave.setMode(KeyMode.CUSTOM);
+    keyService.registerKey(keyContent, username, toSave);
     newKey = keyService.getKeyById(toSave.getKeyId());
   }
 
@@ -66,7 +72,10 @@ public class KeyServiceTest {
     assertThat(keyService.getKeysForUser(username).stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(false));
 
-    keyService.registerKey("010", "AAAA", username, "newestKey", new Key(), "test");
+    Key newKey = new Key();
+    newKey.setKeyName("newestKey");
+    newKey.setMode(KeyMode.CUSTOM);
+    keyService.registerKey("AAAA", username, newKey);
     assertThat(keyService.getKeyById(highestKeyId+1), is(notNullValue()));
     assertThat(keyService.getKeysForUser(username).stream()
       .anyMatch(k -> k.getKeyName().equals("newestKey")), is(true));
@@ -78,7 +87,7 @@ public class KeyServiceTest {
     List<Key> modList = keyService.getKeysForUser("lukas@keyless.com");
     assertThat(modList.stream()
       .allMatch(k1 -> adminList.stream()
-        .anyMatch(k2 -> k1.getKeyName().equals(k2.getKeyName()))), is(true));
+        .anyMatch(k2 -> k1.getKeyName().equals(k2.getKeyName()))), is(false));
     assertThat(adminList.stream()
       .allMatch(k1 -> modList.stream()
         .anyMatch(k2 -> k1.getKeyName().equals(k2.getKeyName()))), is(false));
@@ -89,19 +98,17 @@ public class KeyServiceTest {
     Key toEdit = keyService.getKeyById(1L);
     assertThat(toEdit.getKeyName(), not(is("test")));
 
-    Key newKey = new Key();
-    newKey.setKeyName("test");
-    newKey.setCustomPermission(!toEdit.isCustomPermission());
-    keyService.editKey(1L, newKey, username);
+    toEdit.setKeyName("test");
+    toEdit.setMode(KeyMode.CUSTOM);
+    keyService.editKey(toEdit, userService.getUserByEmail(username));
 
     Key edited = keyService.getKeyById(1L);
     assertThat(edited.getKeyName(), is("test"));
-    assertThat(edited.isCustomPermission(), not(toEdit.isCustomPermission()));
   }
 
   @Test
   public void testIsValid() {
-    newKey.setCustomPermission(true);
+    newKey.setMode(KeyMode.CUSTOM);
     Calendar c = Calendar.getInstance();
     c.add(Calendar.MONTH, -1);
     newKey.setValidFrom(c.getTime());
