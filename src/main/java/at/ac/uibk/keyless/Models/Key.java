@@ -27,13 +27,15 @@ public class Key {
   @JsonIgnore
   private String content;
 
+  @Column
   private String aid;
-
-  @Column(name = "custom_permission")
-  private boolean customPermission;
 
   @Column
   private String uid;
+
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private KeyMode mode;
 
   @JsonIgnore
   @Temporal(TemporalType.DATE)
@@ -118,20 +120,20 @@ public class Key {
     this.uid = uid;
   }
 
+  public KeyMode getMode() {
+    return mode;
+  }
+
+  public void setMode(KeyMode mode) {
+    this.mode = mode;
+  }
+
   public String getKeyName() {
     return keyName;
   }
 
   public void setKeyName(String keyName) {
     this.keyName = keyName;
-  }
-
-  public boolean isCustomPermission() {
-    return customPermission;
-  }
-
-  public void setCustomPermission(boolean customPermission) {
-    this.customPermission = customPermission;
   }
 
   public Date getValidFrom() {

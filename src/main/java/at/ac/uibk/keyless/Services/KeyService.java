@@ -1,9 +1,6 @@
 package at.ac.uibk.keyless.Services;
 
-import at.ac.uibk.keyless.Models.Key;
-import at.ac.uibk.keyless.Models.KeyPermission;
-import at.ac.uibk.keyless.Models.Lock;
-import at.ac.uibk.keyless.Models.User;
+import at.ac.uibk.keyless.Models.*;
 import at.ac.uibk.keyless.Repositories.KeyRepository;
 import at.ac.uibk.keyless.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +39,11 @@ public class KeyService {
     return keyRepository.findByKeyId(id);
   }
 
+
+  public List<Key> getAllKeys() {
+    return keyRepository.findAll();
+  }
+
   /**
    * @param id Id of the key to return.
    * @param username Email of the requesting user.
@@ -68,47 +70,40 @@ public class KeyService {
   }
 
   /**
-   * Function to edit an existing key.
-   * TODO: Extend method for new parameters.
+   * Method to set the mode of a Key to BLOCKED
    */
-  public void editKey(Long keyId, Key newKey, String username) {
-    Key toEdit = keyRepository.findByKeyId(keyId);
-    if (toEdit != null) {
-      toEdit.setKeyName(newKey.getKeyName());
-      toEdit.setCustomPermission(newKey.isCustomPermission());
-      toEdit.setValidFrom(newKey.getValidFrom());
-      toEdit.setValidTo(newKey.getValidTo());
-      keyRepository.save(toEdit);
-      logService.logEvent("User "+username+" edited key "+toEdit.getKeyId(),
-        userService.getUserByEmail(username).getUserId());
-    }
+  public void deactivateKey(Key key) {
+    key.setMode(KeyMode.DISABLED);
+    keyRepository.save(key);
   }
 
-  public void registerKey(String aid, String content, String username, String keyName, Key toSave, String uid) {
+  /**
+   * Method to edit an existing key.
+   */
+  public void editKey(Key key, User user) {
+    keyRepository.save(key);
+    logService.logEvent("User "+user.getEmail()+" edited key "+key.getKeyId(), user.getUserId());
+  }
+
+  /**
+   * Method to register a new key.
+   */
+  public void registerKey(String content, String username, Key toSave) {
     User owner = userRepository.findFirstByEmail(username);
-    toSave.setAid(aid);
     toSave.setContent(passwordEncoder.encode(content));
     toSave.setOwner(owner);
-    toSave.setKeyName(keyName);
-    toSave.setUid(uid);
-    toSave.setCustomPermission(false);
     Key saved = keyRepository.save(toSave);
     keyPermissionService.savePermission(new KeyPermission(saved));
     logService.logEvent("User "+username+" registered key "+saved.getKeyId(),
       userService.getUserByEmail(username).getUserId());
   }
 
+  /**
+   * @return all keys where a given user is the owner
+   */
   public List<Key> getKeysForUser(String username) {
     User operator = userRepository.findFirstByEmail(username);
-    if (userService.hasRole(operator, "Admin")) {
-      return getAllKeys();
-    } else {
-      return keyRepository.findKeyForUser(operator);
-    }
-  }
-
-  public List<Key> getAllKeys() {
-    return keyRepository.findAll();
+    return keyRepository.findKeyForUser(operator);
   }
 
   /**
@@ -126,12 +121,11 @@ public class KeyService {
 
   public boolean isValid(Key key) {
     Date current = new Date();
-    if ((key.getValidFrom().before(current) && key.getValidTo().after(current))
-      && keyPermissionService.isValid(key.getPermission())) {
-      return true;
-    } else {
+    if (key.getMode().toLowString().equals("Disabled")) {
       return false;
     }
+    return (((key.getValidFrom().before(current) && key.getValidTo().after(current))
+      && keyPermissionService.isValid(key.getPermission())) || (key.getMode().toLowString().equals("Enabled")));
   }
 
   public boolean isValidContent(String content, Lock lock) {

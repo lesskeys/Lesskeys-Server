@@ -1,6 +1,7 @@
 package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Key;
+import at.ac.uibk.keyless.Models.KeyMode;
 import at.ac.uibk.keyless.Models.KeyPermission;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,8 +44,12 @@ public class KeyPermissionServiceTest {
 
   @Before
   public void init() {
-    keyService.registerKey("test1", "test1", "admin@keyless.com", "test1", test1, "test");
-    keyService.registerKey("test2", "test2", "admin@keyless.com", "test2", test2, "test");
+    test1.setKeyName("test1");
+    test1.setMode(KeyMode.CUSTOM);
+    test2.setKeyName("test2");
+    test2.setMode(KeyMode.CUSTOM);
+    keyService.registerKey("test","admin@keyless.com",  test1);
+    keyService.registerKey("test2", "admin@keyless.com", test2);
     test1 = keyService.getKeyById(test1.getKeyId());
     test2 = keyService.getKeyById(test2.getKeyId());
     permission = permissionService.savePermission(new KeyPermission(test1));
