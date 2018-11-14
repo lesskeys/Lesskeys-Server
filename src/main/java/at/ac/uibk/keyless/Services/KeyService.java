@@ -73,7 +73,7 @@ public class KeyService {
    * Method to set the mode of a Key to BLOCKED
    */
   public void deactivateKey(Key key) {
-    key.setMode(KeyMode.BLOCKED);
+    key.setMode(KeyMode.DISABLED);
     keyRepository.save(key);
   }
 
@@ -132,11 +132,11 @@ public class KeyService {
 
   public boolean isValid(Key key) {
     Date current = new Date();
-    if (key.getMode().toString().equals("Blocked")) {
+    if (key.getMode().toString().equals("Disabled")) {
       return false;
     }
     return (((key.getValidFrom().before(current) && key.getValidTo().after(current))
-      && keyPermissionService.isValid(key.getPermission())) || (key.getMode().toString().equals("Active")));
+      && keyPermissionService.isValid(key.getPermission())) || (key.getMode().toString().equals("Enabled")));
   }
 
   public boolean isValidContent(String content, Lock lock) {

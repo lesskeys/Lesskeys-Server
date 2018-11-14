@@ -5,8 +5,8 @@ package at.ac.uibk.keyless.Models;
  */
 public enum KeyMode {
 
-  ACTIVE,
-  BLOCKED,
+  ENABLED,
+  DISABLED,
   CUSTOM;
 
   @Override
