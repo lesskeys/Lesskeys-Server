@@ -32,6 +32,17 @@ public class SystemLogService {
     return systemLogRepository.findAll();
   }
 
+  public Set<SystemLogEntry> getForMainLock() {
+    return systemLogRepository.findAll().stream()
+      .filter(e -> e.getEvent().startsWith("Lock 1") && e.getType().equals(SystemLogType.UNLOCK))
+      .map(e -> {
+        SystemLogEntry toReturn = e;
+        toReturn.setActor("");
+        return toReturn;
+      })
+      .collect(Collectors.toSet());
+  }
+
   /**
    * Method to create a log of type UNLOCK
    * @param lock, the lock that was unlocked
@@ -77,7 +88,12 @@ public class SystemLogService {
   public Set<SystemLogEntry> getEntriesForUser(long userId) {
     User user = userService.getUserById(userId);
 
-    if (user.getRole().equals("Tenant")) {
+    if (user.getRole().equals("Admin") || user.getRole().equals("Custodian")) {
+      return Sets.union(systemLogRepository.findAll().stream()
+        .filter(e -> e.isOwner(user))
+        .collect(Collectors.toSet()),
+        getForMainLock());
+    } else if (user.getRole().equals("Tenant")) {
       return Sets.union(user.getSubUsers().stream()
         .flatMap(u -> systemLogRepository.findAll().stream()
           .filter(e -> e.isOwner(user)))
@@ -85,9 +101,10 @@ public class SystemLogService {
         systemLogRepository.findAll().stream()
           .filter(e -> e.isOwner(user))
           .collect(Collectors.toSet()));
+    } else {
+      return systemLogRepository.findAll().stream()
+        .filter(e -> e.isOwner(user))
+        .collect(Collectors.toSet());
     }
-    return systemLogRepository.findAll().stream()
-      .filter(e -> e.isOwner(user) || user.getRole().equals("Admin"))
-      .collect(Collectors.toSet());
   }
 }

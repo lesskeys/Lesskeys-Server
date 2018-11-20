@@ -40,6 +40,11 @@ public class SystemLogEntry {
   private String actor;
 
 
+  public SystemLogEntry() {
+    this.logTime = new Date();
+    this.owners = new ArrayList<>();
+  }
+
   public SystemLogEntry(SystemLogType type) {
     this.logTime = new Date();
     this.owners = new ArrayList<>();
