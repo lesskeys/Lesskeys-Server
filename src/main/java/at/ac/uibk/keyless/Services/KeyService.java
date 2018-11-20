@@ -82,7 +82,7 @@ public class KeyService {
    */
   public void editKey(Key key, User user) {
     keyRepository.save(key);
-    logService.logEvent("User "+user.getEmail()+" edited key "+key.getKeyId(), user.getUserId());
+    logService.logSystemEvent(user,"Key "+key.getKeyId()+" was edited", null);
   }
 
   /**

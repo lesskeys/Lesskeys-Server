@@ -34,11 +34,21 @@ INSERT INTO key_permission (PERMISSION_ID, KEY_KEY_ID) VALUES (6, 6)
 INSERT INTO key_permission (PERMISSION_ID, KEY_KEY_ID) VALUES (7, 7)
 INSERT INTO key_permission (PERMISSION_ID, KEY_KEY_ID) VALUES (8, 8)
 
-INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, OWNER_ID, EVENT) VALUES (1, CURRENT_TIMESTAMP, 1, 'This is a test log-entry.')
-INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, OWNER_ID, EVENT) VALUES (2, CURRENT_TIMESTAMP, 1, 'This is the second test log-entry.')
-INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, OWNER_ID, EVENT) VALUES (3, CURRENT_TIMESTAMP, 2, 'This is the third test log-entry.')
-INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, OWNER_ID, EVENT) VALUES (4, CURRENT_TIMESTAMP, 3, 'This is the fourth test log-entry.')
-INSERT into system_log (SYSTEM_LOG_ID, LOG_TIME, OWNER_ID, EVENT) VALUES (5, CURRENT_TIMESTAMP, 4, 'This is the fifth test log-entry.')
+/* Log */
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (1, CURRENT_TIMESTAMP, 'Test', 'This is a test log-entry.', 'SYSTEM')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (2, CURRENT_TIMESTAMP, 'Test', 'This is the second test log-entry.', 'SYSTEM')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (3, CURRENT_TIMESTAMP, 'Test', 'This is the third test log-entry.', 'SYSTEM')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (4, CURRENT_TIMESTAMP, 'Test', 'This is the fourth test log-entry.', 'SYSTEM')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (5, CURRENT_TIMESTAMP, 'Test', 'This is the fifth test log-entry.', 'SYSTEM')
+
+INSERT INTO system_log_owners (SYSTEM_LOG_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (1, 1)
+INSERT INTO system_log_owners (SYSTEM_LOG_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (1, 2)
+INSERT INTO system_log_owners (SYSTEM_LOG_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (1, 3)
+INSERT INTO system_log_owners (SYSTEM_LOG_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (1, 4)
+INSERT INTO system_log_owners (SYSTEM_LOG_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (2, 1)
+INSERT INTO system_log_owners (SYSTEM_LOG_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (3, 1)
+INSERT INTO system_log_owners (SYSTEM_LOG_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (4, 1)
+INSERT INTO system_log_owners (SYSTEM_LOG_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (5, 1)
 
 /* Locks */
 INSERT INTO locks (LOCK_ID, LOCK_NAME, ADDRESS, CODE) VALUES (1, 'Main', '80.110.95.154:5000', 'code')

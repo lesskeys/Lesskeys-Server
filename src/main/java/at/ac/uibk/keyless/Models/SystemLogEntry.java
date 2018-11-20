@@ -1,9 +1,13 @@
 package at.ac.uibk.keyless.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -16,36 +20,61 @@ public class SystemLogEntry {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long systemLogId;
 
-  @Column(nullable = false, updatable = false)
-  private long ownerId;
+  @Column(name = "log_type", nullable = false, updatable = false)
+  @Enumerated(EnumType.STRING)
+  private SystemLogType type;
+
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @CollectionTable(name = "system_log_owners")
+  private List<User> owners;
 
   @Column(nullable = false, updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
-  @CreatedDate
   private Date logTime;
 
   @Column(nullable = false, updatable = false)
   private String event;
 
+  @Column(nullable = false, updatable = false)
+  private String actor;
+
+
+  public SystemLogEntry(SystemLogType type) {
+    this.logTime = new Date();
+    this.owners = new ArrayList<>();
+    this.type = type;
+  }
 
   public long getSystemLogId() {
     return systemLogId;
   }
 
-  public long getOwnerId() {
-    return ownerId;
+  public SystemLogType getType() {
+    return type;
   }
 
-  public void setOwnerId(long ownerId) {
-    this.ownerId = ownerId;
+  public List<User> getOwners() {
+    return owners;
+  }
+
+  public void setOwnerId(List<User> owners) {
+    this.owners = owners;
+  }
+
+  public void addOwner(User user) {
+    this.owners.add(user);
+  }
+
+  public boolean isOwner(User user) {
+    return this.owners.stream()
+      .map(User::getUserId)
+      .collect(Collectors.toSet())
+      .contains(user.getUserId());
   }
 
   public Date getLogTime() {
     return logTime;
-  }
-
-  public void setLogTime(Date logTime) {
-    this.logTime = logTime;
   }
 
   public String getEvent() {
@@ -54,5 +83,13 @@ public class SystemLogEntry {
 
   public void setEvent(String event) {
     this.event = event;
+  }
+
+  public String getActor() {
+    return actor;
+  }
+
+  public void setActor(String actor) {
+    this.actor = actor;
   }
 }
