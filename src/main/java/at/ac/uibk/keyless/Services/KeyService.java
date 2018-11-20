@@ -94,8 +94,7 @@ public class KeyService {
     toSave.setOwner(owner);
     Key saved = keyRepository.save(toSave);
     keyPermissionService.savePermission(new KeyPermission(saved));
-    logService.logEvent("User "+username+" registered key "+saved.getKeyId(),
-      userService.getUserByEmail(username).getUserId());
+    logService.logSystemEvent(owner, "Key "+saved.getKeyId()+" was registered", null);
   }
 
   /**
@@ -106,16 +105,11 @@ public class KeyService {
     return keyRepository.findKeyForUser(operator);
   }
 
-  /**
-   * Method to delete a Key if the operating user is an owner or has the role Admin.
-   */
   public void deleteKey(Long keyId, String username) {
     Key toDelete = keyRepository.findByKeyId(keyId);
-    if (toDelete.getOwner().getEmail().equals(username) ||
-      userService.hasRole(toDelete.getOwner(), "Admin")) {
+    if (toDelete.getOwner().getEmail().equals(username)) {
       keyRepository.delete(toDelete);
-      logService.logEvent("User "+username+" deleted key "+toDelete.getKeyName(),
-        userService.getUserByEmail(username).getUserId());
+      logService.logSystemEvent(toDelete.getOwner(), "Key "+toDelete.getKeyId()+" was deleted", null);
     }
   }
 

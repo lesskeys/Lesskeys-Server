@@ -25,9 +25,12 @@ public class SystemLogServiceTest {
   @Autowired
   SystemLogService systemLogService;
 
+  @Autowired
+  UserService userService;
+
   @Before
   public void addLog() {
-    systemLogService.logEvent("test", 1L);
+    systemLogService.logSystemEvent(userService.getUserById(1L), "test", null);
   }
 
   @Test

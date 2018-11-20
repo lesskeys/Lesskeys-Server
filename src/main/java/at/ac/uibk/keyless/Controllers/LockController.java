@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -45,8 +46,8 @@ public class LockController {
   @RequestMapping(value = "/lock/log-unlock", method = RequestMethod.PUT)
   public void logUnlock(@RequestBody Map<String, String> data) {
     Lock lock = lockService.getLockById(Long.parseLong(data.get("lockId")));
-    systemLogService.logEvent(data.get("message"), lock.getRelevantUserIds().stream()
-      .findFirst().orElse(0L));
+    systemLogService.logUnlockEvent(lock, Optional.ofNullable(data.get("user"))
+      .orElse("Key "+keyService.getKeyByUid(data.get("uid"))));
   }
 
   /**
@@ -100,10 +101,9 @@ public class LockController {
       String session = data.get("session");
       if (sessionService.userMatchesSession(session, user.getUserId()) &&
         lock.getRelevantUserIds().contains(user.getUserId())) {
-        systemLogService.logEvent("Lock "+lock.getName()+" opened by "+user.getEmail(), user.getUserId());
+        systemLogService.logUnlockEvent(lock,"User "+user.getUserId());
         return true;
       }
-      systemLogService.logEvent("Lock "+lock.getName()+" denied "+user.getEmail(), user.getUserId());
     }
     return false;
   }
