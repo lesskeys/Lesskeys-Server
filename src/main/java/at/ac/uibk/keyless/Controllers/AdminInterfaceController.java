@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Lukas Dötlinger.
@@ -76,7 +73,9 @@ public class AdminInterfaceController {
   }
 
   @RequestMapping(value = "/ai/log", method = RequestMethod.POST)
-  public Set<SystemLogEntry> getEntries(@RequestBody Map<String, String> data) {
-    return systemLogService.getEntriesForUser(Long.parseLong(data.get("userId")));
+  public List<SystemLogEntry> getEntries(@RequestBody Map<String, String> data) {
+    List<SystemLogEntry> list = new ArrayList<>(systemLogService.getEntriesForUser(Long.parseLong(data.get("userId"))));
+    list.sort(Comparator.comparing(SystemLogEntry::getLogTime).reversed());
+    return list;
   }
 }
