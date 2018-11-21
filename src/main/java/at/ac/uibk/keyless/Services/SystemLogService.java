@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by Lukas Dötlinger.
@@ -31,8 +32,9 @@ public class SystemLogService {
     return systemLogRepository.findAll();
   }
 
-  public Set<SystemLogEntry> getForMainLock() {
+  public Set<SystemLogEntry> getForMainLock(User user) {
     return systemLogRepository.findAll().stream()
+      .filter(e -> !e.getActor().startsWith("User "+user.getUserId()))
       .filter(e -> e.getEvent().startsWith("Lock 1") && e.getType().equals(SystemLogType.UNLOCK))
       .map(e -> {
         SystemLogEntry toReturn = e;
@@ -42,9 +44,9 @@ public class SystemLogService {
       .collect(Collectors.toSet());
   }
 
-  public Set<SystemLogEntry> getRequestedLogs() {
+  public Set<SystemLogEntry> getRequestedLogs(User user) {
     return logRequestService.getAll().stream()
-      .flatMap(request -> getLogsForRequest(request).stream())
+      .flatMap(request -> getLogsForRequest(request, user).stream())
       .collect(Collectors.toSet());
   }
 
@@ -57,9 +59,10 @@ public class SystemLogService {
       cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
   }
 
-  private Set<SystemLogEntry> getLogsForRequest(SystemLogRequest request) {
+  private Set<SystemLogEntry> getLogsForRequest(SystemLogRequest request, User user) {
     return request.getUsers().keySet().stream()
-      .filter(userId -> request.getUsers().get(userId))
+      // filter only users that have accepted the request and not the requesting user itself
+      .filter(userId -> request.getUsers().get(userId) && (userId != user.getUserId()))
       .flatMap(userId -> systemLogRepository.findAll().stream()
         .filter(e -> isSameDay(e.getLogTime(), request.getDay()))
         .filter(e -> e.isOwner(userService.getUserById(userId)) && e.getType().equals(SystemLogType.UNLOCK)))
@@ -112,18 +115,18 @@ public class SystemLogService {
     User user = userService.getUserById(userId);
 
     if (user.getRole().equals("Admin") || user.getRole().equals("Custodian")) {
-      Set<SystemLogEntry> requested = getRequestedLogs();
+      Set<SystemLogEntry> requested = getRequestedLogs(user);
       Set<SystemLogEntry> ownedLogs = systemLogRepository.findAll().stream()
         .filter(e -> e.isOwner(user))
         .collect(Collectors.toSet());
       
       return Sets.union(ownedLogs, Sets.union(requested,
-        getForMainLock().stream()
+        getForMainLock(user).stream()
           .filter(e -> {
-            List<Long> requestedIds = requested.stream()
+            List<Long> ids = Stream.concat(requested.stream(), ownedLogs.stream())
               .map(SystemLogEntry::getSystemLogId)
               .collect(Collectors.toList());
-            return !requestedIds.contains(e.getSystemLogId()) && !requestedIds.contains(e.getSystemLogId());
+            return !ids.contains(e.getSystemLogId());
           })
           .collect(Collectors.toSet())));
 
