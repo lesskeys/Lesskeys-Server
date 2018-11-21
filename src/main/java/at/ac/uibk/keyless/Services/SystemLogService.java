@@ -1,18 +1,14 @@
 package at.ac.uibk.keyless.Services;
 
-import at.ac.uibk.keyless.Models.Lock;
-import at.ac.uibk.keyless.Models.SystemLogEntry;
-import at.ac.uibk.keyless.Models.SystemLogType;
-import at.ac.uibk.keyless.Models.User;
+import at.ac.uibk.keyless.Models.*;
 import at.ac.uibk.keyless.Repositories.SystemLogEntryRepository;
+import at.ac.uibk.keyless.Repositories.SystemLogRequestRepository;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +19,9 @@ public class SystemLogService {
 
   @Autowired
   private SystemLogEntryRepository systemLogRepository;
+
+  @Autowired
+  private SystemLogRequestService logRequestService;
 
   @Autowired
   private UserService userService;
@@ -40,6 +39,20 @@ public class SystemLogService {
         toReturn.setActor("");
         return toReturn;
       })
+      .collect(Collectors.toSet());
+  }
+
+  public Set<SystemLogEntry> getRequestedLogs() {
+    return logRequestService.getAll().stream()
+      .flatMap(request -> getLogsForRequest(request).stream())
+      .collect(Collectors.toSet());
+  }
+
+  private Set<SystemLogEntry> getLogsForRequest(SystemLogRequest request) {
+    return request.getUsers().keySet().stream()
+      .filter(userId -> request.getUsers().get(userId))
+      .flatMap(userId -> systemLogRepository.findAll().stream()
+        .filter(e -> e.isOwner(userService.getUserById(userId)) && e.getType().equals(SystemLogType.UNLOCK)))
       .collect(Collectors.toSet());
   }
 
@@ -89,10 +102,17 @@ public class SystemLogService {
     User user = userService.getUserById(userId);
 
     if (user.getRole().equals("Admin") || user.getRole().equals("Custodian")) {
+      Set<SystemLogEntry> requested = getRequestedLogs();
       return Sets.union(systemLogRepository.findAll().stream()
         .filter(e -> e.isOwner(user))
         .collect(Collectors.toSet()),
-        getForMainLock());
+        Sets.union(requested,
+          getForMainLock().stream()
+            .filter(e -> requested.stream()
+              .map(SystemLogEntry::getSystemLogId)
+              .collect(Collectors.toList()).contains(e.getSystemLogId()))
+            .collect(Collectors.toSet())));
+
     } else if (user.getRole().equals("Tenant")) {
       return Sets.union(user.getSubUsers().stream()
         .flatMap(u -> systemLogRepository.findAll().stream()
@@ -101,6 +121,7 @@ public class SystemLogService {
         systemLogRepository.findAll().stream()
           .filter(e -> e.isOwner(user))
           .collect(Collectors.toSet()));
+      
     } else {
       return systemLogRepository.findAll().stream()
         .filter(e -> e.isOwner(user))
