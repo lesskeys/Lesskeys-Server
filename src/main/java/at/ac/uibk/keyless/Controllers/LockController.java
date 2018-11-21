@@ -45,9 +45,14 @@ public class LockController {
    */
   @RequestMapping(value = "/lock/log-unlock", method = RequestMethod.PUT)
   public void logUnlock(@RequestBody Map<String, String> data) {
-    Lock lock = lockService.getLockById(Long.parseLong(data.get("lockId")));
-    systemLogService.logUnlockEvent(lock, Optional.ofNullable(data.get("user"))
-      .orElse("Key "+keyService.getKeyByUid(data.get("uid"))));
+    if (lockService.getLockForIdAndCode(Long.parseLong(data.get("lockId")), data.get("code")) != null) {
+      Lock lock = lockService.getLockById(Long.parseLong(data.get("lockId")));
+      if (data.get("username") != null) {
+        systemLogService.logUnlockEvent(lock, "User " + userService.getUserByEmail(data.get("username")).getUserId());
+      } else {
+        systemLogService.logUnlockEvent(lock, "Key " + keyService.getKeyByUid(data.get("uid")));
+      }
+    }
   }
 
   /**
