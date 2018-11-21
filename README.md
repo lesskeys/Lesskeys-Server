@@ -1,6 +1,12 @@
-Keyless-Server
+# Keyless-Server
 
-**Test**
+## How to run
+
+Make sure you have a MySQL user called `admin` with password `admin`.  
+Then, setup an empty database called `keyless`, and execute `mvn clean spring-boot:run`.
+
+
+## Testing
 
 Running coverage test:  
 `mvn clean`  
