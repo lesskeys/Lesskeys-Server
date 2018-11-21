@@ -48,10 +48,20 @@ public class SystemLogService {
       .collect(Collectors.toSet());
   }
 
+  private boolean isSameDay(Date date1, Date date2) {
+    Calendar cal1 = Calendar.getInstance();
+    Calendar cal2 = Calendar.getInstance();
+    cal1.setTime(date1);
+    cal2.setTime(date2);
+    return cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
+      cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+  }
+
   private Set<SystemLogEntry> getLogsForRequest(SystemLogRequest request) {
     return request.getUsers().keySet().stream()
       .filter(userId -> request.getUsers().get(userId))
       .flatMap(userId -> systemLogRepository.findAll().stream()
+        .filter(e -> isSameDay(e.getLogTime(), request.getDay()))
         .filter(e -> e.isOwner(userService.getUserById(userId)) && e.getType().equals(SystemLogType.UNLOCK)))
       .collect(Collectors.toSet());
   }
@@ -121,7 +131,7 @@ public class SystemLogService {
         systemLogRepository.findAll().stream()
           .filter(e -> e.isOwner(user))
           .collect(Collectors.toSet()));
-      
+
     } else {
       return systemLogRepository.findAll().stream()
         .filter(e -> e.isOwner(user))

@@ -16,7 +16,7 @@ public class SystemLogRequest {
   private long requestId;
 
   @Column
-  private Map<Long, Boolean> users;
+  private HashMap<Long, Boolean> users;
 
   @Temporal(TemporalType.DATE)
   private Date day;
@@ -34,7 +34,7 @@ public class SystemLogRequest {
     return users;
   }
 
-  public void setUsers(Map<Long, Boolean> users) {
+  public void setUsers(HashMap<Long, Boolean> users) {
     this.users = users;
   }
 
