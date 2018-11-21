@@ -89,7 +89,7 @@ public class SystemLogService {
     SystemLogEntry toSave = new SystemLogEntry(SystemLogType.LOGIN);
     toSave.addOwner(user);
     toSave.setEvent(event);
-    toSave.setActor("User "+user.getEmail());
+    toSave.setActor("User "+user.getUserId());
     systemLogRepository.save(toSave);
   }
 
@@ -113,15 +113,19 @@ public class SystemLogService {
 
     if (user.getRole().equals("Admin") || user.getRole().equals("Custodian")) {
       Set<SystemLogEntry> requested = getRequestedLogs();
-      return Sets.union(systemLogRepository.findAll().stream()
+      Set<SystemLogEntry> ownedLogs = systemLogRepository.findAll().stream()
         .filter(e -> e.isOwner(user))
-        .collect(Collectors.toSet()),
-        Sets.union(requested,
-          getForMainLock().stream()
-            .filter(e -> requested.stream()
+        .collect(Collectors.toSet());
+      
+      return Sets.union(ownedLogs, Sets.union(requested,
+        getForMainLock().stream()
+          .filter(e -> {
+            List<Long> requestedIds = requested.stream()
               .map(SystemLogEntry::getSystemLogId)
-              .collect(Collectors.toList()).contains(e.getSystemLogId()))
-            .collect(Collectors.toSet())));
+              .collect(Collectors.toList());
+            return !requestedIds.contains(e.getSystemLogId()) && !requestedIds.contains(e.getSystemLogId());
+          })
+          .collect(Collectors.toSet())));
 
     } else if (user.getRole().equals("Tenant")) {
       return Sets.union(user.getSubUsers().stream()
