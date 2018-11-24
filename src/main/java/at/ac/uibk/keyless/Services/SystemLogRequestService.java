@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -21,8 +22,19 @@ public class SystemLogRequestService {
   private SystemLogRequestRepository logRequestRepository;
 
 
+  public SystemLogRequest getById(Long requestId) {
+    return logRequestRepository.findByRequestId(requestId);
+  }
+
   public List<SystemLogRequest> getAll() {
     return logRequestRepository.findAll();
+  }
+
+  public List<SystemLogRequest> getRequestsForUser(User user) {
+    return logRequestRepository.findAll().stream()
+      .filter(r -> r.getUsers().keySet().contains(user.getUserId()))
+      .filter(r -> !r.getUsers().get(user.getUserId()))
+      .collect(Collectors.toList());
   }
 
   public void createRequest(Lock lock, Date date, SystemLogType type) {
@@ -38,6 +50,11 @@ public class SystemLogRequestService {
     request.addUser(userId);
     request.setDay(date);
     request.setType(type);
+    logRequestRepository.save(request);
+  }
+
+  public void acceptRequestForUser(SystemLogRequest request, User user) {
+    request.setUserTrue(user.getUserId());
     logRequestRepository.save(request);
   }
 }

@@ -1,8 +1,10 @@
 package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.SystemLogEntry;
+import at.ac.uibk.keyless.Models.SystemLogRequest;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Services.SessionService;
+import at.ac.uibk.keyless.Services.SystemLogRequestService;
 import at.ac.uibk.keyless.Services.SystemLogService;
 import at.ac.uibk.keyless.Services.UserService;
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -26,6 +28,9 @@ public class SystemLogController {
   private SystemLogService systemLogService;
 
   @Autowired
+  private SystemLogRequestService requestService;
+
+  @Autowired
   private SessionService sessionService;
 
   @Autowired
@@ -41,5 +46,23 @@ public class SystemLogController {
       return list;
     }
     return null;
+  }
+
+  @RequestMapping(value = "/log/requests", method = RequestMethod.POST)
+  public List<SystemLogRequest> getUsersRequests(@RequestBody Map<String, String> data) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
+      User user = userService.getUserByEmail(data.get("username"));
+      return requestService.getRequestsForUser(user);
+    }
+    return null;
+  }
+
+  @RequestMapping(value = "/log/accept-request", method = RequestMethod.POST)
+  public void acceptRequest(@RequestBody Map<String, String> data) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
+      User user = userService.getUserByEmail(data.get("username"));
+      SystemLogRequest request = requestService.getById(Long.parseLong(data.get("requestId")));
+      requestService.acceptRequestForUser(request, user);
+    }
   }
 }
