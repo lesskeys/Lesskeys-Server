@@ -21,6 +21,10 @@ public class SystemLogRequest {
   @Temporal(TemporalType.DATE)
   private Date day;
 
+  @Column(name = "log_type", nullable = false, updatable = false)
+  @Enumerated(EnumType.STRING)
+  private SystemLogType type;
+
 
   public SystemLogRequest() {
     this.users = new HashMap<>();
@@ -52,5 +56,13 @@ public class SystemLogRequest {
 
   public void setDay(Date day) {
     this.day = day;
+  }
+
+  public SystemLogType getType() {
+    return type;
+  }
+
+  public void setType(SystemLogType type) {
+    this.type = type;
   }
 }

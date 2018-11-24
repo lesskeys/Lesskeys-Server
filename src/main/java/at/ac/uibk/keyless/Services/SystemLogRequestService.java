@@ -2,6 +2,8 @@ package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Models.SystemLogRequest;
+import at.ac.uibk.keyless.Models.SystemLogType;
+import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.SystemLogRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +25,19 @@ public class SystemLogRequestService {
     return logRequestRepository.findAll();
   }
 
-  public void createRequest(Lock lock, Date date) {
+  public void createRequest(Lock lock, Date date, SystemLogType type) {
     SystemLogRequest request = new SystemLogRequest();
     lock.getRelevantUserIds().forEach(request::addUser);
     request.setDay(date);
+    request.setType(type);
+    logRequestRepository.save(request);
+  }
+
+  public void createRequest(Long userId, Date date, SystemLogType type) {
+    SystemLogRequest request = new SystemLogRequest();
+    request.addUser(userId);
+    request.setDay(date);
+    request.setType(type);
     logRequestRepository.save(request);
   }
 }

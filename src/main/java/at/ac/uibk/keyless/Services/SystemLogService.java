@@ -32,6 +32,12 @@ public class SystemLogService {
     return systemLogRepository.findAll();
   }
 
+  public List<SystemLogEntry> getByType(SystemLogType type) {
+    return systemLogRepository.findAll().stream()
+      .filter(e -> e.getType().toString().equals(type.toString()))
+      .collect(Collectors.toList());
+  }
+
   public Set<SystemLogEntry> getForMainLock(User user) {
     return systemLogRepository.findAll().stream()
       .filter(e -> !e.getActor().startsWith("User "+user.getUserId()))
@@ -63,7 +69,7 @@ public class SystemLogService {
     return request.getUsers().keySet().stream()
       // filter only users that have accepted the request and not the requesting user itself
       .filter(userId -> request.getUsers().get(userId) && (userId != user.getUserId()))
-      .flatMap(userId -> systemLogRepository.findAll().stream()
+      .flatMap(userId -> getByType(request.getType()).stream()
         .filter(e -> isSameDay(e.getLogTime(), request.getDay()))
         .filter(e -> e.isOwner(userService.getUserById(userId)) && e.getType().equals(SystemLogType.UNLOCK)))
       .collect(Collectors.toSet());
