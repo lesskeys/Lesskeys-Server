@@ -71,7 +71,7 @@ public class SystemLogService {
       .filter(userId -> request.getUsers().get(userId) && (userId != user.getUserId()))
       .flatMap(userId -> getByType(request.getType()).stream()
         .filter(e -> isSameDay(e.getLogTime(), request.getDay()))
-        .filter(e -> e.isOwner(userService.getUserById(userId)) && e.getType().equals(SystemLogType.UNLOCK)))
+        .filter(e -> e.isOwner(userService.getUserById(userId))))
       .collect(Collectors.toSet());
   }
 
@@ -80,11 +80,15 @@ public class SystemLogService {
    * @param lock, the lock that was unlocked
    * @param actor, either the name of a user or a key that unlocked the lock
    */
-  public void logUnlockEvent(Lock lock, String actor) {
+  public void logUnlockEvent(Lock lock, String actor, Long userId) {
     SystemLogEntry toSave = new SystemLogEntry(SystemLogType.UNLOCK);
-    lock.getRelevantUsers().stream()
-      .filter(user -> !user.getRole().equals("Visitor"))
-      .forEach(toSave::addOwner);
+    if (lock.getLockId() != 1L) {
+      lock.getRelevantUsers().stream()
+        .filter(user -> !user.getRole().equals("Visitor"))
+        .forEach(toSave::addOwner);
+    } else {
+      toSave.addOwner(userService.getUserById(userId));
+    }
     toSave.setEvent("Lock "+lock.getLockId()+" was unlocked");
     toSave.setActor(actor);
     systemLogRepository.save(toSave);
@@ -129,9 +133,9 @@ public class SystemLogService {
       return Sets.union(ownedLogs, Sets.union(requested,
         getForMainLock(user).stream()
           .filter(e -> {
-            List<Long> ids = Stream.concat(requested.stream(), ownedLogs.stream())
+            Set<Long> ids = Stream.concat(requested.stream(), ownedLogs.stream())
               .map(SystemLogEntry::getSystemLogId)
-              .collect(Collectors.toList());
+              .collect(Collectors.toSet());
             return !ids.contains(e.getSystemLogId());
           })
           .collect(Collectors.toSet())));

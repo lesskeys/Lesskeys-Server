@@ -102,7 +102,7 @@ public class AdminInterfaceController {
     }
 
     if (data.get("type").equals("UNLOCK")) {
-      logRequestService.createRequest(lockService.getLockById(1L), logDay, SystemLogType.UNLOCK);
+      logRequestService.createRequest(lockService.getLockById(1L), logDay);
     } else {
       logRequestService.createRequest(Long.parseLong(data.get("userId")), logDay, SystemLogType.SYSTEM);
       logRequestService.createRequest(Long.parseLong(data.get("userId")), logDay, SystemLogType.LOGIN);

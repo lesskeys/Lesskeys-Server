@@ -15,8 +15,8 @@ public class SystemLogRequest {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long requestId;
 
-  @Column
-  private HashMap<Long, Boolean> users;
+  @ElementCollection
+  private Map<Long, Boolean> users;
 
   @Temporal(TemporalType.DATE)
   private Date day;

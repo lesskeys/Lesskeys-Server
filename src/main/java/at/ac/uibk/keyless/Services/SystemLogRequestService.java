@@ -37,11 +37,11 @@ public class SystemLogRequestService {
       .collect(Collectors.toList());
   }
 
-  public void createRequest(Lock lock, Date date, SystemLogType type) {
+  public void createRequest(Lock lock, Date date) {
     SystemLogRequest request = new SystemLogRequest();
     lock.getRelevantUserIds().forEach(request::addUser);
     request.setDay(date);
-    request.setType(type);
+    request.setType(SystemLogType.UNLOCK);
     logRequestRepository.save(request);
   }
 
