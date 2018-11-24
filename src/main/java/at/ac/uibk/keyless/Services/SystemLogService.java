@@ -113,7 +113,7 @@ public class SystemLogService {
     toSave.addOwner(user);
     if (!(userTarget == null)) { toSave.addOwner(userTarget); }
     toSave.setEvent(event);
-    toSave.setActor("User "+user.getEmail());
+    toSave.setActor("User "+user.getUserId());
     systemLogRepository.save(toSave);
   }
 

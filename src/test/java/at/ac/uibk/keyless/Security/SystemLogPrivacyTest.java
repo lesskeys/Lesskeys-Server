@@ -20,6 +20,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ import static org.hamcrest.Matchers.*;
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
+@Transactional
 public class SystemLogPrivacyTest {
 
   @Autowired
@@ -53,13 +55,17 @@ public class SystemLogPrivacyTest {
   LockService lockService;
 
 
-  private User admin = userService.getUserById(1L);
-  private User tenant = userService.getUserById(2L);
-  private User visitor = userService.getUserById(5L);
-  private Lock main = lockService.getLockById(1L);
+  private User admin;
+  private User tenant;
+  private User visitor;
+  private Lock main;
 
   @Before
   public void deleteAllLogs() {
+    this.admin = userService.getUserById(1L);
+    this.tenant = userService.getUserById(2L);
+    this.visitor = userService.getUserById(5L);
+    this.main = lockService.getLockById(1L);
     logRepository.findAll()
       .forEach(l -> logRepository.delete(l));
     logRequestRepository.findAll()
@@ -76,7 +82,7 @@ public class SystemLogPrivacyTest {
     // assert that admin sees all three logs and himself as the actor and is also the owner of all of them
     assertThat(logs.size(), is(3));
     assertThat(logs.stream()
-      .allMatch(l -> l.getActor().equals("User 1")), is(true));
+      .allMatch(l -> l.getActor().startsWith("User 1")), is(true));
     assertThat(logs.stream()
       .allMatch(l -> l.isOwner(admin)), is(true));
   }

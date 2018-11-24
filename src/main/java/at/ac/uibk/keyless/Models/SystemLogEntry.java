@@ -25,7 +25,7 @@ public class SystemLogEntry {
   private SystemLogType type;
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToMany(fetch = FetchType.LAZY)
   @CollectionTable(name = "system_log_owners")
   private List<User> owners;
 
