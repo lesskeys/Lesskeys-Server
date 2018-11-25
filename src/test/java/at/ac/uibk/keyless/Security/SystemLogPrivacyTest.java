@@ -166,4 +166,32 @@ public class SystemLogPrivacyTest {
       .allMatch(l -> l.getActor().startsWith("User 2")), is(true));
     assertThat(logs.size(), is(4));
   }
+
+  /**
+   * Test if a users sees its sub-users, only visitors, log.
+   * Test if visitor sees only his own log.
+   */
+  @Test
+  public void testSubUserVisible() {
+    logService.logLoginEvent(visitor, "Logged in manually");
+    logService.logUnlockEvent(main, "User 5", visitor.getUserId());
+
+    Set<SystemLogEntry> logs = logService.getEntriesForUser(tenant.getUserId());
+    assertThat(logs.size(), is(2));
+    assertThat(logs.stream()
+      .allMatch(l -> l.getActor().startsWith("User 5")), is(true));
+
+    logService.logUnlockEvent(main, "User 2", tenant.getUserId());
+    logs = logService.getEntriesForUser(tenant.getUserId());
+    assertThat(logs.size(), is(3));
+    assertThat(logs.stream()
+      .allMatch(l -> l.getActor().startsWith("User")), is(true));
+    assertThat(logs.stream()
+      .anyMatch(l -> l.getActor().startsWith("User 2")), is(true));
+
+    logs = logService.getEntriesForUser(visitor.getUserId());
+    assertThat(logs.size(), is(2));
+    assertThat(logs.stream()
+      .allMatch(l -> l.getActor().startsWith("User 5")), is(true));
+  }
 }

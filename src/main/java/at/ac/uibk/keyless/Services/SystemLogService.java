@@ -161,8 +161,9 @@ public class SystemLogService {
 
     } else if (user.getRole().equals("Tenant")) {
       return Sets.union(user.getSubUsers().stream()
+        .filter(u -> u.getRole().equals("Visitor"))
         .flatMap(u -> systemLogRepository.findAll().stream()
-          .filter(e -> e.isOwner(user)))
+          .filter(e -> e.isOwner(u)))
         .collect(Collectors.toSet()),
         systemLogRepository.findAll().stream()
           .filter(e -> e.isOwner(user))
