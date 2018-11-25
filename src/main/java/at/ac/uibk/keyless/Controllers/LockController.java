@@ -52,7 +52,7 @@ public class LockController {
         systemLogService.logUnlockEvent(lock, "User " + userId, userId);
       } else {
         Long keyId = keyService.getKeyByUid(data.get("uid")).getKeyId();
-        systemLogService.logUnlockEvent(lock, "Key " + keyId, keyId);
+        systemLogService.logUnlockEventByKey(lock, "Key " + keyId, keyId);
       }
     }
   }

@@ -51,6 +51,13 @@ public class SystemLogEntry {
     this.type = type;
   }
 
+  public SystemLogEntry(Long systemLogId, SystemLogType type, Date date) {
+    this.systemLogId = systemLogId;
+    this.logTime = date;
+    this.owners = new ArrayList<>();
+    this.type = type;
+  }
+
   public long getSystemLogId() {
     return systemLogId;
   }

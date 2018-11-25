@@ -57,6 +57,7 @@ public class SystemLogPrivacyTest {
 
   private User admin;
   private User tenant;
+  private User tenant2;
   private User visitor;
   private Lock main;
   private Lock tenants;
@@ -65,6 +66,7 @@ public class SystemLogPrivacyTest {
   public void deleteAllLogs() {
     this.admin = userService.getUserById(1L);
     this.tenant = userService.getUserById(2L);
+    this.tenant2 = userService.getUserById(3L);
     this.visitor = userService.getUserById(5L);
     this.main = lockService.getLockById(1L);
     this.tenants = lockService.getLockById(2L);
@@ -82,7 +84,7 @@ public class SystemLogPrivacyTest {
   public void testOwnLogVisible() {
     logService.logLoginEvent(admin, "Logged in manually");
     logService.logSystemEvent(admin, "Created User 2", tenant);
-    logService.logUnlockEvent(main, "User 1", tenant.getUserId());
+    logService.logUnlockEvent(main, "User 1", admin.getUserId());
 
     Set<SystemLogEntry> logs = logService.getEntriesForUser(admin.getUserId());
     assertThat(logs.size(), is(3));
@@ -100,7 +102,7 @@ public class SystemLogPrivacyTest {
   public void testOtherLogInvisible() {
     logService.logLoginEvent(tenant, "Logged in manually");
     logService.logUnlockEvent(main, "User 2", tenant.getUserId());
-    logService.logUnlockEvent(main, "User 5", visitor.getUserId());
+    logService.logUnlockEvent(main, "User 3", tenant2.getUserId());
 
     Set<SystemLogEntry> logs = logService.getEntriesForUser(admin.getUserId());
     assertThat(logs.size(), is(2));
@@ -117,10 +119,10 @@ public class SystemLogPrivacyTest {
   @Test
   public void testRequestedLogVisible() {
     logService.logLoginEvent(tenant, "Logged in manually");
-    logService.logLoginEvent(visitor, "Logged in manually");
+    logService.logLoginEvent(tenant2, "Logged in manually");
     logService.logUnlockEvent(main, "User 2", tenant.getUserId());
     logService.logUnlockEvent(tenants, "User 2", tenant.getUserId());
-    logService.logUnlockEvent(main, "User 5", visitor.getUserId());
+    logService.logUnlockEvent(main, "User 3", tenant2.getUserId());
 
     Set<SystemLogEntry> logs = logService.getEntriesForUser(admin.getUserId());
     assertThat(logs.size(), is(2));
@@ -140,14 +142,14 @@ public class SystemLogPrivacyTest {
       .anyMatch(l -> l.getActor().equals("")), is(true));
 
     // visitor also accepts request
-    logRequestService.acceptRequestForUser(lockRequest, visitor);
+    logRequestService.acceptRequestForUser(lockRequest, tenant2);
     logs = logService.getEntriesForUser(admin.getUserId());
     assertThat(logs.stream()
-      .anyMatch(l -> l.getActor().equals("")), is(true));
+      .anyMatch(l -> l.getActor().equals("")), is(false));
     // admin sees the actors of the other unlocks
     assertThat(logs.stream()
       .filter(l -> l.getType().equals(SystemLogType.UNLOCK))
-      .allMatch(l -> l.getActor().startsWith("User 2")), is(true));
+      .allMatch(l -> l.getActor().startsWith("User")), is(true));
 
 
     logRequestService.createRequest(tenant.getUserId(), new Date(), SystemLogType.LOGIN);
@@ -162,5 +164,6 @@ public class SystemLogPrivacyTest {
     assertThat(logs.stream()
       .filter(l -> l.getType().equals(SystemLogType.LOGIN))
       .allMatch(l -> l.getActor().startsWith("User 2")), is(true));
+    assertThat(logs.size(), is(4));
   }
 }

@@ -27,6 +27,9 @@ public class SystemLogService {
   @Autowired
   private UserService userService;
 
+  @Autowired
+  private KeyService keyService;
+
 
   public List<SystemLogEntry> getAll() {
     return systemLogRepository.findAll();
@@ -39,11 +42,12 @@ public class SystemLogService {
   }
 
   public Set<SystemLogEntry> getForMainLock(User user) {
-    return systemLogRepository.findAll().stream()
+    return getAll().stream()
       .filter(e -> !e.getActor().startsWith("User "+user.getUserId()))
       .filter(e -> e.getEvent().startsWith("Lock 1") && e.getType().equals(SystemLogType.UNLOCK))
       .map(e -> {
-        SystemLogEntry toReturn = e;
+        SystemLogEntry toReturn = new SystemLogEntry(e.getSystemLogId(), e.getType(), e.getLogTime());
+        toReturn.setEvent(e.getEvent());
         toReturn.setActor("");
         return toReturn;
       })
@@ -94,6 +98,20 @@ public class SystemLogService {
     systemLogRepository.save(toSave);
   }
 
+  public void logUnlockEventByKey(Lock lock, String actor, Long keyId) {
+    SystemLogEntry toSave = new SystemLogEntry(SystemLogType.UNLOCK);
+    if (lock.getLockId() != 1L) {
+      lock.getRelevantUsers().stream()
+        .filter(user -> !user.getRole().equals("Visitor"))
+        .forEach(toSave::addOwner);
+    } else {
+      toSave.addOwner(keyService.getKeyById(keyId).getOwner());
+    }
+    toSave.setEvent("Lock "+lock.getLockId()+" was unlocked");
+    toSave.setActor(actor);
+    systemLogRepository.save(toSave);
+  }
+
   /**
    * Method to create a log of type LOGIN
    * @param event states whether it was an auto-login or not
@@ -129,16 +147,17 @@ public class SystemLogService {
       Set<SystemLogEntry> ownedLogs = systemLogRepository.findAll().stream()
         .filter(e -> e.isOwner(user))
         .collect(Collectors.toSet());
-      
-      return Sets.union(ownedLogs, Sets.union(requested,
-        getForMainLock(user).stream()
-          .filter(e -> {
-            Set<Long> ids = Stream.concat(requested.stream(), ownedLogs.stream())
-              .map(SystemLogEntry::getSystemLogId)
-              .collect(Collectors.toSet());
-            return !ids.contains(e.getSystemLogId());
-          })
-          .collect(Collectors.toSet())));
+
+      Set<SystemLogEntry> mainLogs = getForMainLock(user).stream()
+        .filter(e -> {
+          Set<Long> ids = Stream.concat(requested.stream(), ownedLogs.stream())
+            .map(SystemLogEntry::getSystemLogId)
+            .collect(Collectors.toSet());
+          return !ids.contains(e.getSystemLogId());
+        })
+        .collect(Collectors.toSet());
+
+      return Sets.union(ownedLogs, Sets.union(requested, mainLogs));
 
     } else if (user.getRole().equals("Tenant")) {
       return Sets.union(user.getSubUsers().stream()
