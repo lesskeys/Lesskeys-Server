@@ -129,7 +129,7 @@ public class SystemLogPrivacyTest {
     assertThat(logs.stream()
       .allMatch(l -> l.getActor().equals("")), is(true));
 
-    logRequestService.createRequest(main, new Date());
+    logRequestService.createRequest(main, new Date(), "test");
     assertThat(logs.stream()
       .allMatch(l -> l.getActor().equals("")), is(true));
 
@@ -152,7 +152,7 @@ public class SystemLogPrivacyTest {
       .allMatch(l -> l.getActor().startsWith("User")), is(true));
 
 
-    logRequestService.createRequest(tenant.getUserId(), new Date(), SystemLogType.LOGIN);
+    logRequestService.createRequest(tenant.getUserId(), new Date(), SystemLogType.LOGIN, "test");
     SystemLogRequest loginRequest = logRequestService.getById(2L);
 
     logRequestService.acceptRequestForUser(loginRequest, tenant);

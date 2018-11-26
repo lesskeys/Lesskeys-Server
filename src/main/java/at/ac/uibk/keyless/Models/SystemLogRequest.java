@@ -25,6 +25,8 @@ public class SystemLogRequest {
   @Enumerated(EnumType.STRING)
   private SystemLogType type;
 
+  private String message;
+
 
   public SystemLogRequest() {
     this.users = new HashMap<>();
@@ -64,5 +66,13 @@ public class SystemLogRequest {
 
   public void setType(SystemLogType type) {
     this.type = type;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 }
