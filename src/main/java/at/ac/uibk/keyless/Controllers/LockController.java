@@ -49,7 +49,7 @@ public class LockController {
       Lock lock = lockService.getLockById(Long.parseLong(data.get("lockId")));
       if (data.get("username") != null) {
         Long userId = userService.getUserByEmail(data.get("username")).getUserId();
-        systemLogService.logUnlockEvent(lock, "User " + userId, userId);
+        systemLogService.logUnlockEvent(lock, "User " + userId, userId, false);
       } else {
         Long keyId = keyService.getKeyByUid(data.get("uid")).getKeyId();
         systemLogService.logUnlockEventByKey(lock, "Key " + keyId, keyId);
@@ -108,7 +108,7 @@ public class LockController {
       String session = data.get("session");
       if (sessionService.userMatchesSession(session, user.getUserId()) &&
         lock.getRelevantUserIds().contains(user.getUserId())) {
-        systemLogService.logUnlockEvent(lock,"User "+user.getUserId(), user.getUserId());
+        systemLogService.logUnlockEvent(lock,"User "+user.getUserId(), user.getUserId(), false);
         return true;
       }
     }

@@ -58,6 +58,7 @@ public class LockRequestController {
       sessionService.userMatchesSession(data.get("session"), user.getUserId())) {
       if (lock.getRelevantUserIds().contains(user.getUserId())) {
         lockRequestService.addNewUnlockRequest(lock.getLockId());
+        lockRequestService.logRemoteUnlock(lock, user);
         lockRequestService.sendMessageToLock(lock.getLockId(), "unlock");
       }
     }

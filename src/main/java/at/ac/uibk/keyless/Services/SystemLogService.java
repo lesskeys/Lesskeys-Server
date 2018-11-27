@@ -84,7 +84,7 @@ public class SystemLogService {
    * @param lock, the lock that was unlocked
    * @param actor, either the name of a user or a key that unlocked the lock
    */
-  public void logUnlockEvent(Lock lock, String actor, Long userId) {
+  public void logUnlockEvent(Lock lock, String actor, Long userId, boolean remote) {
     SystemLogEntry toSave = new SystemLogEntry(SystemLogType.UNLOCK);
     if (lock.getLockId() != 1L) {
       lock.getRelevantUsers().stream()
@@ -93,7 +93,13 @@ public class SystemLogService {
     } else {
       toSave.addOwner(userService.getUserById(userId));
     }
-    toSave.setEvent("Lock "+lock.getLockId()+" was unlocked");
+
+    if (remote) {
+      toSave.setEvent("Lock " + lock.getLockId() + " was unlocked remotely");
+    } else {
+      toSave.setEvent("Lock " + lock.getLockId() + " was unlocked");
+    }
+
     toSave.setActor(actor);
     systemLogRepository.save(toSave);
   }

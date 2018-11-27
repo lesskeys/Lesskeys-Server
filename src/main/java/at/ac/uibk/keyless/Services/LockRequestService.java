@@ -2,6 +2,7 @@ package at.ac.uibk.keyless.Services;
 
 import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Models.UnlockRequest;
+import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Repositories.UnlockRequestRepository;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
@@ -25,6 +26,9 @@ public class LockRequestService {
   @Autowired
   private UnlockRequestRepository unlockRequestRepository;
 
+  @Autowired
+  private SystemLogService logService;
+
 
   public void sendMessageToLock(long lockId, String message) {
     Lock lock = lockService.getLockById(lockId);
@@ -43,8 +47,12 @@ public class LockRequestService {
   public boolean isToUnlock(long lockId) {
     return unlockRequestRepository.findAll().stream()
       .filter(r -> r.getLockId() == lockId)
-      .filter(r -> Minutes.minutesBetween(new DateTime(r.getIssued()), new DateTime()).isLessThan(Minutes.minutes(5)))
+      .filter(r -> Minutes.minutesBetween(new DateTime(r.getIssued()), new DateTime()).isLessThan(Minutes.minutes(2)))
       .collect(Collectors.toList()).size() > 0;
+  }
+
+  public void logRemoteUnlock(Lock lock, User user) {
+    logService.logUnlockEvent(lock, "User " + user.getUserId(), user.getUserId(), true);
   }
 
   public void addNewUnlockRequest(long lockId) {

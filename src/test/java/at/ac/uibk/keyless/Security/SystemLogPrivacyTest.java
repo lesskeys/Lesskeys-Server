@@ -84,7 +84,7 @@ public class SystemLogPrivacyTest {
   public void testOwnLogVisible() {
     logService.logLoginEvent(admin, "Logged in manually");
     logService.logSystemEvent(admin, "Created User 2", tenant);
-    logService.logUnlockEvent(main, "User 1", admin.getUserId());
+    logService.logUnlockEvent(main, "User 1", admin.getUserId(), false);
 
     Set<SystemLogEntry> logs = logService.getEntriesForUser(admin.getUserId());
     assertThat(logs.size(), is(3));
@@ -101,8 +101,8 @@ public class SystemLogPrivacyTest {
   @Test
   public void testOtherLogInvisible() {
     logService.logLoginEvent(tenant, "Logged in manually");
-    logService.logUnlockEvent(main, "User 2", tenant.getUserId());
-    logService.logUnlockEvent(main, "User 3", tenant2.getUserId());
+    logService.logUnlockEvent(main, "User 2", tenant.getUserId(), false);
+    logService.logUnlockEvent(main, "User 3", tenant2.getUserId(), false);
 
     Set<SystemLogEntry> logs = logService.getEntriesForUser(admin.getUserId());
     assertThat(logs.size(), is(2));
@@ -120,9 +120,9 @@ public class SystemLogPrivacyTest {
   public void testRequestedLogVisible() {
     logService.logLoginEvent(tenant, "Logged in manually");
     logService.logLoginEvent(tenant2, "Logged in manually");
-    logService.logUnlockEvent(main, "User 2", tenant.getUserId());
-    logService.logUnlockEvent(tenants, "User 2", tenant.getUserId());
-    logService.logUnlockEvent(main, "User 3", tenant2.getUserId());
+    logService.logUnlockEvent(main, "User 2", tenant.getUserId(), false);
+    logService.logUnlockEvent(tenants, "User 2", tenant.getUserId(), false);
+    logService.logUnlockEvent(main, "User 3", tenant2.getUserId(), false);
 
     Set<SystemLogEntry> logs = logService.getEntriesForUser(admin.getUserId());
     assertThat(logs.size(), is(2));
@@ -174,14 +174,14 @@ public class SystemLogPrivacyTest {
   @Test
   public void testSubUserVisible() {
     logService.logLoginEvent(visitor, "Logged in manually");
-    logService.logUnlockEvent(main, "User 5", visitor.getUserId());
+    logService.logUnlockEvent(main, "User 5", visitor.getUserId(), false);
 
     Set<SystemLogEntry> logs = logService.getEntriesForUser(tenant.getUserId());
     assertThat(logs.size(), is(2));
     assertThat(logs.stream()
       .allMatch(l -> l.getActor().startsWith("User 5")), is(true));
 
-    logService.logUnlockEvent(main, "User 2", tenant.getUserId());
+    logService.logUnlockEvent(main, "User 2", tenant.getUserId(), false);
     logs = logService.getEntriesForUser(tenant.getUserId());
     assertThat(logs.size(), is(3));
     assertThat(logs.stream()

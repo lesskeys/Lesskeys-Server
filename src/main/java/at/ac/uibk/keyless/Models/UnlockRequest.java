@@ -22,6 +22,7 @@ public class UnlockRequest {
   @Column(nullable = false, updatable = false)
   private Date issued;
 
+
   public Long getRequestId() {
     return requestId;
   }
