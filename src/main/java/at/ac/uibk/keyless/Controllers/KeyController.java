@@ -139,6 +139,15 @@ public class KeyController {
     if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       Key found = keyService.getKeyByUid(data.get("uid").toString());
       if (found != null) {
+        User finder = userService.getUserByEmail(data.get("username").toString());
+
+        // If the finder is the owner
+        if (finder.getUserId() == found.getOwner().getUserId()) {
+          toReturn.put("firstName", found.getOwner().getFirstName() + " " + found.getOwner().getLastName());
+          toReturn.put("lastName", "Schlüssel " + found.getKeyName());
+          return toReturn;
+        }
+
         keyService.deactivateKey(found);
         toReturn.put("firstName", found.getOwner().getFirstName());
         toReturn.put("lastName", found.getOwner().getLastName());
@@ -155,7 +164,6 @@ public class KeyController {
           SpringConsoleLogger.error("/key/find: Owner wos not notified");
           return toReturn;
         }
-        User finder = userService.getUserByEmail(data.get("username").toString());
         String message = "Schlüssel "+found.getKeyName()+" wurde von "+finder.getFirstName()+" "+finder.getLastName()+" gefunden!";
 
         Message toSend = Message.builder()
@@ -175,7 +183,6 @@ public class KeyController {
           messageService.saveRingMessage("System", message, found.getOwner().getUserId());
         } catch (FirebaseMessagingException e) {
           SpringConsoleLogger.error("/key/find: Owner wos not notified");
-          e.printStackTrace();
         }
 
         return toReturn;

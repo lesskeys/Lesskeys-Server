@@ -115,11 +115,14 @@ public class KeyService {
 
   public boolean isValid(Key key) {
     Date current = new Date();
-    if (key.getMode().toLowString().equals("Disabled")) {
+    if (key.getMode().toString().equals("DISABLED")) {
       return false;
+    } else if (key.getMode().toString().equals("ENABLED")) {
+      return true;
+    } else {
+      return (((key.getValidFrom().before(current) && key.getValidTo().after(current))
+        && keyPermissionService.isValid(key.getPermission())));
     }
-    return (((key.getValidFrom().before(current) && key.getValidTo().after(current))
-      && keyPermissionService.isValid(key.getPermission())) || (key.getMode().toLowString().equals("Enabled")));
   }
 
   public boolean isValidContent(String content, Lock lock) {
