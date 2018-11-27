@@ -57,6 +57,17 @@ public class SystemLogController {
     return null;
   }
 
+  @RequestMapping(value = "/log/request/newest", method = RequestMethod.POST)
+  public SystemLogRequest getUsersMostRecentRequest(@RequestBody Map<String, String> data) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
+      User user = userService.getUserByEmail(data.get("username"));
+      return requestService.getRequestsForUser(user).stream()
+        .max(Comparator.comparing(SystemLogRequest::getDay).reversed())
+        .orElse(null);
+    }
+    return null;
+  }
+
   @RequestMapping(value = "/log/accept-request", method = RequestMethod.POST)
   public void acceptRequest(@RequestBody Map<String, String> data) {
     if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
