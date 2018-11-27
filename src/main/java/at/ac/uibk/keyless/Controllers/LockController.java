@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -44,9 +45,16 @@ public class LockController {
    */
   @RequestMapping(value = "/lock/log-unlock", method = RequestMethod.PUT)
   public void logUnlock(@RequestBody Map<String, String> data) {
-    Lock lock = lockService.getLockById(Long.parseLong(data.get("lockId")));
-    systemLogService.logEvent(data.get("message"), lock.getRelevantUserIds().stream()
-      .findFirst().orElse(0L));
+    if (lockService.getLockForIdAndCode(Long.parseLong(data.get("lockId")), data.get("code")) != null) {
+      Lock lock = lockService.getLockById(Long.parseLong(data.get("lockId")));
+      if (data.get("username") != null) {
+        Long userId = userService.getUserByEmail(data.get("username")).getUserId();
+        systemLogService.logUnlockEvent(lock, "User " + userId, userId);
+      } else {
+        Long keyId = keyService.getKeyByUid(data.get("uid")).getKeyId();
+        systemLogService.logUnlockEventByKey(lock, "Key " + keyId, keyId);
+      }
+    }
   }
 
   /**
@@ -100,10 +108,9 @@ public class LockController {
       String session = data.get("session");
       if (sessionService.userMatchesSession(session, user.getUserId()) &&
         lock.getRelevantUserIds().contains(user.getUserId())) {
-        systemLogService.logEvent("Lock "+lock.getName()+" opened by "+user.getEmail(), user.getUserId());
+        systemLogService.logUnlockEvent(lock,"User "+user.getUserId(), user.getUserId());
         return true;
       }
-      systemLogService.logEvent("Lock "+lock.getName()+" denied "+user.getEmail(), user.getUserId());
     }
     return false;
   }

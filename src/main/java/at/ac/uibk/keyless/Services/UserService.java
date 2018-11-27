@@ -35,12 +35,12 @@ public class UserService {
     return userRepository.findByUserId(userId);
   }
 
-  public void saveUser(User toSave) {
+  public User saveUser(User toSave) {
     if (userRepository.findByUserId(toSave.getUserId()) != null) {
-      userRepository.save(toSave);
+      return userRepository.save(toSave);
     } else {
       toSave.setPassword(passwordEncoder.encode(toSave.getPassword()));
-      userRepository.save(toSave);
+      return userRepository.save(toSave);
     }
   }
 

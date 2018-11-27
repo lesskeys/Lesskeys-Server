@@ -74,6 +74,7 @@ public class RingController {
           .setTitle("Klingel von "+sender)
           .setBody(message)
           .setIcon("stock_ticker_update")
+          .setClickAction("at.ac.uibk.keylessapp_TARGET_NOTIFICATION")
           .build())
         .build())
       .build();

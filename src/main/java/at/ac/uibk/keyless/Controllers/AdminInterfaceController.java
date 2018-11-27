@@ -2,18 +2,21 @@ package at.ac.uibk.keyless.Controllers;
 
 import at.ac.uibk.keyless.Models.Lock;
 import at.ac.uibk.keyless.Models.SystemLogEntry;
+import at.ac.uibk.keyless.Models.SystemLogType;
 import at.ac.uibk.keyless.Models.User;
 import at.ac.uibk.keyless.Services.LockService;
+import at.ac.uibk.keyless.Services.SystemLogRequestService;
 import at.ac.uibk.keyless.Services.SystemLogService;
 import at.ac.uibk.keyless.Services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by Lukas Dötlinger.
@@ -31,7 +34,12 @@ public class AdminInterfaceController {
   SystemLogService systemLogService;
 
   @Autowired
+  SystemLogRequestService logRequestService;
+
+  @Autowired
   private PasswordEncoder passwordEncoder;
+
+  private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 
   @RequestMapping(value = "/ai/login", method = RequestMethod.POST)
@@ -76,7 +84,30 @@ public class AdminInterfaceController {
   }
 
   @RequestMapping(value = "/ai/log", method = RequestMethod.POST)
-  public Set<SystemLogEntry> getEntries(@RequestBody Map<String, String> data) {
-    return systemLogService.getEntriesForUser(Long.parseLong(data.get("userId")));
+  public List<SystemLogEntry> getEntries(@RequestBody Map<String, String> data) {
+    List<SystemLogEntry> list = new ArrayList<>(systemLogService.getEntriesForUser(Long.parseLong(data.get("userId"))));
+    list.sort(Comparator.comparing(SystemLogEntry::getLogTime).reversed());
+    return list;
+  }
+
+  @RequestMapping(value = "/ai/log/request", method = RequestMethod.POST)
+  public boolean requestLog(@RequestBody Map<String, String> data) {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+    String message = data.get("message");
+    Date logDay;
+    try {
+      logDay = sdf.parse(data.get("date"));
+    } catch (ParseException e) {
+      log.error("/ai/log/request: date could not be parsed from string");
+      return false;
+    }
+
+    if (data.get("type").equals("UNLOCK")) {
+      logRequestService.createRequest(lockService.getLockById(1L), logDay, message, true);
+    } else {
+      logRequestService.createRequest(Long.parseLong(data.get("userId")), logDay, SystemLogType.SYSTEM, message, true);
+      logRequestService.createRequest(Long.parseLong(data.get("userId")), logDay, SystemLogType.LOGIN, message, true);
+    }
+    return true;
   }
 }
