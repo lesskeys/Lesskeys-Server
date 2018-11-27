@@ -51,22 +51,30 @@ public class SystemLogRequestService {
       .collect(Collectors.toList());
   }
 
-  public void createRequest(Lock lock, Date date, String message) {
+  public void createRequest(Lock lock, Date date, String message, boolean notify) {
     SystemLogRequest request = new SystemLogRequest();
     lock.getRelevantUserIds().forEach(request::addUser);
     request.setDay(date);
     request.setMessage(message);
     request.setType(SystemLogType.UNLOCK);
-    saveRequest(request);
+    if (notify) {
+      saveRequest(request);
+    } else {
+      logRequestRepository.save(request);
+    }
   }
 
-  public void createRequest(Long userId, Date date, SystemLogType type, String message) {
+  public void createRequest(Long userId, Date date, SystemLogType type, String message, boolean notify) {
     SystemLogRequest request = new SystemLogRequest();
     request.addUser(userId);
     request.setDay(date);
     request.setMessage(message);
     request.setType(type);
-    saveRequest(request);
+    if (notify) {
+      saveRequest(request);
+    } else {
+      logRequestRepository.save(request);
+    }
   }
 
   public void acceptRequestForUser(SystemLogRequest request, User user) {
@@ -86,7 +94,6 @@ public class SystemLogRequestService {
       return;
     }
 
-    // add additional info of request
     Message toSend = Message.builder()
       .setToken(registrationToken)
       .setAndroidConfig(AndroidConfig.builder()

@@ -92,21 +92,21 @@ public class AdminInterfaceController {
 
   @RequestMapping(value = "/ai/log/request", method = RequestMethod.POST)
   public boolean requestLog(@RequestBody Map<String, String> data) {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
     String message = data.get("message");
     Date logDay;
     try {
       logDay = sdf.parse(data.get("date"));
     } catch (ParseException e) {
-      log.error("/ai/log/request: date could not be paresd from string");
+      log.error("/ai/log/request: date could not be parsed from string");
       return false;
     }
 
     if (data.get("type").equals("UNLOCK")) {
-      logRequestService.createRequest(lockService.getLockById(1L), logDay, message);
+      logRequestService.createRequest(lockService.getLockById(1L), logDay, message, true);
     } else {
-      logRequestService.createRequest(Long.parseLong(data.get("userId")), logDay, SystemLogType.SYSTEM, message);
-      logRequestService.createRequest(Long.parseLong(data.get("userId")), logDay, SystemLogType.LOGIN, message);
+      logRequestService.createRequest(Long.parseLong(data.get("userId")), logDay, SystemLogType.SYSTEM, message, true);
+      logRequestService.createRequest(Long.parseLong(data.get("userId")), logDay, SystemLogType.LOGIN, message, true);
     }
     return true;
   }
