@@ -1,5 +1,7 @@
 package at.ac.uibk.keyless.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ public class SystemLogRequest {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long requestId;
 
+  @JsonIgnore
   @ElementCollection
   private Map<Long, Boolean> users;
 
