@@ -43,7 +43,7 @@ public class UserController {
   public User getCurrentUser(@RequestBody Map<String, String> data) {
     User user = userService.getUserByEmail(data.get("username"));
     String session = data.get("session");
-    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       return user;
     }
     return null;
@@ -53,7 +53,7 @@ public class UserController {
   public List<User> getSubUsers(@RequestBody Map<String, String> data) {
     User user = userService.getUserByEmail(data.get("username"));
     String session = data.get("session");
-    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       return user.getSubUsers();
     }
     return null;
@@ -63,7 +63,7 @@ public class UserController {
   public void editSubUsersPermissions(@RequestBody Map<String, Object> data) {
     User user = userService.getUserByEmail(data.get("username").toString());
     String session = data.get("session").toString();
-    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())) {
+    if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       String subUserName = data.get("subUser").toString();
       if (user.getSubUsers().stream()
         .anyMatch(su -> su.getEmail().equals(subUserName))) {
@@ -82,7 +82,7 @@ public class UserController {
   public void editUser(@RequestBody Map<String, Object> data) {
     User toEdit = userService.getUserByEmail(data.get("username").toString());
     String session = data.get("session").toString();
-    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, toEdit.getUserId())) {
+    if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       toEdit.setEmail(Optional.ofNullable(data.get("newUsername").toString()).orElse(toEdit.getEmail()));
       toEdit.setFirstName(Optional.ofNullable(data.get("newFirstName").toString()).orElse(toEdit.getFirstName()));
       SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -102,7 +102,7 @@ public class UserController {
   public String editPassword(@RequestBody Map<String, String> data) {
     User toEdit = userService.getUserByEmail(data.get("username"));
     String session = data.get("session");
-    if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, toEdit.getUserId())) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       return userService.editUsersPassword(toEdit, data.get("oldPw"), data.get("newPw1"), data.get("newPw2"));
     }
     return "Failure";
@@ -110,13 +110,12 @@ public class UserController {
 
   /**
    * Method to add a new User.
-   * TODO: refactor this.
    */
   @RequestMapping(value = "/user/add", method = RequestMethod.POST)
   public Map<String, String> addUser(@RequestBody Map<String, Object> data) {
     Map<String, String> response = new HashMap<>();
     User operatingUser = userService.getUserByEmail(data.get("username").toString());
-    if (sessionService.isValidSession(data.get("session").toString())) {
+    if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       User newUser = new User();
       newUser.setEmail(data.get("newUsername").toString());
       if (data.get("newPw1").equals(data.get("newPw2"))) {

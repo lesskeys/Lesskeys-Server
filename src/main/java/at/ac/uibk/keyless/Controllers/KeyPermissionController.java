@@ -33,7 +33,7 @@ public class KeyPermissionController {
 
   @RequestMapping(value = "/key/edit/permission", method = RequestMethod.PUT)
   public void editKeyPermission(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       int day = Integer.parseInt(data.get("day"));
       Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
       keyPermissionService.editPermissionDay(day, data.get("newFrom"), data.get("newTo"), key.getPermission());
@@ -42,7 +42,7 @@ public class KeyPermissionController {
 
   @RequestMapping(value = "/key/edit/entire-permission", method = RequestMethod.PUT)
   public void editEntireKeyPermission(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       Key key = keyService.getKeyById(Long.parseLong(data.get("keyId")));
       keyPermissionService.editPermission(data, key.getPermission());
     }
@@ -50,7 +50,7 @@ public class KeyPermissionController {
 
   @RequestMapping(value = "/key/permission", method = RequestMethod.POST)
   public KeyPermission getPermissionForKey(@RequestBody Map<String, String> data) {
-    if (sessionService.isValidSession(data.get("session"))) {
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
       return keyService.getKeyById(Long.parseLong(data.get("keyId"))).getPermission();
     }
     return null;
