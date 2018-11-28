@@ -94,4 +94,13 @@ public class LockServiceTest {
       .filter(u -> !u.getRoles().contains(UserRole.ADMIN))
       .anyMatch(u -> lockService.getLocksForUser(u.getUserId()).contains(localLock)), is(false));
   }
+
+  @Test
+  public void testAddLock() {
+    Lock newLock = lockService.addLock(1L, "Lock new", "192.168.0.1:5000", "code");
+    lockService.updateAddressAndName(newLock.getLockId(), "Test", "Test");
+    newLock = lockService.getLockById(newLock.getLockId());
+    assertThat(newLock.getName(), is("Test"));
+    assertThat(newLock.getAddress(), is("Test"));
+  }
 }

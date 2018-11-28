@@ -38,7 +38,7 @@ public class SessionService {
   }
 
   public Session getByUserId(long userId) {
-    return sessionRepository.findByUserId(userId);
+    return sessionRepository.findFirstByUserId(userId);
   }
 
   /**
@@ -46,7 +46,7 @@ public class SessionService {
    * @return initializes a new session for a user and returns the session-token
    */
   public String initSession(User user, String fireBaseToken) {
-    Session s = sessionRepository.findByUserId(user.getUserId());
+    Session s = sessionRepository.findFirstByUserId(user.getUserId());
     if (s == null) {
       s = new Session();
       s.setUserId(user.getUserId());
@@ -73,7 +73,7 @@ public class SessionService {
    */
   public boolean userMatchesSession(String session, Long userId) {
     if (session != null && userId != null) {
-      return sessionRepository.findByUserId(userId).getSessionToken().equals(session);
+      return sessionRepository.findFirstByUserId(userId).getSessionToken().equals(session);
     }
     return false;
   }

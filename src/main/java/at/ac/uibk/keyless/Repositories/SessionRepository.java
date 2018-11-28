@@ -12,5 +12,5 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
   Session findBySessionId(Long sessionId);
 
-  Session findByUserId(Long userId);
+  Session findFirstByUserId(Long userId);
 }
