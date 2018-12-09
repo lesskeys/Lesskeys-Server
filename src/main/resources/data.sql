@@ -35,11 +35,11 @@ INSERT INTO key_permission (PERMISSION_ID, KEY_KEY_ID) VALUES (7, 7)
 INSERT INTO key_permission (PERMISSION_ID, KEY_KEY_ID) VALUES (8, 8)
 
 /* Log */
-INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (1, CURRENT_TIMESTAMP, 'test', 'Everybody should see this', 'SYSTEM')
-INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (2, CURRENT_TIMESTAMP, 'admin', 'Test Only admin should see this', 'SYSTEM')
-INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (3, CURRENT_TIMESTAMP, 'actor', 'Lock 1 Admin should not see actor', 'UNLOCK')
-INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (4, CURRENT_TIMESTAMP, 'actor', 'Lock 1 Admin should not see actor', 'UNLOCK')
-INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (5, CURRENT_TIMESTAMP, 'actor', 'Lock 2 Admin should not see this at all', 'UNLOCK')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (1, CURRENT_TIMESTAMP, 'User 1', 'Everybody should see this', 'SYSTEM')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (2, CURRENT_TIMESTAMP, 'User 1', 'Test Only admin should see this', 'SYSTEM')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (3, CURRENT_TIMESTAMP, 'User 2', 'Lock 1 Admin should not see actor', 'UNLOCK')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (4, CURRENT_TIMESTAMP, 'User 3', 'Lock 1 Admin should not see actor', 'UNLOCK')
+INSERT INTO system_log (SYSTEM_LOG_ID, LOG_TIME, ACTOR, EVENT, LOG_TYPE) VALUES (5, CURRENT_TIMESTAMP, 'User 4', 'Lock 2 Admin should not see this at all', 'UNLOCK')
 
 INSERT INTO system_log_owners (SYSTEM_LOG_ENTRY_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (1, 1)
 INSERT INTO system_log_owners (SYSTEM_LOG_ENTRY_SYSTEM_LOG_ID, OWNERS_USER_ID) VALUES (1, 2)
