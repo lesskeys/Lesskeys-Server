@@ -33,9 +33,6 @@ public class User {
   @Column(nullable = false, updatable = false)
   private Date createdAt;
 
-  @Temporal(TemporalType.DATE)
-  private Date birthday;
-
   @Column(nullable = false)
   private String firstName;
 
@@ -106,14 +103,6 @@ public class User {
 
   public void setCreatedAt(Date createdAt) {
     this.createdAt = createdAt;
-  }
-
-  public Date getBirthday() {
-    return birthday;
-  }
-
-  public void setBirthday(Date birthday) {
-    this.birthday = birthday;
   }
 
   public String getFirstName() {

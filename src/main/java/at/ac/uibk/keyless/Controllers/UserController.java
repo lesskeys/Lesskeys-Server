@@ -90,7 +90,6 @@ public class UserController {
       try {
         newBirthday = sdf.parse(data.get("newBirthday").toString());
       } catch (Exception e) {}
-      toEdit.setBirthday(Optional.ofNullable(newBirthday).orElse(toEdit.getBirthday()));
       userService.saveUser(toEdit);
     }
   }
@@ -131,10 +130,6 @@ public class UserController {
       newUser.setRoles(roles);
       newUser.setCreatedAt(new Date());
 
-      SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-      try {
-        newUser.setBirthday(sdf.parse(data.get("newBirthday").toString()));
-      } catch (Exception e) {}
       newUser.setCreator(operatingUser);
       newUser = userService.saveUser(newUser);
       lockService.addUserToLocks((List<Object>) data.get("lockIds"), newUser.getUserId());
