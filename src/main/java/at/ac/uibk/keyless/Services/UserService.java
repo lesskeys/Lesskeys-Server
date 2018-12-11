@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Lukas Dötlinger.
@@ -21,6 +22,9 @@ public class UserService {
 
   @Autowired
   PasswordEncoder passwordEncoder;
+
+  @Autowired
+  KeyService keyService;
 
 
   public List<User> getAllUsers() {
@@ -35,6 +39,12 @@ public class UserService {
     return userRepository.findByUserId(userId);
   }
 
+  public List<User> getActiveSubUsersForUser(User user) {
+    return user.getSubUsers().stream()
+      .filter(u -> !u.isDisabled())
+      .collect(Collectors.toList());
+  }
+
   public User saveUser(User toSave) {
     if (userRepository.findByUserId(toSave.getUserId()) != null) {
       return userRepository.save(toSave);
@@ -46,6 +56,21 @@ public class UserService {
 
   public boolean hasRole(User user, String role) {
     return user.getRoles().stream().anyMatch(r -> r.toString().equals(role));
+  }
+
+  public void disableUser(User user) {
+    if (user.getRole().equals("TENANT") || user.getRole().equals("VISITOR")) {
+      user.setFirstName("-");
+      user.setLastName("-");
+      user.setDisabledTrue();
+      userRepository.save(user);
+      // disable all keys
+      user.getKeys()
+        .forEach(keyService::deactivateKey);
+      // repeat the procedure for all sub-users
+      user.getSubUsers()
+        .forEach(this::disableUser);
+    }
   }
 
   public String editUsersPassword(User user, String oldPw, String newPw1, String newPw2) {

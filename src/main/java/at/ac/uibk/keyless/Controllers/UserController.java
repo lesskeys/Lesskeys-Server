@@ -54,9 +54,20 @@ public class UserController {
     User user = userService.getUserByEmail(data.get("username"));
     String session = data.get("session");
     if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))) {
-      return user.getSubUsers();
+      return userService.getActiveSubUsersForUser(user);
     }
     return null;
+  }
+
+  @RequestMapping(value = "/user/subuser/disable", method = RequestMethod.PUT)
+  public void disableSubUser(@RequestBody Map<String, String> data) {
+    User user = userService.getUserByEmail(data.get("username"));
+    User toDisable = userService.getUserById(Long.parseLong(data.get("toDisableId")));
+    String session = data.get("session");
+    if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))
+      && (toDisable.getCreator().getUserId() == user.getUserId())) {
+      userService.disableUser(toDisable);
+    }
   }
 
   @RequestMapping(value = "/user/subuser/edit-permission", method = RequestMethod.POST)
@@ -65,7 +76,7 @@ public class UserController {
     String session = data.get("session").toString();
     if (sessionService.userMatchesValidSession(data.get("session").toString(), data.get("username").toString())) {
       String subUserName = data.get("subUser").toString();
-      if (user.getSubUsers().stream()
+      if (userService.getActiveSubUsersForUser(user).stream()
         .anyMatch(su -> su.getEmail().equals(subUserName))) {
         User subUser = userService.getUserByEmail(subUserName);
         lockService.removeUserFromLocks(subUser.getUserId());

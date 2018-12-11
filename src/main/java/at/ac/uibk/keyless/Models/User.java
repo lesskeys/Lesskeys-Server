@@ -59,6 +59,14 @@ public class User {
   @Enumerated(EnumType.STRING)
   private Set<UserRole> roles;
 
+  @JsonIgnore
+  @Column(nullable = false)
+  private boolean disabled;
+
+
+  public User() {
+    this.disabled = false;
+  }
 
   public String getRole() {
     Set<UserRole> r = getRoles();
@@ -151,5 +159,13 @@ public class User {
 
   public void setRoles(Set<UserRole> roles) {
     this.roles = roles;
+  }
+
+  public boolean isDisabled() {
+    return disabled;
+  }
+
+  public void setDisabledTrue() {
+    this.disabled = true;
   }
 }

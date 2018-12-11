@@ -93,7 +93,7 @@ public class LockController {
     String session = data.get("session");
     Long subUserId = Long.parseLong(data.get("subUserId"));
     if (sessionService.isValidSession(session) && sessionService.userMatchesSession(session, user.getUserId())
-      && user.getSubUsers().stream()
+      && userService.getActiveSubUsersForUser(user).stream()
         .anyMatch(u -> u.getUserId() == subUserId)) {
       return lockService.getLocksForUser(subUserId);
     }
