@@ -6,6 +6,7 @@ import at.ac.uibk.keyless.Services.LockService;
 import at.ac.uibk.keyless.Services.SessionService;
 import at.ac.uibk.keyless.Services.SystemLogService;
 import at.ac.uibk.keyless.Services.UserService;
+import clover.it.unimi.dsi.fastutil.Hash;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,15 +60,20 @@ public class UserController {
     return null;
   }
 
-  @RequestMapping(value = "/user/subuser/disable", method = RequestMethod.PUT)
-  public void disableSubUser(@RequestBody Map<String, String> data) {
+  @RequestMapping(value = "/user/subuser/disable", method = RequestMethod.POST)
+  public Map<String, String> disableSubUser(@RequestBody Map<String, String> data) {
+    Map<String, String> toReturn = new HashMap<>();
     User user = userService.getUserByEmail(data.get("username"));
     User toDisable = userService.getUserById(Long.parseLong(data.get("toDisableId")));
     String session = data.get("session");
     if (sessionService.userMatchesValidSession(data.get("session"), data.get("username"))
       && (toDisable.getCreator().getUserId() == user.getUserId())) {
       userService.disableUser(toDisable);
+      toReturn.put("value", "true");
+      return toReturn;
     }
+    toReturn.put("value", "false");
+    return toReturn;
   }
 
   @RequestMapping(value = "/user/subuser/edit-permission", method = RequestMethod.POST)
