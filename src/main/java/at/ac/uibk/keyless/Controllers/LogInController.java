@@ -59,7 +59,7 @@ public class LogInController {
     Map<String, String> response = new HashMap<>();
     User loggedIn = userRepository.findFirstByEmail(data.get("username"));
     if (!(loggedIn == null)) {
-      if (data.get("username").equals(loggedIn.getEmail()) &&
+      if ((!loggedIn.isDisabled()) && data.get("username").equals(loggedIn.getEmail()) &&
         passwordEncoder.matches(data.get("password"), loggedIn.getPassword())) {
         LogInEntry entry = logInService.updateLogInEntry(data.get("deviceId"), loggedIn.getUserId(),
           generateToken(data.get("deviceId")));
