@@ -61,11 +61,11 @@ public class User {
 
   @JsonIgnore
   @Column(nullable = false)
-  private boolean disabled;
+  private String disabled;
 
 
   public User() {
-    this.disabled = false;
+    this.disabled = "ENABLED";
   }
 
   public String getRole() {
@@ -162,10 +162,10 @@ public class User {
   }
 
   public boolean isDisabled() {
-    return disabled;
+    return disabled.equals("DISABLED");
   }
 
   public void setDisabledTrue() {
-    this.disabled = true;
+    this.disabled = "DISABLED";
   }
 }

@@ -59,7 +59,7 @@ public class UserService {
   }
 
   public void disableUser(User user) {
-    if (user.getRole().equals("TENANT") || user.getRole().equals("VISITOR")) {
+    if (user.getRole().equals("Tenant") || user.getRole().equals("Visitor")) {
       user.setFirstName("-");
       user.setLastName("-");
       user.setDisabledTrue();
