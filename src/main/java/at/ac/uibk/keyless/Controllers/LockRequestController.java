@@ -17,6 +17,7 @@ import java.util.Map;
 /**
  * Created by Lukas Dötlinger.
  */
+///CLOVER:OFF
 @RestController
 public class LockRequestController {
 
@@ -64,3 +65,4 @@ public class LockRequestController {
     }
   }
 }
+///CLOVER:ON

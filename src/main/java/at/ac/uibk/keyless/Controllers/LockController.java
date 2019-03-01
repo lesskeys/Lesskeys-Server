@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Lukas Dötlinger.
  */
+///CLOVER:OFF
 @RestController
 public class LockController {
 
@@ -123,6 +124,7 @@ public class LockController {
     }
     return false;
   }
+  ///CLOVER:ON
 
   @RequestMapping(value = "/lock/keys", method = RequestMethod.POST)
   public List<Map<String, Object>> getKeysForLock(@RequestBody Map<String, String> data) {

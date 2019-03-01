@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Lukas Dötlinger.
  */
+///CLOVER:OFF
 @RestController
 public class KeyController {
 
@@ -191,3 +192,4 @@ public class KeyController {
     return null;
   }
 }
+///CLOVER:ON

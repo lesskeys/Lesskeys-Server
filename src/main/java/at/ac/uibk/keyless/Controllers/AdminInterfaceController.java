@@ -21,6 +21,7 @@ import java.util.*;
 /**
  * Created by Lukas Dötlinger.
  */
+///CLOVER:OFF
 @RestController
 public class AdminInterfaceController {
 
@@ -111,3 +112,4 @@ public class AdminInterfaceController {
     return true;
   }
 }
+///CLOVER:ON

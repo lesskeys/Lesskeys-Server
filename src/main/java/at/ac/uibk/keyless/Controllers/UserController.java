@@ -21,6 +21,7 @@ import java.util.*;
 /**
  * Created by Lukas Dötlinger.
  */
+///CLOVER:OFF
 @RestController
 public class UserController {
 
@@ -158,3 +159,4 @@ public class UserController {
     return response;
   }
 }
+///CLOVER:ON
