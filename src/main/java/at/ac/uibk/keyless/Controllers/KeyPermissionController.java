@@ -18,6 +18,7 @@ import java.util.Map;
 /**
  * Created by Lukas Dötlinger.
  */
+///CLOVER:OFF
 @RestController
 public class KeyPermissionController {
 
@@ -56,3 +57,4 @@ public class KeyPermissionController {
     return null;
   }
 }
+///CLOVER:ON

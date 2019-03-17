@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uibk.ac.at</groupId>
-    <artifactId>Keyless</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>Lesskeys-Backend</artifactId>
+    <version>0.9.Pre-Release</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -102,6 +102,8 @@
                 <configuration>
                     <!-- Exclude getters and setters -->
                     <contextFilters>property</contextFilters>
+                    <generatePdf>true</generatePdf>
+                    <reportDescriptor>clover-report-config.xml</reportDescriptor>
                 </configuration>
                 <executions>
                     <execution>

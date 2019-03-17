@@ -25,13 +25,6 @@ public class RingMessageService {
 
 
   /**
-   * @return a message for a given id
-   */
-  public RingMessage getRingMessageById(Long messageId) {
-    return messageRepository.findByMessageId(messageId);
-  }
-
-  /**
    * Method to save a new ring message.
    */
   public void saveRingMessage(String sender, String message, Long recipient) {

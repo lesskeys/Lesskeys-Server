@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Lukas Dötlinger.
  */
+///CLOVER:OFF
 @RestController
 public class SystemLogController {
 
@@ -77,3 +78,4 @@ public class SystemLogController {
     }
   }
 }
+///CLOVER:ON

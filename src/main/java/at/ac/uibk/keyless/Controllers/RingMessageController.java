@@ -15,6 +15,7 @@ import java.util.Map;
 /**
  * Created by Lukas Dötlinger.
  */
+///CLOVER:OFF
 @RestController
 public class RingMessageController {
 
@@ -33,3 +34,4 @@ public class RingMessageController {
     return null;
   }
 }
+///CLOVER:ON

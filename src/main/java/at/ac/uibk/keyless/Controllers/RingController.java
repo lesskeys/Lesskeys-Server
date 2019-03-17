@@ -52,6 +52,7 @@ public class RingController {
     return userService.getAllUsers();
   }
 
+  ///CLOVER:OFF
   @RequestMapping(value = "/ring/send", method = RequestMethod.PUT)
   public void sendRingMessage(@RequestBody Map<String, String> data) {
     User receiver = userService.getUserById(Long.parseLong(data.get("userId")));
@@ -86,6 +87,7 @@ public class RingController {
       e.printStackTrace();
     }
   }
+  ///CLOVER:ON
 
   private String generateAuthCode() {
     String alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
